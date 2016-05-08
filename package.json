@@ -1,0 +1,50 @@
+{
+  "name": "1tp",
+  "version": "0.0.1",
+  "description": "One transport protocol to rule them all -- offering socket abstraction on top of various communication protocols",
+  "main": "index.js",
+  "keywords": [
+    "transport",
+    "flunky",
+    "nat",
+    "udp",
+    "tcp",
+    "turn",
+    "xmpp",
+    "gcm",
+    "webrtc",
+    "websocket"
+  ],
+  "author": {
+    "name": "Nico Janssens",
+    "email": "nico.b.janssens@gmail.com"
+  },
+  "contributors": [{
+    "name": "Thomas Delaet",
+    "email": "thomas@delaet.org"
+  }],
+  "license": "MIT",
+  "engines": {
+    "node": ">=4.0.0 <6.0.0"
+  },
+  "dependencies": {
+    "debug": "^2.2.0",
+    "hat": "0.0.3",
+    "merge": "^1.2.0",
+    "nat-upnp": "^1.0.0",
+    "netstring-stream": "^0.1.2",
+    "public-ip": "^1.1.0",
+    "q": "^1.4.1",
+    "socket.io-client": "1.4.5",
+    "turn-js": "^0.2.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-as-promised": "^5.2.0",
+    "mocha": "^2.4.5",
+    "yargs": "^3.32.0"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha test/*.unit.js"
+  }
+}
