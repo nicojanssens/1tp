@@ -5,15 +5,11 @@
   "main": "index.js",
   "keywords": [
     "transport",
-    "flunky",
+    "microminion",
     "nat",
     "udp",
     "tcp",
-    "turn",
-    "xmpp",
-    "gcm",
-    "webrtc",
-    "websocket"
+    "turn"
   ],
   "author": {
     "name": "Nico Janssens",
