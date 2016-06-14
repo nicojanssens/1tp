@@ -124,6 +124,7 @@ TcpTransport.prototype.activate = function (activationInfo, onSuccess, onFailure
     })
   }
   // fire up
+  port = (port === undefined) ? 0 : port 
   debugLog('listening on address:' + address + ', port:' + port)
   this._server.listen(port, address)
 }
