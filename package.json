@@ -1,6 +1,6 @@
 {
   "name": "1tp",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "One transport protocol to rule them all -- offering socket abstraction on top of various communication protocols",
   "main": "index.js",
   "keywords": [
@@ -15,10 +15,12 @@
     "name": "Nico Janssens",
     "email": "nico.b.janssens@gmail.com"
   },
-  "contributors": [{
-    "name": "Thomas Delaet",
-    "email": "thomas@delaet.org"
-  }],
+  "contributors": [
+    {
+      "name": "Thomas Delaet",
+      "email": "thomas@delaet.org"
+    }
+  ],
   "license": "MIT",
   "engines": {
     "node": ">=4.0.0"
