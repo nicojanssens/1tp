@@ -38,7 +38,7 @@ var argv = require('yargs')
   .alias('h', 'help')
   .argv
 
-describe('flunky transports', function () {
+describe('1tp transports', function () {
   this.timeout(10000)
 
   it('should return echo messages using udp transport and close server afterwards', function (done) {
