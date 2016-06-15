@@ -1,7 +1,7 @@
 'use strict'
 
 var events = require('events')
-var flunkyUtils = require('../utils')
+var utils = require('../utils')
 var Q = require('q')
 var util = require('util')
 
@@ -12,7 +12,7 @@ function AbstractTransport () {
   // event emitter
   events.EventEmitter.call(this)
   // register _error handler
-  flunkyUtils.mixinEventEmitterErrorFunction(this)
+  utils.mixinEventEmitterErrorFunction(this)
 }
 
 // Inherit EventEmitter

@@ -1,7 +1,7 @@
 'use strict'
 
 var events = require('events')
-var flunkyUtils = require('../src/utils')
+var utils = require('../src/utils')
 var Q = require('q')
 var util = require('util')
 
@@ -13,7 +13,7 @@ var errorMsg = 'Oh ow'
 describe('utils module', function () {
   it('should exec error handler', function (done) {
     var testObject = new TestObject()
-    flunkyUtils.mixinEventEmitterErrorFunction(testObject)
+    utils.mixinEventEmitterErrorFunction(testObject)
     var onError = function (error) {
       expect(error).to.equal(errorMsg)
       done()
@@ -23,7 +23,7 @@ describe('utils module', function () {
 
   it('should fire a test error event', function (done) {
     var testObject = new TestObject()
-    flunkyUtils.mixinEventEmitterErrorFunction(testObject)
+    utils.mixinEventEmitterErrorFunction(testObject)
     testObject.on('error', function (error) {
       expect(error).to.equal(errorMsg)
       done()
@@ -33,14 +33,14 @@ describe('utils module', function () {
 
   it('should throw a test error', function (done) {
     var testObject = new TestObject()
-    flunkyUtils.mixinEventEmitterErrorFunction(testObject)
+    utils.mixinEventEmitterErrorFunction(testObject)
     expect(testObject.doSomethingWrong).to.throw(Error)
     done()
   })
 
   it('should complain about incorrect object type', function (done) {
     var fn = function () {
-      flunkyUtils.mixinEventEmitterErrorFunction('foo')
+      utils.mixinEventEmitterErrorFunction('foo')
     }
     expect(fn).to.throw(Error)
     done()
@@ -48,7 +48,7 @@ describe('utils module', function () {
 
   it('should complain about undefined object', function (done) {
     var fn = function () {
-      flunkyUtils.mixinEventEmitterErrorFunction()
+      utils.mixinEventEmitterErrorFunction()
     }
     expect(fn).to.throw(Error)
     done()
@@ -58,7 +58,7 @@ describe('utils module', function () {
     var testPromise = Q.fcall(function () {
       return 'promise resolved'
     })
-    var timeoutPromise = flunkyUtils.timeoutResolvePromise(testPromise, 500)
+    var timeoutPromise = utils.timeoutResolvePromise(testPromise, 500)
     timeoutPromise.then(function (result) {
       expect(result).to.not.be.undefined
       expect(result).to.equal('promise resolved')
@@ -75,7 +75,7 @@ describe('utils module', function () {
     var delayedTestPromise = Q.delay(100).then(function () {
       return testPromise
     })
-    var timeoutPromise = flunkyUtils.timeoutResolvePromise(delayedTestPromise, 500)
+    var timeoutPromise = utils.timeoutResolvePromise(delayedTestPromise, 500)
     timeoutPromise.then(function (result) {
       expect(result).to.not.be.undefined
       expect(result).to.equal('promise resolved')
@@ -96,7 +96,7 @@ describe('utils module', function () {
     var onTimeout = function () {
       timeoutCallbackExecuted = true
     }
-    var timeoutPromise = flunkyUtils.timeoutResolvePromise(delayedTestPromise, 500, onTimeout)
+    var timeoutPromise = utils.timeoutResolvePromise(delayedTestPromise, 500, onTimeout)
     timeoutPromise.then(function (result) {
       expect(result).to.be.undefined
       expect(timeoutCallbackExecuted).to.be.true

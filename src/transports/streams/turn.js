@@ -1,7 +1,7 @@
 'use strict'
 
 var Duplex = require('stream').Duplex
-var flunkyUtils = require('../../utils')
+var utils = require('../../utils')
 var inherits = require('inherits')
 
 var debug = require('debug')
@@ -32,7 +32,7 @@ function TurnStream (peerAddress, turnClient) {
   this._turnClient.on('relayed-message', this._onMessage())
 
   // register _error handler
-  flunkyUtils.mixinEventEmitterErrorFunction(this)
+  utils.mixinEventEmitterErrorFunction(this)
 
   // done
   debugLog('created turn stream for (peer) connection info ' + JSON.stringify(peerAddress))

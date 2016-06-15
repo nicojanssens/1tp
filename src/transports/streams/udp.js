@@ -1,7 +1,7 @@
 'use strict'
 
 var Duplex = require('stream').Duplex
-var flunkyUtils = require('../../utils')
+var utils = require('../../utils')
 var hat = require('hat')
 var inherits = require('inherits')
 
@@ -28,7 +28,7 @@ function UdpStream (peerAddress, sessionId, socket) {
   this._destroyed = false
 
   // register _error handler
-  flunkyUtils.mixinEventEmitterErrorFunction(this)
+  utils.mixinEventEmitterErrorFunction(this)
 
   // done
   debugLog('created new udp stream.')

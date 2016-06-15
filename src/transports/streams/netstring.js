@@ -1,7 +1,7 @@
 'use strict'
 
 var Duplex = require('stream').Duplex
-var flunkyUtils = require('../../utils')
+var utils = require('../../utils')
 var inherits = require('inherits')
 var netstring = require('netstring-stream')
 
@@ -35,7 +35,7 @@ function NetStringStream () {
   })
 
   // register _error handler
-  flunkyUtils.mixinEventEmitterErrorFunction(this)
+  utils.mixinEventEmitterErrorFunction(this)
 
   // done
   debugLog('created new netstring stream.')

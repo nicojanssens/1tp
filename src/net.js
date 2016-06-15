@@ -5,7 +5,7 @@ var inherits = require('inherits')
 var ProxyStream = require('./stream')
 var Q = require('q')
 var util = require('util')
-var flunkyUtils = require('./utils')
+var utils = require('./utils')
 
 var debug = require('debug')
 var debugLog = debug('1tp:net')
@@ -31,7 +31,7 @@ var Server = function (transports, connectionListener) {
   // event emitter
   events.EventEmitter.call(this)
   // register _error handler
-  flunkyUtils.mixinEventEmitterErrorFunction(this, errorLog)
+  utils.mixinEventEmitterErrorFunction(this, errorLog)
   // register connectionListener -- if this is a function
   if (typeof connectionListener === 'function') {
     this.once('connection', connectionListener)
@@ -130,7 +130,7 @@ var Socket = function (transports) {
   // init proxy stream
   ProxyStream.call(this)
   // register _error handler
-  flunkyUtils.mixinEventEmitterErrorFunction(this, errorLog)
+  utils.mixinEventEmitterErrorFunction(this, errorLog)
   // done
   debugLog('created new net socket')
 }
@@ -243,7 +243,7 @@ var _createConnectTimeoutPromise = function (transportSpecs) {
   var endpointInfo = transportSpecs.endpointInfo
   var connectPromise = transport.connectP(endpointInfo)
   // resolve promise without result if it does not complete before timeout
-  var connectTimeoutPromise = flunkyUtils.timeoutResolvePromise(connectPromise, connectTimeout, function () {
+  var connectTimeoutPromise = utils.timeoutResolvePromise(connectPromise, connectTimeout, function () {
     // on timeout, close connection
     var timeoutMessage = 'timeout while transport ' + transport.transportType() + ' tries to connect with ' + JSON.stringify(endpointInfo)
     debugLog(timeoutMessage)
