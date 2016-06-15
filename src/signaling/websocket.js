@@ -22,7 +22,7 @@ function WebSocketSignaling (wsOpts) {
 }
 
 WebSocketSignaling.DEFAULTS = {
-  wsUrl: 'https://flunky-registrar.herokuapp.com',
+  wsUrl: 'https://microminion-registrar.herokuapp.com',
   reconnectionDelay: 0,
   reopenDelay: 0,
   forceNewConnection: true
