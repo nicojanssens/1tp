@@ -50,7 +50,7 @@ describe('net api', function () {
         turnPort: argv.port,
         turnUsername: argv.user,
         turnPassword: argv.pwd,
-        signaling: new WebSocketSignaling({wsUrl: argv.ws})
+        signaling: new WebSocketSignaling({url: argv.ws})
       })
     )
     var server = new Server(transports)
