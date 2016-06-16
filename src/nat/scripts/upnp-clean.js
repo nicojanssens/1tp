@@ -15,7 +15,7 @@ upnp.getPortMappingsP()
   .then(function (portMappings) {
     var promises = portMappings.map(function (portMapping) {
       if (portMapping.description.match(regex)) {
-        return upnp.unmapPrivateToPublicPortP(portMapping)
+        return upnp.unmapPublicPortP(portMapping)
       }
     })
     return Q.all(promises)
