@@ -172,7 +172,7 @@ WebSocketSignaling.prototype.onIncomingMessage = function () {
 
 WebSocketSignaling.prototype.onPing = function () {
   return function (message) {
-    console.log('incoming ping ' + JSON.stringify(message))
+    debugLog('incoming ping ' + JSON.stringify(message))
   }
 }
 
