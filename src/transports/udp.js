@@ -18,7 +18,7 @@ var _connectOnReply = true
  * Udp transport
  *
  * @constructor
- * @fires UdpTransport#active
+ * @fires UdpTransport#listening
  * @fires UdpTransport#connection
  * @fires UdpTransport#connect
  * @fires UdpTransport#error
@@ -49,24 +49,24 @@ UdpTransport.prototype.transportType = function () {
   return 'udp'
 }
 
-UdpTransport.prototype.activate = function (activationInfo, onSuccess, onFailure) {
+UdpTransport.prototype.listen = function (listeningInfo, onSuccess, onFailure) {
   var port, address
-  if (activationInfo !== undefined) {
-    // verify activationInfo
-    if (activationInfo.transportType !== this.transportType()) {
-      var transportTypeError = 'incorrect activationInfo: unexpected transportType -- ignoring request'
+  if (listeningInfo !== undefined) {
+    // verify listeningInfo
+    if (listeningInfo.transportType !== this.transportType()) {
+      var transportTypeError = 'incorrect listeningInfo: unexpected transportType -- ignoring request'
       errorLog(transportTypeError)
       this._error(transportTypeError, onFailure)
       return
     }
-    if (activationInfo.transportInfo === undefined) {
+    if (listeningInfo.transportInfo === undefined) {
       var transportInfoUndefined = 'incorrect connectionInfo: transportInfo is undefined'
       errorLog(transportInfoUndefined)
       this._error(transportInfoUndefined, onFailure)
       return
     }
-    port = activationInfo.transportInfo.port
-    address = activationInfo.transportInfo.address
+    port = listeningInfo.transportInfo.port
+    address = listeningInfo.transportInfo.address
   }
   var self = this
   // fire up
@@ -80,11 +80,11 @@ UdpTransport.prototype.activate = function (activationInfo, onSuccess, onFailure
         port: self._socket.address().port
       }
     }
-    // if address was specified in activation info, then reuse it
+    // if address was specified in listening info, then reuse it
     if (address) {
       myConnectionInfo.transportInfo.address = self._socket.address().address
       self._myConnectionInfo = myConnectionInfo
-      self._fireActiveEvent(myConnectionInfo, onSuccess)
+      self._fireListeningEvent(myConnectionInfo, onSuccess)
     } else {
       // otherwise, retrieve local ip address
       var myConnectionInfos = ipAddresses.getAllLocalIpv4Addresses().map(function (localAddress) {
@@ -97,7 +97,7 @@ UdpTransport.prototype.activate = function (activationInfo, onSuccess, onFailure
         }
         return connectionInfo
       })
-      self._fireActiveEvent(myConnectionInfos, onSuccess)
+      self._fireListeningEvent(myConnectionInfos, onSuccess)
     }
   })
 }
