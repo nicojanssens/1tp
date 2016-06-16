@@ -72,7 +72,7 @@ signalingSocket.on('message', function (message) {
     signaling: new WebSocketSignaling({url: argv.ws})
   }))
   onetpClient = net.createConnection(transports, request.listeningInfo, function () {
-    console.log('outbound connection established')
+    console.log('connection established')
     bindToTerminal(onetpClient)
   })
 })
@@ -93,7 +93,7 @@ signalingSocket.connectP()
         signaling: new WebSocketSignaling({url: argv.ws})
       }))
       onetpServer = net.createServer(transports, function (connection) {
-        console.log('inbound connection established')
+        console.log('connection established')
         bindToTerminal(connection)
       })
       return onetpServer.listenP()
