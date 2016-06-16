@@ -24,16 +24,16 @@ AbstractTransport.prototype.transportType = function () {
   this._error(errorLog)
 }
 
-AbstractTransport.prototype.activate = function (activationInfo, onSuccess, onFailure) {
-  var errorMsg = 'AbstractTransport.activate function not implemented'
+AbstractTransport.prototype.listen = function (listeningInfo, onSuccess, onFailure) {
+  var errorMsg = 'AbstractTransport.listen function not implemented'
   errorLog(errorMsg)
   this._error(errorMsg)
 }
 
-AbstractTransport.prototype.activateP = function (activationInfo) {
+AbstractTransport.prototype.listenP = function (listeningInfo) {
   var deferred = Q.defer()
-  this.activate(
-    activationInfo,
+  this.listen(
+    listeningInfo,
     function (connectionInfo) {
       deferred.resolve(connectionInfo)
     },
@@ -84,12 +84,12 @@ AbstractTransport.prototype.closeP = function () {
   return deferred.promise
 }
 
-AbstractTransport.prototype._fireActiveEvent = function (myConnectionInfo, callback) {
+AbstractTransport.prototype._fireListeningEvent = function (myConnectionInfo, callback) {
   if (callback) {
     callback(myConnectionInfo)
     return
   }
-  this.emit('active', myConnectionInfo)
+  this.emit('listening', myConnectionInfo)
 }
 
 AbstractTransport.prototype._fireConnectEvent = function (stream, peerConnectionInfo, callback) {
