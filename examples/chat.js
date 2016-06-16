@@ -55,7 +55,6 @@ signalingSocket.on('error', function (error) {
 
 signalingSocket.on('message', function (message) {
   var request = JSON.parse(message)
-  console.log(message)
   // drop my non-init message
   if (request.type !== 'init') {
     return
