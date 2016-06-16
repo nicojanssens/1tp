@@ -44,10 +44,10 @@ var Server = function (transports, connectionListener) {
 util.inherits(Server, events.EventEmitter)
 
 Server.prototype.listen = function () {
-  // first optional argument -> connectionInfo
-  var activationInfo = arguments[0]
-  if (activationInfo === undefined || typeof activationInfo !== 'object') {
-    activationInfo = []
+  // first optional argument -> listeningInfo
+  var listeningInfo = arguments[0]
+  if (listeningInfo === undefined || typeof listeningInfo !== 'object') {
+    listeningInfo = []
   }
   // last optional argument -> callback
   var callback = arguments[arguments.length - 1]
@@ -55,18 +55,18 @@ Server.prototype.listen = function () {
     this.once('listening', callback)
   }
   // create list of promises
-  var activationPromises = this._transports.map(function (transport) {
-    var transportActivationInfo = activationInfo.find(function (activationInfoInstance) {
-      if (activationInfoInstance.transportType === transport.transportType()) {
-        return activationInfoInstance
+  var listenPromises = this._transports.map(function (transport) {
+    var transportListeningInfo = listeningInfo.find(function (listeningInfoInstance) {
+      if (listeningInfoInstance.transportType === transport.transportType()) {
+        return listeningInfoInstance
       }
     })
-    debugLog('activating transport with connection info ' + JSON.stringify(transportActivationInfo))
-    return transport.activateP(transportActivationInfo)
+    debugLog('activating transport with connection info ' + JSON.stringify(transportListeningInfo))
+    return transport.listenP(transportListeningInfo)
   })
   // execute promises
   var self = this
-  Q.all(activationPromises)
+  Q.all(listenPromises)
     .then(function (listeningInfo) {
       debugLog('collected listening info ' + JSON.stringify(listeningInfo))
       listeningInfo = [].concat.apply([], listeningInfo) // flatten multidimensional array
@@ -79,23 +79,23 @@ Server.prototype.listen = function () {
     })
 }
 
-Server.prototype.listenP = function (activationInfo) {
-  // check activation info
-  if (activationInfo === undefined || typeof activationInfo !== 'object') {
-    activationInfo = []
+Server.prototype.listenP = function (listeningInfo) {
+  // check listening info
+  if (listeningInfo === undefined || typeof listeningInfo !== 'object') {
+    listeningInfo = []
   }
   // create list of promises
-  var activationPromises = this._transports.map(function (transport) {
-    var transportActivationInfo = activationInfo.find(function (activationInfoInstance) {
-      if (activationInfoInstance.transportType === transport.transportType()) {
-        return activationInfoInstance
+  var listenPromises = this._transports.map(function (transport) {
+    var transportListeningInfo = listeningInfo.find(function (listeningInfoInstance) {
+      if (listeningInfoInstance.transportType === transport.transportType()) {
+        return listeningInfoInstance
       }
     })
-    debugLog('activating transport with connection info ' + JSON.stringify(transportActivationInfo))
-    return transport.activateP(transportActivationInfo)
+    debugLog('binding transport with listening info ' + JSON.stringify(transportListeningInfo))
+    return transport.listenP(transportListeningInfo)
   })
   // execute promises
-  return Q.all(activationPromises)
+  return Q.all(listenPromises)
     .then(function (listeningInfo) {
       debugLog('collected listening info ' + JSON.stringify(listeningInfo))
       listeningInfo = [].concat.apply([], listeningInfo) // flatten multidimensional array
