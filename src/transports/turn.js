@@ -18,7 +18,7 @@ var defaultLifetime = 600
  * Turn transport
  *
  * @constructor
- * @fires TurnTransport#active
+ * @fires TurnTransport#listening
  * @fires TurnTransport#connection
  * @fires TurnTransport#connect
  * @fires TurnTransport#error
@@ -67,23 +67,23 @@ TurnTransport.prototype.transportType = function () {
   return 'turn'
 }
 
-TurnTransport.prototype.activate = function (activationInfo, onSuccess, onFailure) {
+TurnTransport.prototype.listen = function (listeningInfo, onSuccess, onFailure) {
   var requestedRegistrationInfo
-  if (activationInfo !== undefined) {
-    // verify activationInfo
-    if (activationInfo.transportType !== this.transportType()) {
-      var transportTypeError = 'incorrect activationInfo: unexpected transportType -- ignoring request'
+  if (listeningInfo !== undefined) {
+    // verify listeningInfo
+    if (listeningInfo.transportType !== this.transportType()) {
+      var transportTypeError = 'incorrect listeningInfo: unexpected transportType -- ignoring request'
       errorLog(transportTypeError)
       this._error(transportTypeError, onFailure)
       return
     }
-    if (activationInfo.transportInfo === undefined) {
+    if (listeningInfo.transportInfo === undefined) {
       var transportInfoUndefined = 'incorrect connectionInfo: transportInfo is undefined'
       errorLog(transportInfoUndefined)
       this._error(transportInfoUndefined, onFailure)
       return
     }
-    requestedRegistrationInfo = activationInfo.transportInfo
+    requestedRegistrationInfo = listeningInfo.transportInfo
   }
   // register callback with signaling connector
   var self = this
@@ -94,8 +94,8 @@ TurnTransport.prototype.activate = function (activationInfo, onSuccess, onFailur
         transportInfo: actualRegistrationInfo
       }
       self._myConnectionInfo = myConnectionInfo
-      // send 'active' event
-      self._fireActiveEvent(myConnectionInfo, onSuccess)
+      // send 'listening' event
+      self._fireListeningEvent(myConnectionInfo, onSuccess)
     })
     .catch(function (error) {
       errorLog(error)
@@ -118,8 +118,17 @@ TurnTransport.prototype.connect = function (peerConnectionInfo, onSuccess, onFai
     this._error(transportInfoUndefined, onFailure)
     return
   }
+  // register callback with signaling connector
   var self = this
-  this._turn.allocateP()
+  this._signaling.registerP(this._onSignalingMessage.bind(this))
+    .then(function (actualRegistrationInfo) {
+      var myConnectionInfo = {
+        transportType: self.transportType(),
+        transportInfo: actualRegistrationInfo
+      }
+      self._myConnectionInfo = myConnectionInfo
+      return self._turn.allocateP()
+    })
     .then(function (allocateAddress) {
       self._srflxAddress = allocateAddress.mappedAddress
       self._relayAddress = allocateAddress.relayedAddress
@@ -140,6 +149,9 @@ TurnTransport.prototype.connect = function (peerConnectionInfo, onSuccess, onFai
         }
       }
       return self._signaling.sendP(signalingMessage, signalingDestination)
+    })
+    .then(function () {
+      debugLog("'connect' message sent")
     })
     .catch(function (error) {
       errorLog(error)
@@ -206,7 +218,7 @@ TurnTransport.prototype._onConnectRequest = function (message) {
       // fire connection event
       self._fireConnectionEvent(stream, self, peerConnectionInfo)
       // start refresh interval
-      self._fireActiveEventRefreshLoop()
+      self._startRefreshLoop()
       // send ready response to peer
       var signalingDestination = sender
       var signalingMessage = {
@@ -218,6 +230,9 @@ TurnTransport.prototype._onConnectRequest = function (message) {
         }
       }
       return self._signaling.sendP(signalingMessage, signalingDestination)
+    })
+    .then(function () {
+      debugLog("'ready' message sent")
     })
     .catch(function (error) {
       errorLog(error)
@@ -250,7 +265,7 @@ TurnTransport.prototype._onReadyMessage = function (message) {
         relayedAddress: operationContent.relayAddress
       }
       // start refresh interval
-      self._fireActiveEventRefreshLoop()
+      self._startRefreshLoop()
       // create duplex stream
       var stream = new TurnStream(peerConnectionInfo, self._turn)
       // fire connect event
@@ -262,7 +277,7 @@ TurnTransport.prototype._onReadyMessage = function (message) {
     })
 }
 
-TurnTransport.prototype._fireActiveEventRefreshLoop = function () {
+TurnTransport.prototype._startRefreshLoop = function () {
   var self = this
   // execute reflesh operation to correct _lifetime value (if needed)
   this._turn.refreshP(this._lifetime)
