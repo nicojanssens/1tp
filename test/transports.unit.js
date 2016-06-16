@@ -42,15 +42,8 @@ describe('1tp transports', function () {
   this.timeout(10000)
 
   it('should return echo messages using udp transport and close server afterwards', function (done) {
-    var clientRegistrationInfo = {
-      transportType: 'udp',
-      transportInfo: {
-        address: '127.0.0.1',
-        port: 20000
-      }
-    }
     var clientSocket = new UdpTransport()
-    var serverRegistrationInfo = {
+    var listeningInfo = {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
@@ -60,24 +53,16 @@ describe('1tp transports', function () {
     var serverSocket = new UdpTransport()
     // execute echo test
     testEchoMessages({
-      socket: clientSocket,
-      registrationInfo: clientRegistrationInfo
+      socket: clientSocket
     }, {
       socket: serverSocket,
-      registrationInfo: serverRegistrationInfo
+      listeningInfo: listeningInfo
     }, done)
   })
 
   it('should return echo messages using tcp transport and close receiving transport afterwards', function (done) {
-    var clientRegistrationInfo = {
-      transportType: 'tcp',
-      transportInfo: {
-        address: '127.0.0.1',
-        port: 20002
-      }
-    }
     var clientSocket = new TcpTransport()
-    var serverRegistrationInfo = {
+    var listeningInfo = {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
@@ -87,11 +72,10 @@ describe('1tp transports', function () {
     var serverSocket = new TcpTransport()
     // execute echo test
     testEchoMessages({
-      socket: clientSocket,
-      registrationInfo: clientRegistrationInfo
+      socket: clientSocket
     }, {
       socket: serverSocket,
-      registrationInfo: serverRegistrationInfo
+      listeningInfo: listeningInfo
     }, done)
   })
 
@@ -147,23 +131,15 @@ describe('1tp transports', function () {
   })
 
   it('should return echo messages using udp+turn transport with WS signaling and close receiving transport afterwards', function (done) {
-    var clientRegistrationInfo = {
-      transportType: 'turn',
-      transportInfo: {
-        type: 'websocket-signaling',
-        uid: 'nicoj',
-        url: argv.ws
-      }
-    }
     var clientSocket = new TurnTransport({
       turnServer: argv.addr,
       turnPort: argv.port,
       turnProtocol: new TurnProtocols.UDP(),
       turnUsername: argv.user,
       turnPassword: argv.pwd,
-      signaling: new WebSocketSignaling()
+      signaling: new WebSocketSignaling({url: argv.ws})
     })
-    var serverRegistrationInfo = {
+    var listeningInfo = {
       transportType: 'turn',
       transportInfo: {
         type: 'websocket-signaling',
@@ -177,14 +153,13 @@ describe('1tp transports', function () {
       turnProtocol: new TurnProtocols.UDP(),
       turnUsername: argv.user,
       turnPassword: argv.pwd,
-      signaling: new WebSocketSignaling()
+      signaling: new WebSocketSignaling({url: argv.ws})
     })
     testEchoMessages({
-      socket: clientSocket,
-      registrationInfo: clientRegistrationInfo
+      socket: clientSocket
     }, {
       socket: serverSocket,
-      registrationInfo: serverRegistrationInfo
+      listeningInfo: listeningInfo
     }, done)
   })
 
@@ -195,7 +170,7 @@ describe('1tp transports', function () {
       turnProtocol: new TurnProtocols.TCP(),
       turnUsername: argv.user,
       turnPassword: argv.pwd,
-      signaling: new WebSocketSignaling({wsUrl: argv.ws})
+      signaling: new WebSocketSignaling()
     })
     var serverSocket = new TurnTransport({
       turnServer: argv.addr,
@@ -203,7 +178,7 @@ describe('1tp transports', function () {
       turnProtocol: new TurnProtocols.TCP(),
       turnUsername: argv.user,
       turnPassword: argv.pwd,
-      signaling: new WebSocketSignaling({wsUrl: argv.ws})
+      signaling: new WebSocketSignaling()
     })
     testEchoMessages({
       socket: clientSocket
@@ -213,15 +188,8 @@ describe('1tp transports', function () {
   })
 
   it('should correctly close UDP stream by destroying client socket', function (done) {
-    var clientRegistrationInfo = {
-      transportType: 'udp',
-      transportInfo: {
-        address: '127.0.0.1',
-        port: 20004
-      }
-    }
     var clientSocket = new UdpTransport()
-    var serverRegistrationInfo = {
+    var listeningInfo = {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
@@ -231,25 +199,17 @@ describe('1tp transports', function () {
     var serverSocket = new UdpTransport()
     // execute echo test
     testDestroyStream({
-      socket: clientSocket,
-      registrationInfo: clientRegistrationInfo
+      socket: clientSocket
     }, {
       socket: serverSocket,
-      registrationInfo: serverRegistrationInfo
+      listeningInfo: listeningInfo
     }, 'client',
       done)
   })
 
   it('should correctly close UDP stream by destroying server socket', function (done) {
-    var clientRegistrationInfo = {
-      transportType: 'udp',
-      transportInfo: {
-        address: '127.0.0.1',
-        port: 20006
-      }
-    }
     var clientSocket = new UdpTransport()
-    var serverRegistrationInfo = {
+    var listeningInfo = {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
@@ -259,25 +219,17 @@ describe('1tp transports', function () {
     var serverSocket = new UdpTransport()
     // execute echo test
     testDestroyStream({
-      socket: clientSocket,
-      registrationInfo: clientRegistrationInfo
+      socket: clientSocket
     }, {
       socket: serverSocket,
-      registrationInfo: serverRegistrationInfo
+      listeningInfo: listeningInfo
     }, 'server',
       done)
   })
 
   it('should correctly close TCP stream by destroying client socket', function (done) {
-    var clientRegistrationInfo = {
-      transportType: 'tcp',
-      transportInfo: {
-        address: '127.0.0.1',
-        port: 20008
-      }
-    }
     var clientSocket = new TcpTransport()
-    var serverRegistrationInfo = {
+    var listeningInfo = {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
@@ -287,25 +239,17 @@ describe('1tp transports', function () {
     var serverSocket = new TcpTransport()
     // execute echo test
     testDestroyStream({
-      socket: clientSocket,
-      registrationInfo: clientRegistrationInfo
+      socket: clientSocket
     }, {
       socket: serverSocket,
-      registrationInfo: serverRegistrationInfo
+      listeningInfo: listeningInfo
     }, 'client',
       done)
   })
 
   it('should correctly close TCP stream by destroying server socket', function (done) {
-    var clientRegistrationInfo = {
-      transportType: 'tcp',
-      transportInfo: {
-        address: '127.0.0.1',
-        port: 20010
-      }
-    }
     var clientSocket = new TcpTransport()
-    var serverRegistrationInfo = {
+    var listeningInfo = {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
@@ -315,99 +259,62 @@ describe('1tp transports', function () {
     var serverSocket = new TcpTransport()
     // execute echo test
     testDestroyStream({
-      socket: clientSocket,
-      registrationInfo: clientRegistrationInfo
+      socket: clientSocket
     }, {
       socket: serverSocket,
-      registrationInfo: serverRegistrationInfo
+      listeningInfo: listeningInfo
     }, 'server',
       done)
   })
 
   it('should correctly close TURN stream by destroying client socket', function (done) {
-    var clientRegistrationInfo = {
-      transportType: 'turn',
-      transportInfo: {
-        type: 'websocket-signaling',
-        uid: 'nicoj',
-        url: argv.ws
-      }
-    }
     var clientSocket = new TurnTransport({
       turnServer: argv.addr,
       turnPort: argv.port,
       turnProtocol: new TurnProtocols.UDP(),
       turnUsername: argv.user,
       turnPassword: argv.pwd,
-      signaling: new WebSocketSignaling()
+      signaling: new WebSocketSignaling({uid: 'nicoj', url: argv.ws})
     })
-    var serverRegistrationInfo = {
-      transportType: 'turn',
-      transportInfo: {
-        type: 'websocket-signaling',
-        uid: 'tdelaet',
-        url: argv.ws
-      }
-    }
     var serverSocket = new TurnTransport({
       turnServer: argv.addr,
       turnPort: argv.port,
       turnProtocol: new TurnProtocols.UDP(),
       turnUsername: argv.user,
       turnPassword: argv.pwd,
-      signaling: new WebSocketSignaling()
+      signaling: new WebSocketSignaling({uid: 'tdelaet', url: argv.ws})
     })
     // execute echo test
     testDestroyStream({
-      socket: clientSocket,
-      registrationInfo: clientRegistrationInfo
+      socket: clientSocket
     }, {
-      socket: serverSocket,
-      registrationInfo: serverRegistrationInfo
+      socket: serverSocket
     }, 'client',
       done)
   })
 
   it('should correctly close TURN stream by destroying server socket', function (done) {
-    var clientRegistrationInfo = {
-      transportType: 'turn',
-      transportInfo: {
-        type: 'websocket-signaling',
-        uid: 'nicoj',
-        url: argv.ws
-      }
-    }
     var clientSocket = new TurnTransport({
       turnServer: argv.addr,
       turnPort: argv.port,
       turnProtocol: new TurnProtocols.UDP(),
       turnUsername: argv.user,
       turnPassword: argv.pwd,
-      signaling: new WebSocketSignaling()
+      signaling: new WebSocketSignaling({uid: 'nicoj', url: argv.ws})
     })
-    var serverRegistrationInfo = {
-      transportType: 'turn',
-      transportInfo: {
-        type: 'websocket-signaling',
-        uid: 'tdelaet',
-        url: argv.ws
-      }
-    }
     var serverSocket = new TurnTransport({
       turnServer: argv.addr,
       turnPort: argv.port,
       turnProtocol: new TurnProtocols.TCP(),
       turnUsername: argv.user,
       turnPassword: argv.pwd,
-      signaling: new WebSocketSignaling()
+      signaling: new WebSocketSignaling({uid: 'tdelaet', url: argv.ws})
     })
     // execute echo test
     testDestroyStream({
-      socket: clientSocket,
-      registrationInfo: clientRegistrationInfo
+      socket: clientSocket
     }, {
-      socket: serverSocket,
-      registrationInfo: serverRegistrationInfo
+      socket: serverSocket
     }, 'server',
       done)
   })
@@ -419,15 +326,13 @@ function testEchoMessages (clientSpecs, serverSpecs, done) {
 
   var clientSocket = clientSpecs.socket
   var serverSocket = serverSpecs.socket
-  var clientRegistrationInfo = clientSpecs.registrationInfo
-  var serverRegistrationInfo = serverSpecs.registrationInfo
+  var listeningInfo = serverSpecs.listeningInfo
 
   var clientReadStreamEnded = false
   var clientWriteStreamEnded = false
   var echoReadStreamEnded = false
   var echoWriteStreamEnded = false
 
-  var clientConnectionInfo, serverConnectionInfo
   // when a new stream is generated
   serverSocket.on('connection', function (echoStream, connectionInfo) {
     console.log('echo stream available')
@@ -472,20 +377,12 @@ function testEchoMessages (clientSpecs, serverSpecs, done) {
   }
 
   // bind echo socket
-  serverSocket.activateP(serverRegistrationInfo)
+  serverSocket.listenP(listeningInfo)
     .then(function (connectionInfo) {
-      serverConnectionInfo = connectionInfo
-      if (serverRegistrationInfo) {
-        expect(serverConnectionInfo).to.deep.equal(serverRegistrationInfo)
+      if (listeningInfo) {
+        expect(connectionInfo).to.deep.equal(listeningInfo)
       }
-      return clientSocket.activateP(clientRegistrationInfo)
-    })
-    .then(function (connectionInfo) {
-      clientConnectionInfo = connectionInfo
-      if (clientRegistrationInfo) {
-        expect(clientConnectionInfo).to.deep.equal(clientRegistrationInfo)
-      }
-      return clientSocket.connectP(serverConnectionInfo)
+      return clientSocket.connectP(connectionInfo)
     })
     .then(function (clientStream) {
       console.log('client stream available')
@@ -527,10 +424,8 @@ function testEchoMessages (clientSpecs, serverSpecs, done) {
 function testDestroyStream (clientSpecs, serverSpecs, streamToDestroy, done) {
   var clientSocket = clientSpecs.socket
   var serverSocket = serverSpecs.socket
-  var clientRegistrationInfo = clientSpecs.registrationInfo
-  var serverRegistrationInfo = serverSpecs.registrationInfo
+  var listeningInfo = serverSpecs.listeningInfo
 
-  var clientConnectionInfo, serverConnectionInfo
   var serverStream, clientStream
   var clientStreamClosed = false
   var echoStreamClosed = false
@@ -557,20 +452,12 @@ function testDestroyStream (clientSpecs, serverSpecs, streamToDestroy, done) {
   })
 
   // bind echo socket
-  serverSocket.activateP(serverRegistrationInfo)
+  serverSocket.listenP(listeningInfo)
     .then(function (connectionInfo) {
-      serverConnectionInfo = connectionInfo
-      if (serverRegistrationInfo) {
-        expect(serverConnectionInfo).to.deep.equal(serverRegistrationInfo)
+      if (listeningInfo) {
+        expect(connectionInfo).to.deep.equal(listeningInfo)
       }
-      return clientSocket.activateP(clientRegistrationInfo)
-    })
-    .then(function (connectionInfo) {
-      clientConnectionInfo = connectionInfo
-      if (clientRegistrationInfo) {
-        expect(clientConnectionInfo).to.deep.equal(clientRegistrationInfo)
-      }
-      return clientSocket.connectP(serverConnectionInfo)
+      return clientSocket.connectP(connectionInfo)
     })
     .then(function (sourceStream) {
       console.log('client stream available')
