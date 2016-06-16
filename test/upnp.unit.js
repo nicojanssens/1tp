@@ -30,10 +30,10 @@ describe('#NAT-UPNP', function () {
     return upnp.getPublicGWAddressP().should.eventually.equal(myPublicIpAddress)
   })
 
-  it('should map UDP port 65535 to 65535 and delete it afterwards', function () {
+  it('should map UDP port 65532 to 65532 and delete it afterwards', function () {
     var pmargs = {}
     pmargs.public = {}
-    pmargs.public.port = 65535
+    pmargs.public.port = 65532
     var myMapping
     return upnp.mapPublicPortP(pmargs)
       .then(function (args) {
