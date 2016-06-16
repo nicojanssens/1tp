@@ -22,7 +22,7 @@ function WebSocketSignaling (wsOpts) {
 }
 
 WebSocketSignaling.DEFAULTS = {
-  wsUrl: 'https://microminion-registrar.herokuapp.com',
+  url: 'http://microminion-registrar.herokuapp.com',
   reconnectionDelay: 0,
   reopenDelay: 0,
   forceNewConnection: true
@@ -50,9 +50,9 @@ WebSocketSignaling.prototype.register = function (callback, requestedRegistratio
     url = requestedRegistrationInfo.url
   }
   // create random uid if undefined
-  uid = uid || hat()
+  uid = uid || this._opts.uid || hat()
   // use default websocket url if undefined
-  url = url || this._opts.wsUrl
+  url = url || this._opts.url
   // create new registration info instance to be returned once registration succeeds
   var registrationInfo = {}
   registrationInfo.type = signalingType
@@ -179,7 +179,7 @@ WebSocketSignaling.prototype.onPing = function () {
 WebSocketSignaling.prototype.onConnected = function (callback, registrationInfo, onSuccess, onFailure) {
   var self = this
   return function () {
-    debugLog('connected to ' + self._opts.wsUrl)
+    debugLog('connected to ' + self._opts.url)
     // send registration message over socket
     var signalingMessage = {}
     signalingMessage.username = registrationInfo.uid
@@ -206,7 +206,7 @@ WebSocketSignaling.prototype.onConnected = function (callback, registrationInfo,
 WebSocketSignaling.prototype.onDisconnected = function () {
   var self = this
   return function () {
-    debugLog('disconnected from ' + self._opts.wsUrl)
+    debugLog('disconnected from ' + self._opts.url)
   }
 }
 
