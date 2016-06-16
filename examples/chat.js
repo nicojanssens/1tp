@@ -55,6 +55,7 @@ signalingSocket.on('error', function (error) {
 
 signalingSocket.on('message', function (message) {
   var request = JSON.parse(message)
+  console.log(message)
   // drop my non-init message
   if (request.type !== 'init') {
     return
@@ -68,7 +69,7 @@ signalingSocket.on('message', function (message) {
     turnPort: argv.port,
     turnUsername: argv.user,
     turnPassword: argv.pwd,
-    signaling: new WebSocketSignaling({wsUrl: argv.ws})
+    signaling: new WebSocketSignaling({url: argv.ws})
   }))
   onetpClient = net.createConnection(transports, request.listeningInfo, function () {
     console.log('outbound connection established')
@@ -89,7 +90,7 @@ signalingSocket.connectP()
         turnPort: argv.port,
         turnUsername: argv.user,
         turnPassword: argv.pwd,
-        signaling: new WebSocketSignaling({wsUrl: argv.ws})
+        signaling: new WebSocketSignaling({url: argv.ws})
       }))
       onetpServer = net.createServer(transports, function (connection) {
         console.log('inbound connection established')
