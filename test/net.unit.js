@@ -3,10 +3,10 @@
 var net = require('../src/net')
 var Server = net.Server
 
-var transports = require('../src/transports')
-var TcpTransport = transports.tcp
-var TurnTransport = transports.turn
-var UdpTransport = transports.udp
+var onetpTransports = require('../src/transports')
+var TcpTransport = onetpTransports.tcp
+var TurnTransport = onetpTransports.turn
+var UdpTransport = onetpTransports.udp
 
 var WebSocketSignaling = require('../src/signaling').websocket
 
