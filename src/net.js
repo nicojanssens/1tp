@@ -79,6 +79,30 @@ Server.prototype.listen = function () {
     })
 }
 
+Server.prototype.listenP = function (activationInfo) {
+  // check activation info
+  if (activationInfo === undefined || typeof activationInfo !== 'object') {
+    activationInfo = []
+  }
+  // create list of promises
+  var activationPromises = this._transports.map(function (transport) {
+    var transportActivationInfo = activationInfo.find(function (activationInfoInstance) {
+      if (activationInfoInstance.transportType === transport.transportType()) {
+        return activationInfoInstance
+      }
+    })
+    debugLog('activating transport with connection info ' + JSON.stringify(transportActivationInfo))
+    return transport.activateP(transportActivationInfo)
+  })
+  // execute promises
+  return Q.all(activationPromises)
+    .then(function (listeningInfo) {
+      debugLog('collected listening info ' + JSON.stringify(listeningInfo))
+      listeningInfo = [].concat.apply([], listeningInfo) // flatten multidimensional array
+      return listeningInfo
+    })
+}
+
 Server.prototype.address = function () {
   return this._listeningInfo
 }
