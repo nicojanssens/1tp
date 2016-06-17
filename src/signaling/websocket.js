@@ -22,7 +22,7 @@ function WebSocketSignaling (wsOpts) {
 }
 
 WebSocketSignaling.DEFAULTS = {
-  url: 'http://microminion-registrar.herokuapp.com',
+  url: 'http://onetp-registrar.herokuapp.com',
   reconnectionDelay: 0,
   reopenDelay: 0,
   forceNewConnection: true
