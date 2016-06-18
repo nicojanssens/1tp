@@ -7,6 +7,14 @@ var Q = require('q')
 var util = require('util')
 var utils = require('./utils')
 
+var onetpTransports = require('./transports')
+var TcpTransport = onetpTransports.tcp
+var TurnTransport = onetpTransports.turn
+var UdpTransport = onetpTransports.udp
+var WebSocketSignaling = require('./signaling').websocket
+
+var config = require('../config.json');
+
 var debug = require('debug')
 var debugLog = debug('1tp:net')
 var errorLog = debug('1tp:net:error')
@@ -15,14 +23,21 @@ var connectTimeout = 500
 
 // Server class
 
-var Server = function (transports, connectionListener) {
+var Server = function () {
   if (!(this instanceof Server)) {
     return new Server(transports, connectionListener)
   }
-  if (transports === undefined) {
-    var transportsUndefinedError = 'incorrect server args: transports is undefined'
-    errorLog(transportsUndefinedError)
-    throw new Error(transportsUndefinedError)
+  // first optional argument -> transports
+  var transports = arguments[0]
+  if (transports === undefined || typeof transports !== 'object') {
+    debugLog('no transports defined, using default configuration')
+    transports = getDefaultTransports()
+  }
+  // last optional argument -> callback
+  var connectionListener = arguments[arguments.length - 1]
+  // register connectionListener -- if this is a function
+  if (typeof connectionListener === 'function') {
+    this.once('connection', connectionListener)
   }
   // create array if single elem
   this._transports = Array.isArray(transports) ? transports : [transports]
@@ -32,10 +47,6 @@ var Server = function (transports, connectionListener) {
   events.EventEmitter.call(this)
   // register _error handler
   utils.mixinEventEmitterErrorFunction(this, errorLog)
-  // register connectionListener -- if this is a function
-  if (typeof connectionListener === 'function') {
-    this.once('connection', connectionListener)
-  }
   // done
   debugLog('created new net stream')
 }
@@ -145,9 +156,8 @@ var Socket = function (transports) {
     return new Socket(transports)
   }
   if (transports === undefined) {
-    var transportsUndefinedError = 'incorrect socket args: transports is undefined'
-    errorLog(transportsUndefinedError)
-    throw new Error(transportsUndefinedError)
+    debugLog('no transports defined, using default configuration')
+    transports = getDefaultTransports()
   }
   // create array if single elem
   this._transports = Array.isArray(transports) ? transports : [transports]
@@ -274,6 +284,20 @@ var _createConnectTimeoutPromise = function (transportSpecs) {
   // TODO: close transport
   })
   return connectTimeoutPromise
+}
+
+var getDefaultTransports = function () {
+  var transports = []
+  transports.push(new UdpTransport())
+  transports.push(new TcpTransport())
+  transports.push(new TurnTransport({
+    turnServer: config.turn.addr,
+    turnPort: config.turn.port,
+    turnUsername: config.turn.username,
+    turnPassword: config.turn.password,
+    signaling: new WebSocketSignaling({url: config.registrar})
+  }))
+  return transports
 }
 
 module.exports = {
