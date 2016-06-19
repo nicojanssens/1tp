@@ -29,7 +29,7 @@ try {
 
 var Server = function () {
   if (!(this instanceof Server)) {
-    return new Server(transports, connectionListener)
+    return new Server()
   }
   // first optional argument -> transports
   var transports = arguments[0]
