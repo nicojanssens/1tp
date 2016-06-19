@@ -2,6 +2,7 @@
 
 var net = require('../src/net')
 var Server = net.Server
+var Socket = net.Socket
 
 var onetpTransports = require('../src/transports')
 var TcpTransport = onetpTransports.tcp
@@ -40,6 +41,8 @@ var argv = require('yargs')
   .argv
 
 describe('net api', function () {
+  this.timeout(10000)
+
   it('should init and activate a new server using UDP, TCP and turn transports', function (done) {
     var transports = []
     transports.push(new UdpTransport())
@@ -55,6 +58,15 @@ describe('net api', function () {
     )
     var server = new Server(transports)
     server.listen(function () {
+      expect(server.address()).to.not.be.undefined
+      done()
+    })
+  })
+
+  it('should init and activate a new server using default transport settings', function (done) {
+    var server = new Server()
+    server.listen(function () {
+      console.log(server.address())
       expect(server.address()).to.not.be.undefined
       done()
     })
@@ -185,6 +197,7 @@ describe('net api', function () {
       client = net.createConnection(transports, serverInfo, function () {
         expect(client.isConnected()).to.be.true
         expect(client.remoteAddress).to.not.be.undefined
+        console.log(client.remoteAddress)
         client.write(testMessage)
       })
       expect(client.isConnected()).to.be.false
@@ -193,6 +206,45 @@ describe('net api', function () {
     server = createServer()
     launchServer(localUdpServerInfo, function () {
       createClient(localUdpServerInfo)
+    })
+  })
+
+  it('should establish a connection between two 1tp sockets (using default transports) and exchange a test message', function (done) {
+    var client, server
+    var testMessage = 'test'
+
+    var createServer = function () {
+      server = new Server(function (connection) {
+        expect(connection).to.not.be.undefined
+        expect(connection.isConnected()).to.be.true
+        expect(connection.remoteAddress).to.not.be.undefined
+        connection.on('data', function (data) {
+          expect(data.toString()).to.equal(testMessage)
+          done()
+        })
+      })
+      return server
+    }
+
+    var launchServer = function (onReady) {
+      server.listen(function () {
+        onReady(server.address())
+      })
+    }
+
+    var createClient = function (connectionInfo) {
+      var client = new Socket()
+      client.connect(connectionInfo, function () {
+        expect(client.isConnected()).to.be.true
+        expect(client.remoteAddress).to.not.be.undefined
+        client.write(testMessage)
+      })
+      expect(client.isConnected()).to.be.false
+    }
+
+    server = createServer()
+    launchServer(function (connectionInfo) {
+      createClient(connectionInfo)
     })
   })
 
