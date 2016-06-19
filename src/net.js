@@ -19,7 +19,7 @@ var errorLog = debug('1tp:net:error')
 
 var connectTimeout = 500
 try {
-  var config = require('./config.json')
+  var config = require('../config.json')
   debugLog('config.json found, values = ' + JSON.stringify(config))
 } catch (error) {
   debugLog('could not find config.json')
