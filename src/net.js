@@ -13,13 +13,17 @@ var TurnTransport = onetpTransports.turn
 var UdpTransport = onetpTransports.udp
 var WebSocketSignaling = require('./signaling').websocket
 
-var config = require('../config.json');
-
 var debug = require('debug')
 var debugLog = debug('1tp:net')
 var errorLog = debug('1tp:net:error')
 
 var connectTimeout = 500
+try {
+  var config = require('./config.json')
+  debugLog('config.json found, values = ' + JSON.stringify(config))
+} catch (error) {
+  debugLog('could not find config.json')
+}
 
 // Server class
 
@@ -290,13 +294,15 @@ var getDefaultTransports = function () {
   var transports = []
   transports.push(new UdpTransport())
   transports.push(new TcpTransport())
-  transports.push(new TurnTransport({
-    turnServer: config.turn.addr,
-    turnPort: config.turn.port,
-    turnUsername: config.turn.username,
-    turnPassword: config.turn.password,
-    signaling: new WebSocketSignaling({url: config.registrar})
-  }))
+  if (config) {
+    transports.push(new TurnTransport({
+      turnServer: config.turn.addr,
+      turnPort: config.turn.port,
+      turnUsername: config.turn.username,
+      turnPassword: config.turn.password,
+      signaling: new WebSocketSignaling({url: config.registrar})
+    }))
+  }
   return transports
 }
 
