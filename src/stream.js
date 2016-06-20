@@ -1,7 +1,7 @@
 'use strict'
 
 var Duplex = require('stream').Duplex
-var inherits = require('inherits')
+var inherits = require('util').inherits
 var PassThrough = require('stream').PassThrough
 
 var debug = require('debug')
