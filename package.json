@@ -1,7 +1,7 @@
 {
   "name": "1tp",
   "version": "0.2.1",
-  "description": "One transport protocol to rule them all -- offering socket abstraction on top of various communication protocols",
+  "description": "One transport protocol to rule them all -- offering a net-like stream API on top of various communication protocols",
   "main": "index.js",
   "keywords": [
     "transport",
@@ -41,13 +41,16 @@
     "chai": "^3.5.0",
     "chai-as-promised": "^5.2.0",
     "mocha": "^2.4.5",
-    "yargs": "^3.32.0"
+    "publish": "^0.6.0",
+    "yargs": "^3.32.0",
+    "yn": "^1.2.0"	
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/MicroMinion/1tp.git"
+    "url": "git://github.com/microminion/1tp.git"
   },
   "scripts": {
+    "2npm": "publish",
     "test": "./node_modules/.bin/mocha test/*.unit.js"
   }
 }
