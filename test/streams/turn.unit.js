@@ -7,37 +7,23 @@ var TurnStream = require('../../src/transports/streams/turn')
 var chai = require('chai')
 var expect = chai.expect
 
-var argv = require('yargs')
-  .usage('Usage: $0 [params]')
-  .demand('a')
-  .alias('a', 'addr')
-  .nargs('a', 1)
-  .describe('a', 'TURN server address')
-  .demand('p')
-  .alias('p', 'port')
-  .nargs('p', 1)
-  .describe('p', 'TURN server port')
-  .alias('u', 'user')
-  .nargs('u', 1)
-  .describe('u', 'TURN server user account')
-  .alias('w', 'pwd')
-  .nargs('w', 1)
-  .describe('w', 'TURN server user password')
-  .help('h')
-  .alias('h', 'help')
-  .argv
+var turnAddr = process.env.TURN_ADDR
+var turnPort = process.env.TURN_PORT
+var turnUser = process.env.TURN_USER
+var turnPwd = process.env.TURN_PASS
+var turnProto = process.env.TURN_PROTO || 'tcp'
 
 describe('Testing turn stream', function () {
   this.timeout(10000)
 
   it('should return echo messages and end stream', function (done) {
     var clientAlice, clientBob
-    if (argv.transport === 'udp') {
-      clientAlice = turn(argv.addr, argv.port, argv.user, argv.pwd)
-      clientBob = turn(argv.addr, argv.port, argv.user, argv.pwd)
+    if (turnProto === 'udp') {
+      clientAlice = turn(turnAddr, turnPort, turnUser, turnPwd)
+      clientBob = turn(turnAddr, turnPort, turnUser, turnPwd)
     } else {
-      clientAlice = turn(argv.addr, argv.port, argv.user, argv.pwd, new TurnTransports.TCP())
-      clientBob = turn(argv.addr, argv.port, argv.user, argv.pwd, new TurnTransports.TCP())
+      clientAlice = turn(turnAddr, turnPort, turnUser, turnPwd, new TurnTransports.TCP())
+      clientBob = turn(turnAddr, turnPort, turnUser, turnPwd, new TurnTransports.TCP())
     }
     var connectionInfoAlice, connectionInfoBob
     var streamAlice, streamBob

@@ -12,31 +12,11 @@ var WebSocketSignaling = require('../src/signaling').websocket
 var chai = require('chai')
 var expect = chai.expect
 
-var argv = require('yargs')
-  .usage('Usage: $0 [params]')
-  .demand('a')
-  .alias('a', 'addr')
-  .nargs('a', 1)
-  .describe('a', 'TURN server address')
-  .demand('p')
-  .alias('p', 'port')
-  .nargs('p', 1)
-  .describe('p', 'TURN server port')
-  .demand('u')
-  .alias('u', 'user')
-  .nargs('u', 1)
-  .describe('u', 'TURN server user account')
-  .demand('w')
-  .alias('w', 'pwd')
-  .nargs('w', 1)
-  .describe('w', 'TURN server user password')
-  .demand('s')
-  .alias('s', 'ws')
-  .nargs('s', 1)
-  .describe('s', 'Signaling server')
-  .help('h')
-  .alias('h', 'help')
-  .argv
+var turnAddr = process.env.TURN_ADDR
+var turnPort = process.env.TURN_PORT
+var turnUser = process.env.TURN_USER
+var turnPwd = process.env.TURN_PASS
+var registrar = process.env.ONETP_REGISTRAR
 
 describe('1tp transports', function () {
   this.timeout(10000)
@@ -82,19 +62,19 @@ describe('1tp transports', function () {
   it('should return echo messages using udp+turn transport with local signaling and close receiving transport afterwards', function (done) {
     var localSignaling = new LocalSignaling()
     var clientSocket = new TurnTransport({
-      turnServer: argv.addr,
-      turnPort: argv.port,
+      turnServer: turnAddr,
+      turnPort: turnPort,
       turnProtocol: new TurnProtocols.UDP(),
-      turnUsername: argv.user,
-      turnPassword: argv.pwd,
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
       signaling: localSignaling
     })
     var serverSocket = new TurnTransport({
-      turnServer: argv.addr,
-      turnPort: argv.port,
+      turnServer: turnAddr,
+      turnPort: turnPort,
       turnProtocol: new TurnProtocols.UDP(),
-      turnUsername: argv.user,
-      turnPassword: argv.pwd,
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
       signaling: localSignaling
     })
     // execute echo test
@@ -108,19 +88,19 @@ describe('1tp transports', function () {
   it('should return echo messages using tcp+turn transport with local signaling and close receiving transport afterwards', function (done) {
     var localSignaling = new LocalSignaling()
     var clientSocket = new TurnTransport({
-      turnServer: argv.addr,
-      turnPort: argv.port,
+      turnServer: turnAddr,
+      turnPort: turnPort,
       turnProtocol: new TurnProtocols.TCP(),
-      turnUsername: argv.user,
-      turnPassword: argv.pwd,
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
       signaling: localSignaling
     })
     var serverSocket = new TurnTransport({
-      turnServer: argv.addr,
-      turnPort: argv.port,
+      turnServer: turnAddr,
+      turnPort: turnPort,
       turnProtocol: new TurnProtocols.TCP(),
-      turnUsername: argv.user,
-      turnPassword: argv.pwd,
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
       signaling: localSignaling
     })
     testEchoMessages({
@@ -132,28 +112,28 @@ describe('1tp transports', function () {
 
   it('should return echo messages using udp+turn transport with WS signaling and close receiving transport afterwards', function (done) {
     var clientSocket = new TurnTransport({
-      turnServer: argv.addr,
-      turnPort: argv.port,
+      turnServer: turnAddr,
+      turnPort: turnPort,
       turnProtocol: new TurnProtocols.UDP(),
-      turnUsername: argv.user,
-      turnPassword: argv.pwd,
-      signaling: new WebSocketSignaling({url: argv.ws})
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
+      signaling: new WebSocketSignaling({url: registrar})
     })
     var listeningInfo = {
       transportType: 'turn',
       transportInfo: {
         type: 'websocket-signaling',
         uid: 'tdelaet',
-        url: argv.ws
+        url: registrar
       }
     }
     var serverSocket = new TurnTransport({
-      turnServer: argv.addr,
-      turnPort: argv.port,
+      turnServer: turnAddr,
+      turnPort: turnPort,
       turnProtocol: new TurnProtocols.UDP(),
-      turnUsername: argv.user,
-      turnPassword: argv.pwd,
-      signaling: new WebSocketSignaling({url: argv.ws})
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
+      signaling: new WebSocketSignaling({url: registrar})
     })
     testEchoMessages({
       socket: clientSocket
@@ -165,20 +145,20 @@ describe('1tp transports', function () {
 
   it('should return echo messages using tcp+turn transport with WS signaling and close receiving transport afterwards', function (done) {
     var clientSocket = new TurnTransport({
-      turnServer: argv.addr,
-      turnPort: argv.port,
+      turnServer: turnAddr,
+      turnPort: turnPort,
       turnProtocol: new TurnProtocols.TCP(),
-      turnUsername: argv.user,
-      turnPassword: argv.pwd,
-      signaling: new WebSocketSignaling()
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
+      signaling: new WebSocketSignaling({url: registrar})
     })
     var serverSocket = new TurnTransport({
-      turnServer: argv.addr,
-      turnPort: argv.port,
+      turnServer: turnAddr,
+      turnPort: turnPort,
       turnProtocol: new TurnProtocols.TCP(),
-      turnUsername: argv.user,
-      turnPassword: argv.pwd,
-      signaling: new WebSocketSignaling()
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
+      signaling: new WebSocketSignaling({url: registrar})
     })
     testEchoMessages({
       socket: clientSocket
@@ -269,20 +249,20 @@ describe('1tp transports', function () {
 
   it('should correctly close TURN stream by destroying client socket', function (done) {
     var clientSocket = new TurnTransport({
-      turnServer: argv.addr,
-      turnPort: argv.port,
+      turnServer: turnAddr,
+      turnPort: turnPort,
       turnProtocol: new TurnProtocols.UDP(),
-      turnUsername: argv.user,
-      turnPassword: argv.pwd,
-      signaling: new WebSocketSignaling({uid: 'nicoj', url: argv.ws})
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
+      signaling: new WebSocketSignaling({uid: 'nicoj', url: registrar})
     })
     var serverSocket = new TurnTransport({
-      turnServer: argv.addr,
-      turnPort: argv.port,
+      turnServer: turnAddr,
+      turnPort: turnPort,
       turnProtocol: new TurnProtocols.UDP(),
-      turnUsername: argv.user,
-      turnPassword: argv.pwd,
-      signaling: new WebSocketSignaling({uid: 'tdelaet', url: argv.ws})
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
+      signaling: new WebSocketSignaling({uid: 'tdelaet', url: registrar})
     })
     // execute echo test
     testDestroyStream({
@@ -295,20 +275,20 @@ describe('1tp transports', function () {
 
   it('should correctly close TURN stream by destroying server socket', function (done) {
     var clientSocket = new TurnTransport({
-      turnServer: argv.addr,
-      turnPort: argv.port,
+      turnServer: turnAddr,
+      turnPort: turnPort,
       turnProtocol: new TurnProtocols.UDP(),
-      turnUsername: argv.user,
-      turnPassword: argv.pwd,
-      signaling: new WebSocketSignaling({uid: 'nicoj', url: argv.ws})
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
+      signaling: new WebSocketSignaling({uid: 'nicoj', url: registrar})
     })
     var serverSocket = new TurnTransport({
-      turnServer: argv.addr,
-      turnPort: argv.port,
+      turnServer: turnAddr,
+      turnPort: turnPort,
       turnProtocol: new TurnProtocols.TCP(),
-      turnUsername: argv.user,
-      turnPassword: argv.pwd,
-      signaling: new WebSocketSignaling({uid: 'tdelaet', url: argv.ws})
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
+      signaling: new WebSocketSignaling({uid: 'tdelaet', url: registrar})
     })
     // execute echo test
     testDestroyStream({

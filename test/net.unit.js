@@ -14,31 +14,11 @@ var WebSocketSignaling = require('../src/signaling').websocket
 var chai = require('chai')
 var expect = chai.expect
 
-var argv = require('yargs')
-  .usage('Usage: $0 [params]')
-  .demand('a')
-  .alias('a', 'addr')
-  .nargs('a', 1)
-  .describe('a', 'TURN server address')
-  .demand('p')
-  .alias('p', 'port')
-  .nargs('p', 1)
-  .describe('p', 'TURN server port')
-  .demand('u')
-  .alias('u', 'user')
-  .nargs('u', 1)
-  .describe('u', 'TURN server user account')
-  .demand('w')
-  .alias('w', 'pwd')
-  .nargs('w', 1)
-  .describe('w', 'TURN server user password')
-  .demand('s')
-  .alias('s', 'ws')
-  .nargs('s', 1)
-  .describe('s', 'Signaling server')
-  .help('h')
-  .alias('h', 'help')
-  .argv
+var turnAddr = process.env.TURN_ADDR
+var turnPort = process.env.TURN_PORT
+var turnUser = process.env.TURN_USER
+var turnPwd = process.env.TURN_PASS
+var registrar = process.env.ONETP_REGISTRAR
 
 describe('net api', function () {
   this.timeout(10000)
@@ -49,11 +29,11 @@ describe('net api', function () {
     transports.push(new TcpTransport())
     transports.push(
       new TurnTransport({
-        turnServer: argv.addr,
-        turnPort: argv.port,
-        turnUsername: argv.user,
-        turnPassword: argv.pwd,
-        signaling: new WebSocketSignaling({url: argv.ws})
+        turnServer: turnAddr,
+        turnPort: turnPort,
+        turnUsername: turnUser,
+        turnPassword: turnPwd,
+        signaling: new WebSocketSignaling({url: registrar})
       })
     )
     var server = new Server(transports)
