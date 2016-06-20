@@ -2,7 +2,7 @@
 
 var Duplex = require('stream').Duplex
 var utils = require('../../utils')
-var inherits = require('inherits')
+var inherits = require('util').inherits
 var netstring = require('netstring-stream')
 
 var debug = require('debug')

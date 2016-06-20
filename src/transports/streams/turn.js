@@ -2,7 +2,7 @@
 
 var Duplex = require('stream').Duplex
 var utils = require('../../utils')
-var inherits = require('inherits')
+var inherits = require('util').inherits
 
 var debug = require('debug')
 var debugLog = debug('1tp:transports:streams:turn')
