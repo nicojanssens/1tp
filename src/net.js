@@ -1,10 +1,9 @@
 'use strict'
 
 var events = require('events')
-var inherits = require('inherits')
+var inherits = require('util').inherits
 var ProxyStream = require('./stream')
 var Q = require('q')
-var util = require('util')
 var utils = require('./utils')
 
 var onetpTransports = require('./transports')
@@ -56,7 +55,7 @@ var Server = function () {
 }
 
 // Inherit EventEmitter
-util.inherits(Server, events.EventEmitter)
+inherits(Server, events.EventEmitter)
 
 Server.prototype.listen = function () {
   // first optional argument -> listeningInfo
