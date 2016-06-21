@@ -14,7 +14,7 @@ var turnPwd = process.env.TURN_PASS
 var turnProto = process.env.TURN_PROTO || 'tcp'
 
 describe('Testing turn stream', function () {
-  this.timeout(10000)
+  this.timeout(15000)
 
   it('should return echo messages and end stream', function (done) {
     var clientAlice, clientBob

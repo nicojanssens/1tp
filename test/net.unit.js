@@ -21,7 +21,7 @@ var turnPwd = process.env.TURN_PASS
 var registrar = process.env.ONETP_REGISTRAR
 
 describe('net api', function () {
-  this.timeout(10000)
+  this.timeout(15000)
 
   it('should init and activate a new server using UDP, TCP and turn transports', function (done) {
     var transports = []
