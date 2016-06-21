@@ -37,7 +37,7 @@
     "turn-js": "*"
   },
   "devDependencies": {
-    "apprtc-socket": "^0.1.1",
+    "apprtc-socket": "*",
     "chai": "^3.5.0",
     "chai-as-promised": "^5.2.0",
     "mocha": "^2.4.5",
