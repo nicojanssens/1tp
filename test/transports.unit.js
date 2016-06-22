@@ -27,7 +27,7 @@ describe('1tp transports', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20001
+        port: 30001
       }
     }
     var serverSocket = new UdpTransport()
@@ -46,7 +46,7 @@ describe('1tp transports', function () {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20003
+        port: 30003
       }
     }
     var serverSocket = new TcpTransport()
@@ -173,7 +173,7 @@ describe('1tp transports', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20005
+        port: 30005
       }
     }
     var serverSocket = new UdpTransport()
@@ -193,7 +193,7 @@ describe('1tp transports', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20007
+        port: 30007
       }
     }
     var serverSocket = new UdpTransport()
@@ -213,7 +213,7 @@ describe('1tp transports', function () {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20009
+        port: 30009
       }
     }
     var serverSocket = new TcpTransport()
@@ -233,7 +233,7 @@ describe('1tp transports', function () {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20011
+        port: 30011
       }
     }
     var serverSocket = new TcpTransport()
