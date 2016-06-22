@@ -11,20 +11,14 @@ var turnAddr = process.env.TURN_ADDR
 var turnPort = process.env.TURN_PORT
 var turnUser = process.env.TURN_USER
 var turnPwd = process.env.TURN_PASS
-var turnProto = process.env.TURN_PROTO || 'tcp'
 
 describe('Testing turn stream', function () {
   this.timeout(15000)
 
   it('should return echo messages and end stream', function (done) {
     var clientAlice, clientBob
-    if (turnProto === 'udp') {
-      clientAlice = turn(turnAddr, turnPort, turnUser, turnPwd)
-      clientBob = turn(turnAddr, turnPort, turnUser, turnPwd)
-    } else {
-      clientAlice = turn(turnAddr, turnPort, turnUser, turnPwd, new TurnTransports.TCP())
-      clientBob = turn(turnAddr, turnPort, turnUser, turnPwd, new TurnTransports.TCP())
-    }
+    clientAlice = turn(turnAddr, turnPort, turnUser, turnPwd, new TurnTransports.TCP())
+    clientBob = turn(turnAddr, turnPort, turnUser, turnPwd, new TurnTransports.TCP())
     var connectionInfoAlice, connectionInfoBob
     var streamAlice, streamBob
     var nbTestMessages = 10

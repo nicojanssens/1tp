@@ -8,6 +8,7 @@ var onetpTransports = require('../src/transports')
 var TcpTransport = onetpTransports.tcp
 var TurnTransport = onetpTransports.turn
 var UdpTransport = onetpTransports.udp
+var TurnProtocols = require('turn-js').transports
 
 var WebSocketSignaling = require('../src/signaling').websocket
 
@@ -31,6 +32,7 @@ describe('net api', function () {
       new TurnTransport({
         turnServer: turnAddr,
         turnPort: turnPort,
+        turnProtocol: new TurnProtocols.TCP(),
         turnUsername: turnUser,
         turnPassword: turnPwd,
         signaling: new WebSocketSignaling({url: registrar})
