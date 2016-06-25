@@ -33,7 +33,7 @@ function TcpTransport (socketOpts) {
   debugLog('created tcp transport with args ' + JSON.stringify(opts))
 }
 
-// Inherit EventEmitter
+// Inherit from abstract transport
 util.inherits(TcpTransport, AbstractTransport)
 
 TcpTransport.DEFAULTS = {
@@ -115,6 +115,7 @@ TcpTransport.prototype.listen = function (listeningInfo, onSuccess, onFailure) {
             transportType: myConnectionInfo.transportType,
             transportInfo: {
               address: localAddress,
+              // INVARIANT thomasdelaet: port numbers must be the same when creating separate transport info instances for different local ipAddresses
               port: myConnectionInfo.transportInfo.port
             }
           }
