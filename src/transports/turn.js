@@ -60,7 +60,7 @@ function TurnTransport (args) {
   debugLog('created turn transport')
 }
 
-// Inherit EventEmitter
+// Inherit from abstract transport
 util.inherits(TurnTransport, AbstractTransport)
 
 TurnTransport.prototype.transportType = function () {
