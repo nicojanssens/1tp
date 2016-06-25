@@ -37,7 +37,7 @@ function UdpTransport (dgramOpts) {
   debugLog('created udp transport with args ' + JSON.stringify(opts))
 }
 
-// Inherit EventEmitter
+// Inherit from abstract transport
 util.inherits(UdpTransport, AbstractTransport)
 
 UdpTransport.DEFAULTS = {
@@ -92,6 +92,7 @@ UdpTransport.prototype.listen = function (listeningInfo, onSuccess, onFailure) {
           transportType: myConnectionInfo.transportType,
           transportInfo: {
             address: localAddress,
+            // INVARIANT thomasdelaet: port numbers must be the same when creating separate transport info instances for different local ipAddresses
             port: myConnectionInfo.transportInfo.port
           }
         }
