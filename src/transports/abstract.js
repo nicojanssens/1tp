@@ -21,7 +21,7 @@ util.inherits(AbstractTransport, events.EventEmitter)
 AbstractTransport.prototype.transportType = function () {
   var errorMsg = 'AbstractTransport.transportType function not implemented'
   errorLog(errorMsg)
-  this._error(errorLog)
+  this._error(errorMsg)
 }
 
 AbstractTransport.prototype.listen = function (listeningInfo, onSuccess, onFailure) {
