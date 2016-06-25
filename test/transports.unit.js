@@ -19,7 +19,7 @@ var turnPwd = process.env.TURN_PASS
 var registrar = process.env.ONETP_REGISTRAR
 
 describe('1tp transports', function () {
-  this.timeout(15000)
+  this.timeout(20000)
 
   it('should return echo messages using udp transport and close server afterwards', function (done) {
     var clientSocket = new UdpTransport()

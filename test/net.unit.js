@@ -22,7 +22,7 @@ var turnPwd = process.env.TURN_PASS
 var registrar = process.env.ONETP_REGISTRAR
 
 describe('net api', function () {
-  this.timeout(15000)
+  this.timeout(20000)
 
   it('should init and activate a new server using UDP, TCP and turn transports', function (done) {
     var transports = []
@@ -114,10 +114,11 @@ describe('net api', function () {
     })
   })
 
-  it('should bind server using net.createServer function', function (done) {
+  it('should bind new server using UDP and TCP -- using promise function', function (done) {
     var transports = []
     transports.push(new UdpTransport())
     transports.push(new TcpTransport())
+    var server = new Server(transports)
     var registrationInfo = [{
       transportType: 'udp',
       transportInfo: {
@@ -129,6 +130,34 @@ describe('net api', function () {
       transportInfo: {
         address: '127.0.0.1',
         port: 20005
+      }
+    }]
+    server.listenP(registrationInfo)
+      .then(function (listeningInfo) {
+        expect(server.address()).to.not.be.undefined
+        expect(server.address()).to.deep.equal(listeningInfo)
+        done()
+      })
+      .catch(function (error) {
+        done(error)
+      })
+  })
+
+  it('should bind server using net.createServer function', function (done) {
+    var transports = []
+    transports.push(new UdpTransport())
+    transports.push(new TcpTransport())
+    var registrationInfo = [{
+      transportType: 'udp',
+      transportInfo: {
+        address: '127.0.0.1',
+        port: 20006
+      }
+    }, {
+      transportType: 'tcp',
+      transportInfo: {
+        address: '127.0.0.1',
+        port: 20007
       }
     }]
     var server = net.createServer(transports)
@@ -147,7 +176,7 @@ describe('net api', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20006
+        port: 20008
       }
     }]
 

@@ -68,23 +68,9 @@ Server.prototype.listen = function () {
   if (typeof callback === 'function') {
     this.once('listening', callback)
   }
-  // create list of promises
-  var listenPromises = this._transports.map(function (transport) {
-    var transportListeningInfo = listeningInfo.find(function (listeningInfoInstance) {
-      if (listeningInfoInstance.transportType === transport.transportType()) {
-        return listeningInfoInstance
-      }
-    })
-    debugLog('activating transport with connection info ' + JSON.stringify(transportListeningInfo))
-    return transport.listenP(transportListeningInfo)
-  })
-  // execute promises
   var self = this
-  Q.all(listenPromises)
-    .then(function (listeningInfo) {
-      debugLog('collected listening info ' + JSON.stringify(listeningInfo))
-      listeningInfo = [].concat.apply([], listeningInfo) // flatten multidimensional array
-      self._listeningInfo = listeningInfo
+  this.listenP(listeningInfo)
+    .then(function (collectedListeningInfo) {
       self.emit('listening')
     })
     .catch(function (error) {
@@ -108,12 +94,14 @@ Server.prototype.listenP = function (listeningInfo) {
     debugLog('binding transport with listening info ' + JSON.stringify(transportListeningInfo))
     return transport.listenP(transportListeningInfo)
   })
+  var self = this
   // execute promises
   return Q.all(listenPromises)
-    .then(function (listeningInfo) {
-      debugLog('collected listening info ' + JSON.stringify(listeningInfo))
-      listeningInfo = [].concat.apply([], listeningInfo) // flatten multidimensional array
-      return listeningInfo
+    .then(function (collectedListeningInfo) {
+      debugLog('collected listening info ' + JSON.stringify(collectedListeningInfo))
+      collectedListeningInfo = [].concat.apply([], collectedListeningInfo) // flatten multidimensional array
+      self._listeningInfo = collectedListeningInfo
+      return collectedListeningInfo
     })
 }
 

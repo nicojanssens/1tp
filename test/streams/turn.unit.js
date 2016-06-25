@@ -13,7 +13,7 @@ var turnUser = process.env.TURN_USER
 var turnPwd = process.env.TURN_PASS
 
 describe('Testing turn stream', function () {
-  this.timeout(15000)
+  this.timeout(20000)
 
   it('should return echo messages and end stream', function (done) {
     var clientAlice, clientBob
