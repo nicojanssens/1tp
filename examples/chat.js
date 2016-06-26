@@ -70,7 +70,7 @@ signalingSocket.on('message', function (message) {
     turnPassword: argv.pwd,
     signaling: new WebSocketSignaling({url: argv.ws})
   }))
-  onetpClient = net.createConnection(transports, request.listeningInfo, function () {
+  onetpClient = net.createConnection(request.listeningInfo, transports, function () {
     console.log('connection established')
     bindToTerminal(onetpClient)
   })

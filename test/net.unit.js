@@ -115,10 +115,7 @@ describe('net api', function () {
   })
 
   it('should bind new server using UDP and TCP -- using promise function', function (done) {
-    var transports = []
-    transports.push(new UdpTransport())
-    transports.push(new TcpTransport())
-    var server = new Server(transports)
+    var server = new Server()
     var registrationInfo = [{
       transportType: 'udp',
       transportInfo: {
@@ -144,9 +141,6 @@ describe('net api', function () {
   })
 
   it('should bind server using net.createServer function', function (done) {
-    var transports = []
-    transports.push(new UdpTransport())
-    transports.push(new TcpTransport())
     var registrationInfo = [{
       transportType: 'udp',
       transportInfo: {
@@ -160,10 +154,11 @@ describe('net api', function () {
         port: 20007
       }
     }]
-    var server = net.createServer(transports)
+    var server = net.createServer()
     server.listen(registrationInfo, function () {
       expect(server.address()).to.not.be.undefined
-      expect(server.address()).to.deep.equal(registrationInfo)
+      expect(server.address()).to.deep.include.members(registrationInfo)
+      //expect(server.address()).to.deep.equal(registrationInfo)
       done()
     })
   })
@@ -204,7 +199,7 @@ describe('net api', function () {
     var createClient = function (serverInfo) {
       var transports = []
       transports.push(new UdpTransport())
-      client = net.createConnection(transports, serverInfo, function () {
+      client = net.createConnection(serverInfo, transports, function () {
         expect(client.isConnected()).to.be.true
         expect(client.remoteAddress).to.not.be.undefined
         client.write(testMessage)
@@ -283,10 +278,7 @@ describe('net api', function () {
     }
 
     var createClient = function (serverInfo) {
-      var transports = []
-      transports.push(new TcpTransport())
-      transports.push(new UdpTransport())
-      client = net.createConnection(transports, serverInfo, function () {
+      client = net.createConnection(serverInfo, function () {
         expect(client.isConnected()).to.be.true
         expect(client.remoteAddress).to.not.be.undefined
         client.write(testMessage)
@@ -350,7 +342,7 @@ describe('net api', function () {
       var transports = []
       transports.push(new UdpTransport())
       transports.push(new TcpTransport())
-      client = net.createConnection(transports, serverInfo, function () {
+      client = net.createConnection(serverInfo, transports, function () {
         expect(client.isConnected()).to.be.true
         expect(client.remoteAddress).to.not.be.undefined
         client.write(testMessage)
@@ -411,10 +403,7 @@ describe('net api', function () {
     }
 
     var createClient = function (serverInfo) {
-      var transports = []
-      transports.push(new UdpTransport())
-      transports.push(new TcpTransport())
-      client = net.createConnection(transports, serverInfo, function () {
+      client = net.createConnection(serverInfo, function () {
         expect(client.isConnected()).to.be.true
         expect(client.remoteAddress).to.not.be.undefined
         client.write(testMessage)
@@ -478,7 +467,7 @@ describe('net api', function () {
       var transports = []
       transports.push(new TcpTransport())
       transports.push(new UdpTransport())
-      client = net.createConnection(transports, serverInfo, function () {
+      client = net.createConnection(serverInfo, transports, function () {
         expect(client.isConnected()).to.be.true
         expect(client.remoteAddress).to.not.be.undefined
         client.write(testMessage)
@@ -536,7 +525,7 @@ describe('net api', function () {
     var createClient = function (serverInfo) {
       var transports = []
       transports.push(new TcpTransport())
-      client = net.createConnection(transports, serverInfo, function () {
+      client = net.createConnection(serverInfo, transports, function () {
         var errorMsg = 'not expecting to receive a connection event'
         done(errorMsg)
       })
@@ -587,10 +576,7 @@ describe('net api', function () {
     }
 
     var createClient = function (serverInfo) {
-      var transports = []
-      transports.push(new TcpTransport())
-      transports.push(new UdpTransport())
-      client = net.createConnection(transports, serverInfo, function () {
+      client = net.createConnection(serverInfo, function () {
         var errorMsg = 'not expecting to receive a connection event'
         done(errorMsg)
       })
@@ -654,7 +640,7 @@ describe('net api', function () {
     var createClient = function (serverInfo) {
       var transports = []
       transports.push(new UdpTransport())
-      client = net.createConnection(transports, serverInfo, function () {
+      client = net.createConnection(serverInfo, transports, function () {
         expect(client.isConnected()).to.be.true
         expect(client.remoteAddress).to.not.be.undefined
         client.write(testMessage)
@@ -717,7 +703,7 @@ describe('net api', function () {
     var createClient = function (serverInfo) {
       var transports = []
       transports.push(new TcpTransport())
-      client = net.createConnection(transports, serverInfo, function () {
+      client = net.createConnection(serverInfo, transports, function () {
         expect(client.isConnected()).to.be.true
         expect(client.remoteAddress).to.not.be.undefined
         client.write(testMessage)

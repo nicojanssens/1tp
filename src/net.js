@@ -175,19 +175,24 @@ Socket.prototype.connect = function (connectionInfo, connectionListener) {
   }
   // create array of connection infos
   connectionInfo = Array.isArray(connectionInfo) ? connectionInfo : [connectionInfo]
-  // organize connection infos per transport
+  // prepare connection attempts
   var self = this
-  var connectionInfoPerTransport = connectionInfo.map(function (endpointInfo) {
+  var connectionAttempts = []
+  connectionInfo.forEach(function (endpointInfo) {
     var transport = self._transports.find(function (registeredTransport) {
       if (endpointInfo.transportType === registeredTransport.transportType()) {
         return registeredTransport
       }
     })
-    debugLog('preparing to setup connection with ' + JSON.stringify(endpointInfo))
-    return {
+    if (!transport) {
+      debugLog('could not find associated transport for connection info ' + endpointInfo)
+      return
+    }
+    debugLog('preparing to connection attempt with ' + JSON.stringify(endpointInfo))
+    connectionAttempts.push({
       transport: transport,
       endpointInfo: endpointInfo
-    }
+    })
   })
   // create chain of connect promises
   var promiseChain = Q.fcall(function () {
@@ -195,7 +200,7 @@ Socket.prototype.connect = function (connectionInfo, connectionListener) {
     return
   })
   var foundStream = false
-  connectionInfoPerTransport.forEach(function (transportSpecs) {
+  connectionAttempts.forEach(function (transportSpecs) {
     if (!foundStream) {
       promiseChain = promiseChain.then(function (stream) {
         // no stream found, execute a new connect promise
@@ -252,13 +257,38 @@ Socket.prototype.end = function () {
 
 // factory functions
 
-var createServer = function (transports, connectionListener) {
+var createServer = function () {
+  // first optional argument -> transports
+  var transports = arguments[0]
+  if (transports === undefined || typeof transports !== 'object') {
+    debugLog('no transports defined, using default configuration')
+    transports = getDefaultTransports()
+  }
+  // last optional argument -> callback
+  var connectionListener = arguments[arguments.length - 1]
+  // create new server instance
   return new Server(transports, connectionListener)
 }
 
-var createConnection = function (transports, connectionInfo, connectionListener) {
+var createConnection = function () {
+  // mandator argument -> connectionInfo
+  var connectionInfo = arguments[0]
+  if (connectionInfo === undefined || typeof connectionInfo !== 'object') {
+    errorLog('connectionInfo undefined')
+    return
+  }
+  // first optional argument -> transports
+  var transports = arguments[1]
+  if (transports === undefined || typeof transports !== 'object') {
+    debugLog('no transports defined, using default configuration')
+    transports = getDefaultTransports()
+  }
+  // last optional argument -> callback
+  var connectionListener = arguments[arguments.length - 1]
+  // create socket and init connection handshake
   var socket = new Socket(transports)
   socket.connect(connectionInfo, connectionListener)
+  // done
   return socket
 }
 
