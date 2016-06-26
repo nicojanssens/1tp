@@ -1,5 +1,6 @@
 'use strict'
 
+var config = require('./config')
 var events = require('events')
 var inherits = require('util').inherits
 var ProxyStream = require('./stream')
@@ -17,12 +18,7 @@ var debugLog = debug('1tp:net')
 var errorLog = debug('1tp:net:error')
 
 var connectTimeout = 500
-try {
-  var config = require('../config.json')
-  debugLog('config.json found, values = ' + JSON.stringify(config))
-} catch (error) {
-  debugLog('could not find config.json')
-}
+
 
 // Server class
 
@@ -311,13 +307,16 @@ var getDefaultTransports = function () {
   var transports = []
   transports.push(new UdpTransport())
   transports.push(new TcpTransport())
-  if (config) {
+  if (config.turnAddr !== undefined &
+      config.turnPort !== undefined &
+      config.onetpRegistrar !== undefined
+    ) {
     transports.push(new TurnTransport({
-      turnServer: config.turn.addr,
-      turnPort: config.turn.port,
-      turnUsername: config.turn.username,
-      turnPassword: config.turn.password,
-      signaling: new WebSocketSignaling({url: config.registrar})
+      turnServer: config.turnAddr,
+      turnPort: config.turnPort,
+      turnUsername: config.turnUser,
+      turnPassword: config.turnPass,
+      signaling: new WebSocketSignaling({url: config.onetpRegistrar})
     }))
   }
   return transports
