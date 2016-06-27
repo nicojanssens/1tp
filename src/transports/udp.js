@@ -33,6 +33,8 @@ function UdpTransport (dgramOpts) {
   this._createDgramSocket(opts)
   // keep track of udp streams
   this._streams = {}
+  // accept new incoming connections
+  this._acceptIncomingConnections = true
   // done
   debugLog('created udp transport with args ' + JSON.stringify(opts))
 }
@@ -140,6 +142,17 @@ UdpTransport.prototype.connect = function (peerConnectionInfo, onSuccess, onFail
   }
 }
 
+UdpTransport.prototype.blockIncomingConnections = function () {
+  this._acceptIncomingConnections = false
+}
+
+UdpTransport.prototype.close = function (onSuccess, onFailure) {
+  var self = this
+  this._socket.close(function () {
+    self._fireCloseEvent(onSuccess)
+  })
+}
+
 UdpTransport.prototype._createDgramSocket = function (dgramOpts) {
   this._socket = dgram.createSocket(dgramOpts)
   this._socket.on('message', this._onMessage())
@@ -182,10 +195,14 @@ UdpTransport.prototype._processIncomingDgram = function (message) {
   switch (message.type) {
     case UdpStream.PACKET.SYN:
       debugLog('incoming SYN packet')
-      // send syn-ack
-      var stream = this._streams[message.sessionId]
-      debugLog('send SYN ACK for udp session ' + stream._sessionId)
-      stream._sendSignalingMessage(UdpStream.PACKET.SYN_ACK)
+      if (this._acceptIncomingConnections) {
+        // send syn-ack
+        var stream = this._streams[message.sessionId]
+        debugLog('send SYN ACK for udp session ' + stream._sessionId)
+        stream._sendSignalingMessage(UdpStream.PACKET.SYN_ACK)
+      } else {
+        debugLog('not accepting new connections -- dropping SYN on the floor')
+      }
       // done
       break
     case UdpStream.PACKET.SYN_ACK:
@@ -227,7 +244,9 @@ UdpTransport.prototype._processIncomingDgram = function (message) {
 }
 
 UdpTransport.prototype._createUdpStream = function (peerAddress, streamId) {
-  if (streamId !== null && (streamId in this._streams)) {
+  var streamAlreadyExists = (streamId !== null && (streamId in this._streams))
+  var blockIncomingConnections = (streamId !== null && !this._acceptIncomingConnections)
+  if (streamAlreadyExists || blockIncomingConnections) {
     return
   }
   // create new UpdStream
