@@ -65,6 +65,12 @@ AbstractTransport.prototype.connectP = function (peerConnectionInfo) {
   return deferred.promise
 }
 
+AbstractTransport.prototype.blockIncomingConnections = function () {
+  var errorMsg = 'AbstractTransport.blockIncomingConnections function not implemented'
+  errorLog(errorMsg)
+  this._error(errorMsg)
+}
+
 AbstractTransport.prototype.close = function (onSuccess, onFailure) {
   var errorMsg = 'AbstractTransport.close function not implemented'
   errorLog(errorMsg)
