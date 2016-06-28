@@ -56,6 +56,8 @@ function TurnTransport (args) {
   )
   this._signaling = args.signaling
   this._lifetime = (args.lifetime === undefined) ? defaultLifetime : args.lifetime
+  // accept new incoming connections
+  this._acceptIncomingConnections = true
   // done
   debugLog('created turn transport')
 }
@@ -159,6 +161,10 @@ TurnTransport.prototype.connect = function (peerConnectionInfo, onSuccess, onFai
     })
 }
 
+TurnTransport.prototype.blockIncomingConnections = function () {
+  this._acceptIncomingConnections = false
+}
+
 TurnTransport.prototype._onSignalingMessage = function (message) {
   debugLog('receiving signaling message ' + JSON.stringify(message))
   var operationType = message.operationType
@@ -170,7 +176,11 @@ TurnTransport.prototype._onSignalingMessage = function (message) {
   }
   switch (operationType) {
     case 'connect':
-      this._onConnectRequest(message)
+      if (this._acceptIncomingConnections) {
+        this._onConnectRequest(message)
+      } else {
+        debugLog('not accepting new connections -- dropping connect request on the floor')
+      }
       break
     case 'ready':
       this._onReadyMessage(message)
