@@ -12,9 +12,6 @@ var debug = require('debug')
 var debugLog = debug('1tp:transports:udp')
 var errorLog = debug('1tp:transports:udp:error')
 
-// feature toggle -- for dev purposes only
-var _connectOnReply = true
-
 /**
  * Udp transport
  *
@@ -129,18 +126,14 @@ UdpTransport.prototype.connect = function (peerConnectionInfo, onSuccess, onFail
   }
   // create new stream if rinfo is unknown
   var stream = this._createUdpStream(peerConnectionInfo.transportInfo, null)
-  if (!_connectOnReply) {
-    this._fireConnectEvent(stream, peerConnectionInfo, onSuccess)
-  } else {
-    // store callbacks for later use
-    // TODO: assign these values to the associate 'stream'
-    this._connectOnSuccess = onSuccess
-    this._connectOnFailure = onFailure
-    this._peerConnectionInfo = peerConnectionInfo
-    // init session
-    debugLog('send SYN packet for udp session ' + stream._sessionId)
-    stream._sendSignalingMessage(UdpStream.PACKET.SYN)
-  }
+  // store callbacks for later use
+  // TODO: assign these values to the associate 'stream'
+  this._connectOnSuccess = onSuccess
+  this._connectOnFailure = onFailure
+  this._peerConnectionInfo = peerConnectionInfo
+  // init session
+  debugLog('send SYN packet for udp session ' + stream._sessionId)
+  stream._sendSignalingMessage(UdpStream.PACKET.SYN)
 }
 
 UdpTransport.prototype.close = function (onSuccess, onFailure) {
