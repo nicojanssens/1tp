@@ -1,7 +1,7 @@
 'use strict'
 
 var events = require('events')
-var utils = require('../utils')
+var myUtils = require('../utils')
 var Q = require('q')
 var util = require('util')
 
@@ -12,7 +12,7 @@ function AbstractTransport () {
   // event emitter
   events.EventEmitter.call(this)
   // register _error handler
-  utils.mixinEventEmitterErrorFunction(this)
+  myUtils.mixinEventEmitterErrorFunction(this)
 }
 
 // Inherit EventEmitter
@@ -63,12 +63,6 @@ AbstractTransport.prototype.connectP = function (peerConnectionInfo) {
     }
   )
   return deferred.promise
-}
-
-AbstractTransport.prototype.blockIncomingConnections = function () {
-  var errorMsg = 'AbstractTransport.blockIncomingConnections function not implemented'
-  errorLog(errorMsg)
-  this._error(errorMsg)
 }
 
 AbstractTransport.prototype.close = function (onSuccess, onFailure) {
