@@ -165,8 +165,11 @@ TcpTransport.prototype.connect = function (peerConnectionInfo, onSuccess, onFail
   })
 }
 
-TcpTransport.prototype.blockIncomingConnections = function () {
-  this._server.close()
+TcpTransport.prototype.close = function (onSuccess, onFailure) {
+  var self = this
+  this._server.close(function () {
+    self._fireCloseEvent(onSuccess)
+  })
 }
 
 module.exports = TcpTransport
