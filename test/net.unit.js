@@ -158,7 +158,7 @@ describe('net api', function () {
     server.listen(registrationInfo, function () {
       expect(server.address()).to.not.be.undefined
       expect(server.address()).to.deep.include.members(registrationInfo)
-      //expect(server.address()).to.deep.equal(registrationInfo)
+      // expect(server.address()).to.deep.equal(registrationInfo)
       done()
     })
   })

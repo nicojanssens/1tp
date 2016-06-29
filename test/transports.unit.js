@@ -274,21 +274,21 @@ function testEchoMessages (clientSpecs, serverSpecs, done) {
       expect(clientWriteStreamEnded).to.be.true
       echoReadStreamEnded = true
     })
-    // // try to close server socket
-    // serverSocket.close(function () {
-    //   console.log('CLOSED')
-    //   console.log(clientReadStreamEnded) //false
-    //   console.log(clientWriteStreamEnded) //true
-    //   console.log(echoReadStreamEnded) //false
-    //   console.log(echoWriteStreamEnded) //false
-    //   // expect(clientReadStreamEnded).to.be.true
-    //   // expect(clientWriteStreamEnded).to.be.true
-    //   // expect(echoReadStreamEnded).to.be.true
-    //   // expect(echoWriteStreamEnded).to.be.true
-    //   //done()
-    // }, function (error) {
-    //   done(error)
-    // })
+  // // try to close server socket
+  // serverSocket.close(function () {
+  //   console.log('CLOSED')
+  //   console.log(clientReadStreamEnded) //false
+  //   console.log(clientWriteStreamEnded) //true
+  //   console.log(echoReadStreamEnded) //false
+  //   console.log(echoWriteStreamEnded) //false
+  //   // expect(clientReadStreamEnded).to.be.true
+  //   // expect(clientWriteStreamEnded).to.be.true
+  //   // expect(echoReadStreamEnded).to.be.true
+  //   // expect(echoWriteStreamEnded).to.be.true
+  //   //done()
+  // }, function (error) {
+  //   done(error)
+  // })
   })
 
   function sendTestMessage (stream) {
@@ -411,5 +411,4 @@ function testDestroyStream (clientSpecs, serverSpecs, streamToDestroy, done) {
     .catch(function (error) {
       done(error)
     })
-
 }

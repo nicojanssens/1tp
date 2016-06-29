@@ -19,7 +19,6 @@ var errorLog = debug('1tp:net:error')
 
 var connectTimeout = 500
 
-
 // Server class
 
 var Server = function () {
@@ -310,9 +309,9 @@ var getDefaultTransports = function () {
   transports.push(new UdpTransport())
   transports.push(new TcpTransport())
   if (config.turnAddr !== undefined &
-      config.turnPort !== undefined &
-      config.onetpRegistrar !== undefined
-    ) {
+    config.turnPort !== undefined &
+    config.onetpRegistrar !== undefined
+  ) {
     transports.push(new TurnTransport({
       turnServer: config.turnAddr,
       turnPort: config.turnPort,

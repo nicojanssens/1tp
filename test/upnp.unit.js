@@ -27,7 +27,7 @@ if (executeUpnpTests) {
         .catch(function (error) {
           assert(false, 'Could not retrieve public address before running tests. ' + error)
         })
-      })
+    })
 
     it('should return my public ip address', function () {
       return upnp.getPublicGWAddressP().should.eventually.equal(myPublicIpAddress)

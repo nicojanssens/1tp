@@ -103,7 +103,6 @@ NetStringStream.prototype._write = function (chunk, encoding, done) {
   this.encoder.write(chunk, encoding, done)
 }
 
-NetStringStream.prototype._read = function (size) {
-}
+NetStringStream.prototype._read = function (size) {}
 
 module.exports = NetStringStream

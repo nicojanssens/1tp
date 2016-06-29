@@ -114,7 +114,7 @@ signalingSocket.connectP()
     console.error(error)
   })
 
-function bindToTerminal(connection) {
+function bindToTerminal (connection) {
   // pipe outputstream
   connection.on('data', function (data) {
     console.log(argv.peerid + ': ' + data)

@@ -105,7 +105,6 @@ describe('utils module', function () {
       done(error)
     })
   })
-
 })
 
 function TestObject () {
