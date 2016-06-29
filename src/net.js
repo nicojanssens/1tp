@@ -3,9 +3,9 @@
 var config = require('./config')
 var events = require('events')
 var inherits = require('util').inherits
+var myUtils = require('./utils')
 var ProxyStream = require('./stream')
 var Q = require('q')
-var utils = require('./utils')
 
 var onetpTransports = require('./transports')
 var TcpTransport = onetpTransports.tcp
@@ -45,7 +45,7 @@ var Server = function () {
   // event emitter
   events.EventEmitter.call(this)
   // register _error handler
-  utils.mixinEventEmitterErrorFunction(this, errorLog)
+  myUtils.mixinEventEmitterErrorFunction(this, errorLog)
   // done
   debugLog('created new net stream')
 }
@@ -106,7 +106,9 @@ Server.prototype.address = function () {
 }
 
 Server.prototype.close = function () {
-  throw new Error('server.close not implemented yet')
+  transports.forEach(function (transport) {
+    transport.blockIncomingConnections()
+  })
 }
 
 Server.prototype._registerTransportEvents = function (transports) {
@@ -151,7 +153,7 @@ var Socket = function (transports) {
   // init proxy stream
   ProxyStream.call(this)
   // register _error handler
-  utils.mixinEventEmitterErrorFunction(this, errorLog)
+  myUtils.mixinEventEmitterErrorFunction(this, errorLog)
   // done
   debugLog('created new net socket')
 }
@@ -294,7 +296,7 @@ var _createConnectTimeoutPromise = function (transportSpecs) {
   var endpointInfo = transportSpecs.endpointInfo
   var connectPromise = transport.connectP(endpointInfo)
   // resolve promise without result if it does not complete before timeout
-  var connectTimeoutPromise = utils.timeoutResolvePromise(connectPromise, connectTimeout, function () {
+  var connectTimeoutPromise = myUtils.timeoutResolvePromise(connectPromise, connectTimeout, function () {
     // on timeout, close connection
     var timeoutMessage = 'timeout while transport ' + transport.transportType() + ' tries to connect with ' + JSON.stringify(endpointInfo)
     debugLog(timeoutMessage)
