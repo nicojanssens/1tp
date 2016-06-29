@@ -4,6 +4,7 @@ var AbstractTransport = require('./abstract')
 var dgram = require('dgram')
 var ipAddresses = require('../nat/ip-addresses')
 var merge = require('merge')
+var myUtils = require('../utils')
 var UdpStream = require('./streams/udp')
 var util = require('util')
 
@@ -142,16 +143,20 @@ UdpTransport.prototype.connect = function (peerConnectionInfo, onSuccess, onFail
   }
 }
 
-UdpTransport.prototype.blockIncomingConnections = function () {
+UdpTransport.prototype.close = function (onSuccess, onFailure) {
   this._acceptIncomingConnections = false
+  if (myUtils.isEmpty(this._streams)) {
+    onSuccess()
+    return
+  }
 }
 
-UdpTransport.prototype.close = function (onSuccess, onFailure) {
-  var self = this
-  this._socket.close(function () {
-    self._fireCloseEvent(onSuccess)
-  })
-}
+// UdpTransport.prototype.close = function (onSuccess, onFailure) {
+//   var self = this
+//   this._socket.close(function () {
+//     self._fireCloseEvent(onSuccess)
+//   })
+// }
 
 UdpTransport.prototype._createDgramSocket = function (dgramOpts) {
   this._socket = dgram.createSocket(dgramOpts)
@@ -195,6 +200,7 @@ UdpTransport.prototype._processIncomingDgram = function (message) {
   switch (message.type) {
     case UdpStream.PACKET.SYN:
       debugLog('incoming SYN packet')
+      // if transport is not close -- i.e. it accepts incoming connections
       if (this._acceptIncomingConnections) {
         // send syn-ack
         var stream = this._streams[message.sessionId]
