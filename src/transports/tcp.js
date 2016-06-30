@@ -71,6 +71,10 @@ TcpTransport.prototype.transportType = function () {
   return 'tcp'
 }
 
+TcpTransport.prototype.connectTimeout = function () {
+  return 100
+}
+
 TcpTransport.prototype.listen = function (listeningInfo, onSuccess, onFailure) {
   var port, address
   if (listeningInfo !== undefined) {

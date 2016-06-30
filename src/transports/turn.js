@@ -69,6 +69,10 @@ TurnTransport.prototype.transportType = function () {
   return 'turn'
 }
 
+TurnTransport.prototype.connectTimeout = function () {
+  return 2000
+}
+
 TurnTransport.prototype.listen = function (listeningInfo, onSuccess, onFailure) {
   var requestedRegistrationInfo
   if (listeningInfo !== undefined) {

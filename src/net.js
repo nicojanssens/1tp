@@ -17,8 +17,6 @@ var debug = require('debug')
 var debugLog = debug('1tp:net')
 var errorLog = debug('1tp:net:error')
 
-var connectTimeout = 500
-
 // Server class
 
 var Server = function () {
@@ -295,7 +293,7 @@ var _createConnectTimeoutPromise = function (transportSpecs) {
   var endpointInfo = transportSpecs.endpointInfo
   var connectPromise = transport.connectP(endpointInfo)
   // resolve promise without result if it does not complete before timeout
-  var connectTimeoutPromise = myUtils.timeoutResolvePromise(connectPromise, connectTimeout, function () {
+  var connectTimeoutPromise = myUtils.timeoutResolvePromise(connectPromise, transport.connectTimeout(), function () {
     // on timeout, close connection
     var timeoutMessage = 'timeout while transport ' + transport.transportType() + ' tries to connect with ' + JSON.stringify(endpointInfo)
     debugLog(timeoutMessage)

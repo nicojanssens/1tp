@@ -49,6 +49,10 @@ UdpTransport.prototype.transportType = function () {
   return 'udp'
 }
 
+UdpTransport.prototype.connectTimeout = function () {
+  return 200
+}
+
 UdpTransport.prototype.listen = function (listeningInfo, onSuccess, onFailure) {
   var port, address
   if (listeningInfo !== undefined) {
