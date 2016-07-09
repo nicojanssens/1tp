@@ -241,7 +241,7 @@ Socket.prototype.isConnected = function () {
 Socket.prototype.destroy = function () {
   var errorMsg = 'socket.destroy function not yet implemented'
   errorLog(errorMsg)
-  this._error(errorMsg)
+// this._error(errorMsg)
 }
 
 Socket.prototype.end = function () {
@@ -315,7 +315,9 @@ var getDefaultTransports = function () {
       turnPort: config.turnPort,
       turnUsername: config.turnUser,
       turnPassword: config.turnPass,
-      signaling: new WebSocketSignaling({url: config.onetpRegistrar})
+      signaling: new WebSocketSignaling({
+        url: config.onetpRegistrar
+      })
     }))
   }
   return transports
