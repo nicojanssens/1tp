@@ -12,8 +12,6 @@ var debug = require('debug')
 var debugLog = debug('1tp:transports:turn')
 var errorLog = debug('1tp:transports:turn:error')
 
-var defaultLifetime = 600
-
 /**
  * Turn transport
  *
@@ -55,7 +53,7 @@ function TurnTransport (args) {
     this._turnProtocol
   )
   this._signaling = args.signaling
-  this._lifetime = (args.lifetime === undefined) ? defaultLifetime : args.lifetime
+  this._lifetime = (args.lifetime === undefined) ? this._turn.defaultAllocationLifetime : args.lifetime
   // accept new incoming connections
   this._acceptIncomingConnections = true
   // done
@@ -315,15 +313,55 @@ TurnTransport.prototype._startRefreshTimer = function (duration) {
       })
       .catch(function (error) {
         self._stopRefreshTimer()
-        var errorMsg = 'failure while sending TURN refresh message: ' + error
+        var errorMsg = 'error while sending TURN refresh message: ' + error
         errorLog(errorMsg)
         self._error(errorMsg)
       })
-  }, duration * 1000 - 5000)
+  }, duration * 1000 - 10000)
 }
 
 TurnTransport.prototype._stopRefreshTimer = function () {
   clearInterval(this._refreshTimer)
+}
+
+TurnTransport.prototype._startCreatePermissionTimer = function (address) {
+  var self = this
+  this._createPermissionTimer = setInterval(function () {
+    self._turn.createPermissionP(address)
+      .then(function () {
+        // do nothing
+      })
+      .catch(function (error) {
+        self._stopCreatePermissionTimer()
+        var errorMsg = 'error while refreshing TURN permission: ' + error
+        errorLog(errorMsg)
+        self._error(errorMsg)
+      })
+  }, self._turn.createPermissionLifetime * 1000 - 10000)
+}
+
+TurnTransport.prototype._stopCreatePermissionTimer = function () {
+  clearInterval(this._createPermissionTimer)
+}
+
+TurnTransport.prototype._startChannelBindTimer = function (address, port, channel) {
+  var self = this
+  this._channelBindTimer = setInterval(function () {
+    self._turn.bindChannelP(address, port, channel)
+      .then(function (channel) {
+        // do nothing
+      })
+      .catch(function (error) {
+        self._stopChannelBindTimer()
+        var errorMsg = 'failure while refreshing channel binding: ' + error
+        errorLog(errorMsg)
+        self._error(errorMsg)
+      })
+  }, self._turn.channelBindingLifetime * 1000 - 10000)
+}
+
+TurnTransport.prototype._stopChannelBindTimer = function () {
+  clearInterval(this._channelBindTimer)
 }
 
 module.exports = TurnTransport
