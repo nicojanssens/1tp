@@ -202,8 +202,8 @@ TurnTransport.prototype._onSignalingMessage = function (message) {
 }
 
 TurnTransport.prototype._onConnectRequest = function (message) {
-  var operationContent = message.operationContent
-  if (operationContent === undefined) {
+  var connectRequest = message.operationContent
+  if (connectRequest === undefined) {
     var undefinedOperationContentError = 'incorrect signaling message: undefined operationContent -- ignoring request'
     errorLog(undefinedOperationContentError)
     this._error(undefinedOperationContentError)
@@ -231,13 +231,15 @@ TurnTransport.prototype._onConnectRequest = function (message) {
       // start refresh interval
       self._startRefreshLoop()
       // then create permission for peer to reach me
-      return self._turn.createPermissionP(operationContent.relayAddress.address)
+      return self._turn.createPermissionP(connectRequest.relayAddress.address)
     })
     .then(function () {
+      // start permission refresh timer
+      self._startCreatePermissionTimer(connectRequest.relayAddress.address)
       // create duplex stream
       var peerConnectionInfo = {
-        mappedAddress: operationContent.srflxAddress,
-        relayedAddress: operationContent.relayAddress
+        mappedAddress: connectRequest.srflxAddress,
+        relayedAddress: connectRequest.relayAddress
       }
       var stream = new TurnStream(peerConnectionInfo, self._turn)
       // fire connection event
@@ -264,8 +266,8 @@ TurnTransport.prototype._onConnectRequest = function (message) {
 }
 
 TurnTransport.prototype._onReadyMessage = function (message) {
-  var operationContent = message.operationContent
-  if (operationContent === undefined) {
+  var connectRequest = message.operationContent
+  if (connectRequest === undefined) {
     var undefinedOperationContentError = 'incorrect signaling message: undefined operationContent -- ignoring request'
     errorLog(undefinedOperationContentError)
     this._error(undefinedOperationContentError)
@@ -280,12 +282,14 @@ TurnTransport.prototype._onReadyMessage = function (message) {
   }
   var self = this
   // create permission for peer to reach me
-  this._turn.createPermissionP(operationContent.relayAddress.address)
+  this._turn.createPermissionP(connectRequest.relayAddress.address)
     .then(function () {
+      // start permission refresh timer
+      self._startCreatePermissionTimer(connectRequest.relayAddress.address)
       // create duplex stream
       var peerConnectionInfo = {
-        mappedAddress: operationContent.srflxAddress,
-        relayedAddress: operationContent.relayAddress
+        mappedAddress: connectRequest.srflxAddress,
+        relayedAddress: connectRequest.relayAddress
       }
       // create duplex stream
       var stream = new TurnStream(peerConnectionInfo, self._turn)
