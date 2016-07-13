@@ -53,7 +53,6 @@ function TurnTransport (args) {
     this._turnProtocol
   )
   this._signaling = args.signaling
-  this._lifetime = (args.lifetime === undefined) ? this._turn.defaultAllocationLifetime : args.lifetime
   // accept new incoming connections
   this._acceptIncomingConnections = true
   // done
@@ -62,6 +61,8 @@ function TurnTransport (args) {
 
 // Inherit from abstract transport
 util.inherits(TurnTransport, AbstractTransport)
+
+TurnTransport.TIMEOUT_MARGIN = 10000
 
 TurnTransport.prototype.transportType = function () {
   return 'turn'
@@ -133,11 +134,17 @@ TurnTransport.prototype.connect = function (peerConnectionInfo, onSuccess, onFai
       self._myConnectionInfo = myConnectionInfo
       return self._turn.allocateP()
     })
-    .then(function (allocateAddress) {
-      self._srflxAddress = allocateAddress.mappedAddress
-      self._relayAddress = allocateAddress.relayedAddress
+    .then(function (allocateReply) {
+      self._srflxAddress = allocateReply.mappedAddress
+      self._relayAddress = allocateReply.relayedAddress
+      if (allocateReply.lifetime !== undefined) {
+        self._allocationLifetime = allocateReply.lifetime
+      }
       debugLog('srflx address = ' + self._srflxAddress.address + ':' + self._srflxAddress.port)
       debugLog('relay address = ' + self._relayAddress.address + ':' + self._relayAddress.port)
+      debugLog('lifetime = ' + self._allocationLifetime)
+      // start refresh interval
+      self._startRefreshLoop()
       // store callbacks for later use
       self._connectOnSuccess = onSuccess
       self._connectOnFailure = onFailure
@@ -212,11 +219,17 @@ TurnTransport.prototype._onConnectRequest = function (message) {
   var self = this
   // first allocate TURN resource
   this._turn.allocateP()
-    .then(function (allocateAddress) {
-      self._srflxAddress = allocateAddress.mappedAddress
-      self._relayAddress = allocateAddress.relayedAddress
+    .then(function (allocateReply) {
+      self._srflxAddress = allocateReply.mappedAddress
+      self._relayAddress = allocateReply.relayedAddress
+      if (allocateReply.lifetime !== undefined) {
+        self._allocationLifetime = allocateReply.lifetime
+      }
       debugLog('srflx address = ' + self._srflxAddress.address + ':' + self._srflxAddress.port)
       debugLog('relay address = ' + self._relayAddress.address + ':' + self._relayAddress.port)
+      debugLog('lifetime = ' + self._allocationLifetime)
+      // start refresh interval
+      self._startRefreshLoop()
       // then create permission for peer to reach me
       return self._turn.createPermissionP(operationContent.relayAddress.address)
     })
@@ -229,8 +242,6 @@ TurnTransport.prototype._onConnectRequest = function (message) {
       var stream = new TurnStream(peerConnectionInfo, self._turn)
       // fire connection event
       self._fireConnectionEvent(stream, self, peerConnectionInfo)
-      // start refresh interval
-      self._startRefreshLoop()
       // send ready response to peer
       var signalingDestination = sender
       var signalingMessage = {
@@ -276,8 +287,6 @@ TurnTransport.prototype._onReadyMessage = function (message) {
         mappedAddress: operationContent.srflxAddress,
         relayedAddress: operationContent.relayAddress
       }
-      // start refresh interval
-      self._startRefreshLoop()
       // create duplex stream
       var stream = new TurnStream(peerConnectionInfo, self._turn)
       // fire connect event
@@ -291,12 +300,18 @@ TurnTransport.prototype._onReadyMessage = function (message) {
 
 TurnTransport.prototype._startRefreshLoop = function () {
   var self = this
-  // execute reflesh operation to correct _lifetime value (if needed)
-  this._turn.refreshP(this._lifetime)
-    .then(function (duration) {
-      debugLog('activating refresh loop -- lifetime was set to ' + duration)
-      self._lifetime = duration
-      self._startRefreshTimer(duration)
+  // start refresh timer if allocation lifetime is specified
+  if (this._allocationLifetime !== undefined) {
+    debugLog('activating refresh loop -- lifetime was set to ' + this._allocationLifetime)
+    this._startRefreshTimer(this._allocationLifetime)
+    return
+  }
+  // otherwise execute refresh operation using the default TURN allocation timeout to retrieve actual lifetime
+  this._turn.refreshP(this._turn.DEFAULT_ALLOCATION_LIFETIME)
+    .then(function (lifetime) {
+      debugLog('activating refresh loop -- allocation lifetime ' + lifetime)
+      self._allocationLifetime = lifetime
+      self._startRefreshTimer(self._allocationLifetime)
     })
     .catch(function (error) {
       errorLog(error)
@@ -304,12 +319,12 @@ TurnTransport.prototype._startRefreshLoop = function () {
     })
 }
 
-TurnTransport.prototype._startRefreshTimer = function (duration) {
+TurnTransport.prototype._startRefreshTimer = function (lifetime) {
   var self = this
   this._refreshTimer = setInterval(function () {
-    self._turn.refreshP(duration)
+    self._turn.refreshP(lifetime)
       .then(function (duration) {
-        // do nothing
+        debugLog('executed refresh operation, retrieving lifetime ' + duration)
       })
       .catch(function (error) {
         self._stopRefreshTimer()
@@ -317,7 +332,7 @@ TurnTransport.prototype._startRefreshTimer = function (duration) {
         errorLog(errorMsg)
         self._error(errorMsg)
       })
-  }, duration * 1000 - 10000)
+  }, lifetime * 1000 - TurnTransport.TIMEOUT_MARGIN)
 }
 
 TurnTransport.prototype._stopRefreshTimer = function () {
@@ -329,7 +344,7 @@ TurnTransport.prototype._startCreatePermissionTimer = function (address) {
   this._createPermissionTimer = setInterval(function () {
     self._turn.createPermissionP(address)
       .then(function () {
-        // do nothing
+        debugLog('executed create permission refresh')
       })
       .catch(function (error) {
         self._stopCreatePermissionTimer()
@@ -337,7 +352,7 @@ TurnTransport.prototype._startCreatePermissionTimer = function (address) {
         errorLog(errorMsg)
         self._error(errorMsg)
       })
-  }, self._turn.createPermissionLifetime * 1000 - 10000)
+  }, self._turn.CREATE_PERMISSION_LIFETIME * 1000 - TurnTransport.TIMEOUT_MARGIN)
 }
 
 TurnTransport.prototype._stopCreatePermissionTimer = function () {
@@ -349,7 +364,7 @@ TurnTransport.prototype._startChannelBindTimer = function (address, port, channe
   this._channelBindTimer = setInterval(function () {
     self._turn.bindChannelP(address, port, channel)
       .then(function (channel) {
-        // do nothing
+        debugLog('executed bind channel refresh, retrieving channel ' + channel)
       })
       .catch(function (error) {
         self._stopChannelBindTimer()
@@ -357,7 +372,7 @@ TurnTransport.prototype._startChannelBindTimer = function (address, port, channe
         errorLog(errorMsg)
         self._error(errorMsg)
       })
-  }, self._turn.channelBindingLifetime * 1000 - 10000)
+  }, self._turn.CHANNEL_BINDING_LIFETIME * 1000 - TurnTransport.TIMEOUT_MARGIN)
 }
 
 TurnTransport.prototype._stopChannelBindTimer = function () {
