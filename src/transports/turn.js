@@ -6,6 +6,7 @@ var AbstractTransport = require('./abstract')
 var turn = require('turn-js')
 var TurnStream = require('./streams/turn')
 var TurnTransports = turn.transports
+var TurnClient = turn.TurnClient
 var util = require('util')
 
 var debug = require('debug')
@@ -311,7 +312,7 @@ TurnTransport.prototype._startRefreshLoop = function () {
     return
   }
   // otherwise execute refresh operation using the default TURN allocation timeout to retrieve actual lifetime
-  this._turn.refreshP(this._turn.DEFAULT_ALLOCATION_LIFETIME)
+  this._turn.refreshP(TurnClient.DEFAULT_ALLOCATION_LIFETIME)
     .then(function (lifetime) {
       debugLog('activating refresh loop -- allocation lifetime ' + lifetime)
       self._allocationLifetime = lifetime
@@ -356,7 +357,7 @@ TurnTransport.prototype._startCreatePermissionTimer = function (address) {
         errorLog(errorMsg)
         self._error(errorMsg)
       })
-  }, self._turn.CREATE_PERMISSION_LIFETIME * 1000 - TurnTransport.TIMEOUT_MARGIN)
+  }, TurnClient.CREATE_PERMISSION_LIFETIME * 1000 - TurnTransport.TIMEOUT_MARGIN)
 }
 
 TurnTransport.prototype._stopCreatePermissionTimer = function () {
@@ -376,7 +377,7 @@ TurnTransport.prototype._startChannelBindTimer = function (address, port, channe
         errorLog(errorMsg)
         self._error(errorMsg)
       })
-  }, self._turn.CHANNEL_BINDING_LIFETIME * 1000 - TurnTransport.TIMEOUT_MARGIN)
+  }, TurnClient.CHANNEL_BINDING_LIFETIME * 1000 - TurnTransport.TIMEOUT_MARGIN)
 }
 
 TurnTransport.prototype._stopChannelBindTimer = function () {
