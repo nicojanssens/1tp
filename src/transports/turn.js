@@ -1,4 +1,4 @@
-// TODO: stop reflresh loop when closing connection
+// TODO: stop refresh loops when closing connection
 
 'use strict'
 
@@ -12,6 +12,8 @@ var util = require('util')
 var debug = require('debug')
 var debugLog = debug('1tp:transports:turn')
 var errorLog = debug('1tp:transports:turn:error')
+
+var version = require('../../package.json').version
 
 /**
  * Turn transport
@@ -97,7 +99,8 @@ TurnTransport.prototype.listen = function (listeningInfo, onSuccess, onFailure) 
     .then(function (actualRegistrationInfo) {
       var myConnectionInfo = {
         transportType: self.transportType(),
-        transportInfo: actualRegistrationInfo
+        transportInfo: actualRegistrationInfo,
+        version: version
       }
       self._myConnectionInfo = myConnectionInfo
       // send 'listening' event
@@ -130,7 +133,8 @@ TurnTransport.prototype.connect = function (peerConnectionInfo, onSuccess, onFai
     .then(function (actualRegistrationInfo) {
       var myConnectionInfo = {
         transportType: self.transportType(),
-        transportInfo: actualRegistrationInfo
+        transportInfo: actualRegistrationInfo,
+        version: version
       }
       self._myConnectionInfo = myConnectionInfo
       return self._turn.allocateP()
@@ -153,6 +157,7 @@ TurnTransport.prototype.connect = function (peerConnectionInfo, onSuccess, onFai
       // send connect request to peer
       var signalingDestination = peerConnectionInfo.transportInfo
       var signalingMessage = {
+        version: version,
         sender: self._myConnectionInfo.transportInfo,
         operationType: 'connect',
         operationContent: {
@@ -177,6 +182,12 @@ TurnTransport.prototype.blockIncomingConnections = function () {
 
 TurnTransport.prototype._onSignalingMessage = function (message) {
   debugLog('receiving signaling message ' + JSON.stringify(message))
+  if (message.version === undefined) {
+    var undefinedVersionError = 'incorrect signaling message: undefined version -- ignoring request'
+    errorLog(undefinedVersionError)
+    this._error(undefinedVersionError)
+    return
+  }
   var operationType = message.operationType
   if (operationType === undefined) {
     var undefinedOperationTypeError = 'incorrect signaling message: undefined operationType -- ignoring request'
@@ -248,6 +259,7 @@ TurnTransport.prototype._onConnectRequest = function (message) {
       // send ready response to peer
       var signalingDestination = sender
       var signalingMessage = {
+        version: message.version,
         sender: self._myConnectionInfo.transportInfo,
         operationType: 'ready',
         operationContent: {
