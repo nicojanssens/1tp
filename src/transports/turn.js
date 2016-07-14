@@ -13,8 +13,6 @@ var debug = require('debug')
 var debugLog = debug('1tp:transports:turn')
 var errorLog = debug('1tp:transports:turn:error')
 
-var version = require('../../package.json').version
-
 /**
  * Turn transport
  *
@@ -100,7 +98,7 @@ TurnTransport.prototype.listen = function (listeningInfo, onSuccess, onFailure) 
       var myConnectionInfo = {
         transportType: self.transportType(),
         transportInfo: actualRegistrationInfo,
-        version: version
+        version: self.version()
       }
       self._myConnectionInfo = myConnectionInfo
       // send 'listening' event
@@ -134,7 +132,7 @@ TurnTransport.prototype.connect = function (peerConnectionInfo, onSuccess, onFai
       var myConnectionInfo = {
         transportType: self.transportType(),
         transportInfo: actualRegistrationInfo,
-        version: version
+        version: self.version()
       }
       self._myConnectionInfo = myConnectionInfo
       return self._turn.allocateP()
@@ -157,7 +155,7 @@ TurnTransport.prototype.connect = function (peerConnectionInfo, onSuccess, onFai
       // send connect request to peer
       var signalingDestination = peerConnectionInfo.transportInfo
       var signalingMessage = {
-        version: version,
+        version: self.version(),
         sender: self._myConnectionInfo.transportInfo,
         operationType: 'connect',
         operationContent: {
@@ -259,7 +257,7 @@ TurnTransport.prototype._onConnectRequest = function (message) {
       // send ready response to peer
       var signalingDestination = sender
       var signalingMessage = {
-        version: message.version,
+        version: self.version(),
         sender: self._myConnectionInfo.transportInfo,
         operationType: 'ready',
         operationContent: {

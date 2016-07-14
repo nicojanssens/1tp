@@ -40,6 +40,7 @@
     "apprtc-socket": "*",
     "chai": "^3.5.0",
     "chai-as-promised": "^5.2.0",
+    "merge": "^1.2.0",
     "mocha": "^2.4.5",
     "publish": "^0.6.0",
     "through2": "^0.6.5",

@@ -8,6 +8,8 @@ var util = require('util')
 var debug = require('debug')
 var errorLog = debug('1tp:transports:abstract:error')
 
+var defaultProtocolVersion = require('../../package.json').version
+
 function AbstractTransport () {
   // event emitter
   events.EventEmitter.call(this)
@@ -17,6 +19,10 @@ function AbstractTransport () {
 
 // Inherit EventEmitter
 util.inherits(AbstractTransport, events.EventEmitter)
+
+AbstractTransport.prototype.version = function () {
+  return defaultProtocolVersion
+}
 
 AbstractTransport.prototype.transportType = function () {
   var errorMsg = 'AbstractTransport.transportType function not implemented'

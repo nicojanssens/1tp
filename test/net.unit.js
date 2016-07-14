@@ -15,6 +15,8 @@ var WebSocketSignaling = require('../src/signaling').websocket
 var chai = require('chai')
 var expect = chai.expect
 
+var defaultProtocolVersion = require('../package.json').version
+
 var turnAddr = process.env.TURN_ADDR
 var turnPort = process.env.TURN_PORT
 var turnUser = process.env.TURN_USER
@@ -84,7 +86,11 @@ describe('net api', function () {
     }]
     server.on('listening', function () {
       expect(server.address()).to.not.be.undefined
-      expect(server.address()).to.deep.equal(registrationInfo)
+      var expectedConnectionInfo = registrationInfo.map(function (connectionInfo) {
+        connectionInfo.version = defaultProtocolVersion
+        return connectionInfo
+      })
+      expect(server.address()).to.deep.equal(expectedConnectionInfo)
       done()
     })
     server.listen(registrationInfo)
@@ -115,7 +121,10 @@ describe('net api', function () {
   })
 
   it('should bind new server using UDP and TCP -- using promise function', function (done) {
-    var server = new Server()
+    var transports = []
+    transports.push(new UdpTransport())
+    transports.push(new TcpTransport())
+    var server = new Server(transports)
     var registrationInfo = [{
       transportType: 'udp',
       transportInfo: {
@@ -133,6 +142,11 @@ describe('net api', function () {
       .then(function (listeningInfo) {
         expect(server.address()).to.not.be.undefined
         expect(server.address()).to.deep.equal(listeningInfo)
+        var expectedConnectionInfo = registrationInfo.map(function (connectionInfo) {
+          connectionInfo.version = defaultProtocolVersion
+          return connectionInfo
+        })
+        expect(server.address()).to.deep.equal(expectedConnectionInfo)
         done()
       })
       .catch(function (error) {
@@ -157,7 +171,11 @@ describe('net api', function () {
     var server = net.createServer()
     server.listen(registrationInfo, function () {
       expect(server.address()).to.not.be.undefined
-      expect(server.address()).to.deep.include.members(registrationInfo)
+      var expectedConnectionInfo = registrationInfo.map(function (connectionInfo) {
+        connectionInfo.version = defaultProtocolVersion
+        return connectionInfo
+      })
+      expect(server.address()).to.deep.include.members(expectedConnectionInfo)
       // expect(server.address()).to.deep.equal(registrationInfo)
       done()
     })

@@ -105,7 +105,8 @@ TcpTransport.prototype.listen = function (listeningInfo, onSuccess, onFailure) {
         transportInfo: {
           // address will be added below
           port: self._server.address().port
-        }
+        },
+        version: self.version()
       }
       // if address was specified in listening info, then reuse it
       if (address) {
@@ -121,7 +122,8 @@ TcpTransport.prototype.listen = function (listeningInfo, onSuccess, onFailure) {
               address: localAddress,
               // INVARIANT thomasdelaet: port numbers must be the same when creating separate transport info instances for different local ipAddresses
               port: myConnectionInfo.transportInfo.port
-            }
+            },
+            version: self.version()
           }
           return connectionInfo
         })

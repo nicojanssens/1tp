@@ -11,12 +11,15 @@ var WebSocketSignaling = require('../src/signaling').websocket
 
 var chai = require('chai')
 var expect = chai.expect
+var merge = require('merge')
 
 var turnAddr = process.env.TURN_ADDR
 var turnPort = process.env.TURN_PORT
 var turnUser = process.env.TURN_USER
 var turnPwd = process.env.TURN_PASS
 var registrar = process.env.ONETP_REGISTRAR
+
+var defaultProtocolVersion = require('../package.json').version
 
 describe('1tp transports', function () {
   this.timeout(20000)
@@ -301,7 +304,10 @@ function testEchoMessages (clientSpecs, serverSpecs, done) {
   serverSocket.listenP(listeningInfo)
     .then(function (connectionInfo) {
       if (listeningInfo) {
-        expect(connectionInfo).to.deep.equal(listeningInfo)
+        var protocolVersion = {
+          version: defaultProtocolVersion
+        }
+        expect(connectionInfo).to.deep.equal(merge(protocolVersion, listeningInfo))
       }
       return clientSocket.connectP(connectionInfo)
     })
@@ -376,7 +382,10 @@ function testDestroyStream (clientSpecs, serverSpecs, streamToDestroy, done) {
   serverSocket.listenP(listeningInfo)
     .then(function (connectionInfo) {
       if (listeningInfo) {
-        expect(connectionInfo).to.deep.equal(listeningInfo)
+        var protocolVersion = {
+          version: defaultProtocolVersion
+        }
+        expect(connectionInfo).to.deep.equal(merge(protocolVersion, listeningInfo))
       }
       return clientSocket.connectP(connectionInfo)
     })
