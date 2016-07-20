@@ -5,6 +5,7 @@ var dgram = require('dgram')
 var ipAddresses = require('../nat/ip-addresses')
 var merge = require('merge')
 var myUtils = require('../utils')
+var netstring = require('netstring')
 var UdpStream = require('./streams/udp')
 var util = require('util')
 
@@ -176,6 +177,12 @@ UdpTransport.prototype._onMessage = function () {
   var self = this
   return function (bytes, rinfo) {
     var message = _parse(bytes)
+    if (message.version === undefined) {
+      var undefinedVersionError = 'incorrect signaling message: undefined version -- ignoring request'
+      errorLog(undefinedVersionError)
+      this._error(undefinedVersionError)
+      return
+    }
     var peerAddress = {
       address: rinfo.address,
       port: rinfo.port
@@ -255,19 +262,24 @@ UdpTransport.prototype._createUdpStream = function (peerAddress, streamId) {
     return
   }
   // create new UpdStream
-  var stream = new UdpStream(peerAddress, streamId, this._socket)
+  var stream = new UdpStream(peerAddress, streamId, this._socket, this.version())
   this._streams[stream._sessionId] = stream
   debug('created new stream for ' + JSON.stringify(peerAddress))
   return stream
 }
 
 function _parse (bytes) {
-  var sessionId = bytes.slice(0, 8).toString()
-  var type = bytes.slice(8, 10).readUInt16BE()
-  var data = bytes.slice(10, bytes.length)
+  var offset = 2
+  var type = bytes.slice(0, offset).readUInt16BE()
+  var sessionIdBytes = netstring.nsPayload(bytes, offset)
+  offset += netstring.nsLength(bytes, offset)
+  var versionBytes = netstring.nsPayload(bytes, offset)
+  offset += netstring.nsLength(bytes, offset)
+  var data = bytes.slice(offset, bytes.length)
   return {
-    sessionId: sessionId,
     type: type,
+    sessionId: sessionIdBytes.toString(),
+    version: versionBytes.toString(),
     data: data
   }
 }

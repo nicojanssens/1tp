@@ -4,14 +4,15 @@ var Duplex = require('stream').Duplex
 var hat = require('hat')
 var inherits = require('util').inherits
 var myUtils = require('../../utils')
+var netstring = require('netstring')
 
 var debug = require('debug')
 var debugLog = debug('1tp:transports:streams:udp')
 var errorLog = debug('1tp:transports:streams:udp:error')
 
-function UdpStream (peerAddress, sessionId, socket) {
+function UdpStream (peerAddress, sessionId, socket, version) {
   if (!(this instanceof UdpStream)) {
-    return new UdpStream(peerAddress, sessionId, socket)
+    return new UdpStream(peerAddress, sessionId, socket, version)
   }
 
   if (peerAddress.address === undefined || peerAddress.port === undefined) {
@@ -24,6 +25,7 @@ function UdpStream (peerAddress, sessionId, socket) {
   this._peerAddress = peerAddress
   this._sessionId = (sessionId === null) ? _generateSessionId() : sessionId
   this._socket = socket
+  this._version = version
 
   this._destroyed = false
 
@@ -79,10 +81,11 @@ UdpStream.prototype._destroy = function () {
 }
 
 UdpStream.prototype._write = function (chunk, encoding, done) {
-  var sessionIdBytes = new Buffer(this._sessionId)
   var typeByte = new Buffer(2)
   typeByte.writeUInt16BE(UdpStream.PACKET.DATA)
-  var data = Buffer.concat([sessionIdBytes, typeByte, chunk])
+  var sessionIdBytes = netstring.nsWrite(this._sessionId)
+  var versionBytes = netstring.nsWrite(this._version)
+  var data = Buffer.concat([typeByte, sessionIdBytes, versionBytes, chunk])
   this._socket.send(data, 0, data.length, this._peerAddress.port, this._peerAddress.address, done)
 }
 
@@ -91,10 +94,11 @@ UdpStream.prototype._read = function (size) {
 }
 
 UdpStream.prototype._sendSignalingMessage = function (message, done) {
-  var sessionIdBytes = new Buffer(this._sessionId)
   var typeByte = new Buffer(2)
   typeByte.writeUInt16BE(message)
-  var data = Buffer.concat([sessionIdBytes, typeByte])
+  var sessionIdBytes = netstring.nsWrite(this._sessionId)
+  var versionBytes = netstring.nsWrite(this._version)
+  var data = Buffer.concat([typeByte, sessionIdBytes, versionBytes])
   this._socket.send(data, 0, data.length, this._peerAddress.port, this._peerAddress.address, done)
 }
 

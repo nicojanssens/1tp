@@ -30,6 +30,7 @@
     "hat": "0.0.3",
     "merge": "^1.2.0",
     "nat-upnp": "^1.0.0",
+    "netstring": "^0.3.0",
     "netstring-stream": "^0.1.2",
     "public-ip": "^1.1.0",
     "q": "^1.4.1",
