@@ -4,13 +4,17 @@ var events = require('events')
 var myUtils = require('../utils')
 var Q = require('q')
 var util = require('util')
-
-var debug = require('debug')
-var errorLog = debug('1tp:transports:abstract:error')
+var winston = require('winston')
+var winstonWrapper = require('winston-meta-wrapper')
 
 var defaultProtocolVersion = require('../../package.json').version
 
 function AbstractTransport () {
+  // logging
+  this._log = winstonWrapper(winston)
+  this._log.addMeta({
+    module: '1tp:transports'
+  })
   // event emitter
   events.EventEmitter.call(this)
   // register _error handler
@@ -26,13 +30,13 @@ AbstractTransport.prototype.version = function () {
 
 AbstractTransport.prototype.transportType = function () {
   var errorMsg = 'AbstractTransport.transportType function not implemented'
-  errorLog(errorMsg)
+  this._log.error(errorMsg)
   this._error(errorMsg)
 }
 
 AbstractTransport.prototype.listen = function (listeningInfo, onSuccess, onFailure) {
   var errorMsg = 'AbstractTransport.listen function not implemented'
-  errorLog(errorMsg)
+  this._log.error(errorMsg)
   this._error(errorMsg)
 }
 
@@ -52,7 +56,7 @@ AbstractTransport.prototype.listenP = function (listeningInfo) {
 
 AbstractTransport.prototype.connect = function (peerConnectionInfo, onSuccess, onFailure) {
   var errorMsg = 'AbstractTransport.connect function not implemented'
-  errorLog(errorMsg)
+  this._log.error(errorMsg)
   this._error(errorMsg)
 }
 
@@ -73,13 +77,13 @@ AbstractTransport.prototype.connectP = function (peerConnectionInfo) {
 
 AbstractTransport.prototype.connectTimeout = function () {
   var errorMsg = 'AbstractTransport.connectTimeout function not implemented'
-  errorLog(errorMsg)
+  this._log.error(errorMsg)
   this._error(errorMsg)
 }
 
 AbstractTransport.prototype.close = function (onSuccess, onFailure) {
   var errorMsg = 'AbstractTransport.close function not implemented'
-  errorLog(errorMsg)
+  this._log.error(errorMsg)
   this._error(errorMsg)
 }
 

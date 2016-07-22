@@ -6,10 +6,8 @@ var merge = require('merge')
 var net = require('net')
 var NetStringStream = require('./streams/netstring')
 var util = require('util')
-
-var debug = require('debug')
-var debugLog = debug('1tp:transports:tcp')
-var errorLog = debug('1tp:transports:tcp:error')
+var winston = require('winston')
+var winstonWrapper = require('winston-meta-wrapper')
 
 /**
  * Tcp transport
@@ -26,11 +24,17 @@ function TcpTransport (socketOpts) {
   if (!(this instanceof TcpTransport)) {
     return new TcpTransport(socketOpts)
   }
+  // logging
+  this._log = winstonWrapper(winston)
+  this._log.addMeta({
+    module: '1tp:transports:tcp'
+  })
+  // init
   var opts = merge(Object.create(TcpTransport.DEFAULTS), socketOpts)
   this._createServerSocket(opts)
   AbstractTransport.call(this)
   // done
-  debugLog('created tcp transport with args ' + JSON.stringify(opts))
+  this._log.debug('created tcp transport with args ' + JSON.stringify(opts))
 }
 
 // Inherit from abstract transport
@@ -81,13 +85,13 @@ TcpTransport.prototype.listen = function (listeningInfo, onSuccess, onFailure) {
     // verify listeningInfo
     if (listeningInfo.transportType !== this.transportType()) {
       var transportTypeError = 'incorrect listeningInfo: unexpected transportType -- ignoring request'
-      errorLog(transportTypeError)
+      this._log.error(transportTypeError)
       this._error(transportTypeError, onFailure)
       return
     }
     if (listeningInfo.transportInfo === undefined) {
       var transportInfoUndefined = 'incorrect connectionInfo: transportInfo is undefined'
-      errorLog(transportInfoUndefined)
+      this._log.error(transportInfoUndefined)
       this._error(transportInfoUndefined, onFailure)
       return
     }
@@ -133,28 +137,28 @@ TcpTransport.prototype.listen = function (listeningInfo, onSuccess, onFailure) {
   }
   // fire up
   port = (port === undefined) ? 0 : port
-  debugLog('listening on address:' + address + ', port:' + port)
+  this._log.debug('listening on address:' + address + ', port:' + port)
   this._server.listen(port, address)
 }
 
 TcpTransport.prototype.connect = function (peerConnectionInfo, onSuccess, onFailure) {
-  debugLog('connect to ' + JSON.stringify(peerConnectionInfo))
+  this._log.debug('connect to ' + JSON.stringify(peerConnectionInfo))
   // verify peerConnectionInfo
   if (peerConnectionInfo.transportType !== this.transportType()) {
     var transportTypeError = 'incorrect connectionInfo: unexpected transportType -- ignoring request'
-    errorLog(transportTypeError)
+    this._log.error(transportTypeError)
     this._error(transportTypeError, onFailure)
     return
   }
   if (peerConnectionInfo.transportInfo === undefined) {
     var transportInfoUndefined = 'incorrect connectionInfo: transportInfo is undefined'
-    errorLog(transportInfoUndefined)
+    this._log.error(transportInfoUndefined)
     this._error(transportInfoUndefined, onFailure)
     return
   }
   if (peerConnectionInfo.transportInfo.address === undefined || peerConnectionInfo.transportInfo.port === undefined) {
     var addressError = 'incorrect connectionInfo: address and/or port attribute is undefined'
-    errorLog(addressError)
+    this._log.error(addressError)
     this._error(addressError, onFailure)
     return
   }

@@ -3,20 +3,25 @@
 var AbstractSignaling = require('./abstract')
 var hat = require('hat')
 var util = require('util')
+var winston = require('winston')
+var winstonWrapper = require('winston-meta-wrapper')
 
 var signalingType = 'local-signaling'
-
-var debug = require('debug')
-var debugLog = debug('1tp:transports:signaling:local')
-var errorLog = debug('1tp:transports:signaling:local:error')
 
 function LocalSignaling () {
   if (!(this instanceof LocalSignaling)) {
     return new LocalSignaling()
   }
+  // logging
+  this._log = winstonWrapper(winston)
+  this._log.addMeta({
+    module: '1tp:transports:signaling:local'
+  })
+  // init
   this._listeners = {}
   AbstractSignaling.call(this)
-  debugLog('Created local signaling connector')
+  // done
+  this._log.debug('Created local signaling connector')
 }
 
 // Inherit EventEmitter
@@ -28,7 +33,7 @@ LocalSignaling.prototype.register = function (callback, requestedRegistrationInf
     // verify registration info
     if (requestedRegistrationInfo.type !== signalingType) {
       var signalingTypeError = 'incorrect registrationInfo: unexpected transportType -- ignoring request'
-      errorLog(signalingTypeError)
+      this._log.error(signalingTypeError)
       onFailure(signalingTypeError)
       return
     }
@@ -48,12 +53,12 @@ LocalSignaling.prototype.register = function (callback, requestedRegistrationInf
 LocalSignaling.prototype.deregister = function (registrationInfo, onSuccess, onFailure) {
   if (registrationInfo.type !== signalingType) {
     var signalingTypeError = 'incorrect destinationInfo: unexpected signaling type -- ignoring request'
-    errorLog(signalingTypeError)
+    this._log.error(signalingTypeError)
     onFailure(signalingTypeError)
   }
   if (registrationInfo.uid === undefined) {
     var signalingIdError = 'incorrect destinationInfo: undefined uid -- ignoring request'
-    errorLog(signalingIdError)
+    this._log.error(signalingIdError)
     onFailure(signalingIdError)
   }
   delete this._listeners[registrationInfo.uid]
@@ -62,21 +67,21 @@ LocalSignaling.prototype.deregister = function (registrationInfo, onSuccess, onF
 LocalSignaling.prototype.send = function (message, destinationInfo, onSuccess, onFailure) {
   if (destinationInfo.type !== signalingType) {
     var signalingTypeError = 'incorrect destinationInfo: unexpected signaling type -- ignoring request'
-    errorLog(signalingTypeError)
+    this._log.error(signalingTypeError)
     onFailure(signalingTypeError)
   }
   if (destinationInfo.uid === undefined) {
     var signalingIdError = 'incorrect destinationInfo: undefined uid -- ignoring request'
-    errorLog(signalingIdError)
+    this._log.error(signalingIdError)
     onFailure(signalingIdError)
   }
   var callback = this._listeners[destinationInfo.uid]
   if (callback === undefined) {
     var unknownIdError = 'incorrect destinationInfo: unknown uid -- ignoring request'
-    errorLog(unknownIdError)
+    this._log.error(unknownIdError)
     onFailure(unknownIdError)
   }
-  debugLog('sending message ' + JSON.stringify(message) + ' to ' + JSON.stringify(destinationInfo))
+  this._log.debug('sending message ' + JSON.stringify(message) + ' to ' + JSON.stringify(destinationInfo))
   callback(message)
   onSuccess()
 }

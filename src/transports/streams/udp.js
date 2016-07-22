@@ -5,21 +5,24 @@ var hat = require('hat')
 var inherits = require('util').inherits
 var myUtils = require('../../utils')
 var netstring = require('netstring')
-
-var debug = require('debug')
-var debugLog = debug('1tp:transports:streams:udp')
-var errorLog = debug('1tp:transports:streams:udp:error')
+var winston = require('winston')
+var winstonWrapper = require('winston-meta-wrapper')
 
 function UdpStream (peerAddress, sessionId, socket, version) {
   if (!(this instanceof UdpStream)) {
     return new UdpStream(peerAddress, sessionId, socket, version)
   }
-
+  // logging
+  this._log = winstonWrapper(winston)
+  this._log.addMeta({
+    module: '1tp:transports:streams:udp'
+  })
+  // verify attributes
   if (peerAddress.address === undefined || peerAddress.port === undefined) {
     var peerAddressError = 'incorrect peerAddress: address and/or port attribute is undefined'
     throw new Error(peerAddressError)
   }
-
+  // init
   Duplex.call(this, UdpStream.DEFAULTS)
 
   this._peerAddress = peerAddress
@@ -33,7 +36,7 @@ function UdpStream (peerAddress, sessionId, socket, version) {
   myUtils.mixinEventEmitterErrorFunction(this)
 
   // done
-  debugLog('created new udp stream.')
+  this._log.debug('created new udp stream.')
 }
 
 UdpStream.DEFAULTS = {
@@ -54,7 +57,7 @@ inherits(UdpStream, Duplex)
 
 // Half-closes the socket -- i.e. sends a FIN packet.
 UdpStream.prototype.end = function () {
-  debugLog('ending stream for udp session ' + this._sessionId)
+  this._log.debug('ending stream for udp session ' + this._sessionId)
   var self = this
   this._sendSignalingMessage(UdpStream.PACKET.FIN, function () {
     self._end()
@@ -62,7 +65,7 @@ UdpStream.prototype.end = function () {
 }
 
 UdpStream.prototype.destroy = function () {
-  debugLog('closing stream for udp session ' + this._sessionId)
+  this._log.debug('closing stream for udp session ' + this._sessionId)
   var self = this
   this._sendSignalingMessage(UdpStream.PACKET.RST, function () {
     self._destroy()

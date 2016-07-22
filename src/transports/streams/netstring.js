@@ -4,16 +4,19 @@ var Duplex = require('stream').Duplex
 var inherits = require('util').inherits
 var myUtils = require('../../utils')
 var netstring = require('netstring-stream')
-
-var debug = require('debug')
-var debugLog = debug('1tp:transports:streams:netstring')
-var errorLog = debug('1tp:transports:streams:netstring:error')
+var winston = require('winston')
+var winstonWrapper = require('winston-meta-wrapper')
 
 function NetStringStream () {
   if (!(this instanceof NetStringStream)) {
     return new NetStringStream()
   }
-
+  // logging
+  this._log = winstonWrapper(winston)
+  this._log.addMeta({
+    module: '1tp:transports:streams:netstring'
+  })
+  // init
   Duplex.call(this, NetStringStream.DEFAULTS)
 
   this.encoder = netstring.writeStream() // this is a through2 stream
@@ -38,7 +41,7 @@ function NetStringStream () {
   myUtils.mixinEventEmitterErrorFunction(this)
 
   // done
-  debugLog('created new netstring stream.')
+  this._log.debug('created new netstring stream.')
 }
 
 NetStringStream.DEFAULTS = {
@@ -54,12 +57,12 @@ NetStringStream.prototype.attachToEncoder = function (stream) {
   this.encoder.pipe(stream)
   this.encoder.on('close', function () {
     if (typeof stream.destroy === 'function') {
-      debugLog('closing destination stream')
+      self._log.debug('closing destination stream')
       stream.destroy()
     }
   })
   this.encoder.on('error', function (error) {
-    errorLog(error)
+    self._log.error(error)
     self._error(error)
   })
 }
@@ -68,11 +71,11 @@ NetStringStream.prototype.attachToDecoder = function (stream) {
   var self = this
   stream.pipe(this.decoder)
   stream.on('close', function () {
-    debugLog('destination stream closed')
+    self._log.debug('destination stream closed')
     self.destroy()
   })
   stream.on('error', function (error) {
-    errorLog(error)
+    self._log.error(error)
     self._error(error)
   })
 }

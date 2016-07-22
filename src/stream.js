@@ -3,15 +3,18 @@
 var Duplex = require('stream').Duplex
 var inherits = require('util').inherits
 var PassThrough = require('stream').PassThrough
-
-var debug = require('debug')
-var debugLog = debug('1tp:transports:streams:proxy')
-var errorLog = debug('1tp:transports:streams:proxy:error')
+var winston = require('winston')
+var winstonWrapper = require('winston-meta-wrapper')
 
 function ProxyStream () {
   if (!(this instanceof ProxyStream)) {
     return new ProxyStream()
   }
+  // logging
+  this._log = winstonWrapper(winston)
+  this._log.addMeta({
+    module: '1tp:transports:streams:proxy'
+  })
   // init duplex
   Duplex.call(this, ProxyStream.DEFAULTS)
   // create inbound and outbound streams
@@ -27,7 +30,7 @@ function ProxyStream () {
       self.push(null) // EOF
     })
   // done
-  debugLog('created proxy stream.')
+  this._log.debug('created proxy stream.')
 }
 
 ProxyStream.DEFAULTS = {
@@ -61,7 +64,7 @@ ProxyStream.prototype._readFromInboundPassThrough = function (size) {
 ProxyStream.prototype._write = function (chunk, encoding, done) {
   if (!this._connectedStream) {
     var noStreamError = 'no connected stream to write data to.'
-    errorLog(noStreamError)
+    this._log.error(noStreamError)
     throw new Error(noStreamError)
   }
   this._outboundPassThrough.write(chunk, encoding, done)

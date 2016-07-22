@@ -8,10 +8,8 @@ var TurnStream = require('./streams/turn')
 var TurnTransports = turn.transports
 var TurnClient = turn.TurnClient
 var util = require('util')
-
-var debug = require('debug')
-var debugLog = debug('1tp:transports:turn')
-var errorLog = debug('1tp:transports:turn:error')
+var winston = require('winston')
+var winstonWrapper = require('winston-meta-wrapper')
 
 /**
  * Turn transport
@@ -27,6 +25,11 @@ function TurnTransport (args) {
   if (!(this instanceof TurnTransport)) {
     return new TurnTransport(args)
   }
+  // logging
+  this._log = winstonWrapper(winston)
+  this._log.addMeta({
+    module: '1tp:transports:turn'
+  })
   // verify args
   if (
     args.turnServer === undefined ||
@@ -35,12 +38,12 @@ function TurnTransport (args) {
     args.turnPassword === undefined
   ) {
     var turnArgsError = 'incorrect args: turnServer and/or turnPort and/or turnUsername and/or turnPassword are undefined'
-    errorLog(turnArgsError)
+    this._log.error(turnArgsError)
     throw new Error(turnArgsError)
   }
   if (args.signaling === undefined) {
     var signalingArgsError = 'incorrect args: signaling is undefined'
-    errorLog(signalingArgsError)
+    this._log.error(signalingArgsError)
     throw new Error(signalingArgsError)
   }
   AbstractTransport.call(this)
@@ -57,7 +60,7 @@ function TurnTransport (args) {
   // accept new incoming connections
   this._acceptIncomingConnections = true
   // done
-  debugLog('created turn transport')
+  this._log.debug('created turn transport')
 }
 
 // Inherit from abstract transport
@@ -79,13 +82,13 @@ TurnTransport.prototype.listen = function (listeningInfo, onSuccess, onFailure) 
     // verify listeningInfo
     if (listeningInfo.transportType !== this.transportType()) {
       var transportTypeError = 'incorrect listeningInfo: unexpected transportType -- ignoring request'
-      errorLog(transportTypeError)
+      this._log.error(transportTypeError)
       this._error(transportTypeError, onFailure)
       return
     }
     if (listeningInfo.transportInfo === undefined) {
       var transportInfoUndefined = 'incorrect connectionInfo: transportInfo is undefined'
-      errorLog(transportInfoUndefined)
+      this._log.error(transportInfoUndefined)
       this._error(transportInfoUndefined, onFailure)
       return
     }
@@ -105,23 +108,23 @@ TurnTransport.prototype.listen = function (listeningInfo, onSuccess, onFailure) 
       self._fireListeningEvent(myConnectionInfo, onSuccess)
     })
     .catch(function (error) {
-      errorLog(error)
+      self._log.error(error)
       self._error(error, onFailure)
     })
 }
 
 TurnTransport.prototype.connect = function (peerConnectionInfo, onSuccess, onFailure) {
-  debugLog('connect to ' + JSON.stringify(peerConnectionInfo))
+  this._log.debug('connect to ' + JSON.stringify(peerConnectionInfo))
   // verify peerConnectionInfo
   if (peerConnectionInfo.transportType !== this.transportType()) {
     var transportTypeError = 'incorrect connectionInfo: unexpected transportType -- ignoring request'
-    errorLog(transportTypeError)
+    this._log.error(transportTypeError)
     this._error(transportTypeError, onFailure)
     return
   }
   if (peerConnectionInfo.transportInfo === undefined) {
     var transportInfoUndefined = 'incorrect connectionInfo: transportInfo is undefined'
-    errorLog(transportInfoUndefined)
+    this._log.error(transportInfoUndefined)
     this._error(transportInfoUndefined, onFailure)
     return
   }
@@ -143,9 +146,9 @@ TurnTransport.prototype.connect = function (peerConnectionInfo, onSuccess, onFai
       if (allocateReply.lifetime !== undefined) {
         self._allocationLifetime = allocateReply.lifetime
       }
-      debugLog('srflx address = ' + self._srflxAddress.address + ':' + self._srflxAddress.port)
-      debugLog('relay address = ' + self._relayAddress.address + ':' + self._relayAddress.port)
-      debugLog('lifetime = ' + self._allocationLifetime)
+      self._log.debug('srflx address = ' + self._srflxAddress.address + ':' + self._srflxAddress.port)
+      self._log.debug('relay address = ' + self._relayAddress.address + ':' + self._relayAddress.port)
+      self._log.debug('lifetime = ' + self._allocationLifetime)
       // start refresh interval
       self._startRefreshLoop()
       // store callbacks for later use
@@ -166,10 +169,10 @@ TurnTransport.prototype.connect = function (peerConnectionInfo, onSuccess, onFai
       return self._signaling.sendP(signalingMessage, signalingDestination)
     })
     .then(function () {
-      debugLog("'connect' message sent")
+      self._log.debug("'connect' message sent")
     })
     .catch(function (error) {
-      errorLog(error)
+      self._log.error(error)
       self._error(error, onFailure)
     })
 }
@@ -179,17 +182,17 @@ TurnTransport.prototype.blockIncomingConnections = function () {
 }
 
 TurnTransport.prototype._onSignalingMessage = function (message) {
-  debugLog('receiving signaling message ' + JSON.stringify(message))
+  this._log.debug('receiving signaling message ' + JSON.stringify(message))
   if (message.version === undefined) {
     var undefinedVersionError = 'incorrect signaling message: undefined version -- ignoring request'
-    errorLog(undefinedVersionError)
+    this._log.error(undefinedVersionError)
     this._error(undefinedVersionError)
     return
   }
   var operationType = message.operationType
   if (operationType === undefined) {
     var undefinedOperationTypeError = 'incorrect signaling message: undefined operationType -- ignoring request'
-    errorLog(undefinedOperationTypeError)
+    this._log.error(undefinedOperationTypeError)
     this._error(undefinedOperationTypeError)
     return
   }
@@ -198,7 +201,7 @@ TurnTransport.prototype._onSignalingMessage = function (message) {
       if (this._acceptIncomingConnections) {
         this._onConnectRequest(message)
       } else {
-        debugLog('not accepting new connections -- dropping connect request on the floor')
+        this._log.debug('not accepting new connections -- dropping connect request on the floor')
       }
       break
     case 'ready':
@@ -206,7 +209,7 @@ TurnTransport.prototype._onSignalingMessage = function (message) {
       break
     default:
       var unknownOperationTypeError = "incorrect signaling message: don't know how to process operationType " + operationType + ' -- ignoring request'
-      errorLog(unknownOperationTypeError)
+      this._log.error(unknownOperationTypeError)
       this._error(unknownOperationTypeError)
   }
 }
@@ -215,14 +218,14 @@ TurnTransport.prototype._onConnectRequest = function (message) {
   var connectRequest = message.operationContent
   if (connectRequest === undefined) {
     var undefinedOperationContentError = 'incorrect signaling message: undefined operationContent -- ignoring request'
-    errorLog(undefinedOperationContentError)
+    this._log.error(undefinedOperationContentError)
     this._error(undefinedOperationContentError)
     return
   }
   var sender = message.sender
   if (sender === undefined) {
     var undefinedSenderError = 'incorrect signaling message: undefined sender -- ignoring request'
-    errorLog(undefinedSenderError)
+    this._log.error(undefinedSenderError)
     this._error(undefinedSenderError)
     return
   }
@@ -235,9 +238,9 @@ TurnTransport.prototype._onConnectRequest = function (message) {
       if (allocateReply.lifetime !== undefined) {
         self._allocationLifetime = allocateReply.lifetime
       }
-      debugLog('srflx address = ' + self._srflxAddress.address + ':' + self._srflxAddress.port)
-      debugLog('relay address = ' + self._relayAddress.address + ':' + self._relayAddress.port)
-      debugLog('lifetime = ' + self._allocationLifetime)
+      self._log.debug('srflx address = ' + self._srflxAddress.address + ':' + self._srflxAddress.port)
+      self._log.debug('relay address = ' + self._relayAddress.address + ':' + self._relayAddress.port)
+      self._log.debug('lifetime = ' + self._allocationLifetime)
       // start refresh interval
       self._startRefreshLoop()
       // then create permission for peer to reach me
@@ -268,10 +271,10 @@ TurnTransport.prototype._onConnectRequest = function (message) {
       return self._signaling.sendP(signalingMessage, signalingDestination)
     })
     .then(function () {
-      debugLog("'ready' message sent")
+      self._log.debug("'ready' message sent")
     })
     .catch(function (error) {
-      errorLog(error)
+      self._log.error(error)
       self._error(error)
     })
 }
@@ -280,14 +283,14 @@ TurnTransport.prototype._onReadyMessage = function (message) {
   var connectRequest = message.operationContent
   if (connectRequest === undefined) {
     var undefinedOperationContentError = 'incorrect signaling message: undefined operationContent -- ignoring request'
-    errorLog(undefinedOperationContentError)
+    this._log.error(undefinedOperationContentError)
     this._error(undefinedOperationContentError)
     return
   }
   var sender = message.sender
   if (sender === undefined) {
     var undefinedSenderError = 'incorrect signaling message: undefined sender -- ignoring request'
-    errorLog(undefinedSenderError)
+    this._log.error(undefinedSenderError)
     this._error(undefinedSenderError)
     return
   }
@@ -308,7 +311,7 @@ TurnTransport.prototype._onReadyMessage = function (message) {
       self._fireConnectEvent(stream, self._peerConnectionInfo, self._connectOnSuccess)
     })
     .catch(function (error) {
-      errorLog(error)
+      self._log.error(error)
       self._error(error)
     })
 }
@@ -317,19 +320,19 @@ TurnTransport.prototype._startRefreshLoop = function () {
   var self = this
   // start refresh timer if allocation lifetime is specified
   if (this._allocationLifetime !== undefined) {
-    debugLog('activating refresh loop -- lifetime was set to ' + this._allocationLifetime)
+    this._log.debug('activating refresh loop -- lifetime was set to ' + this._allocationLifetime)
     this._startRefreshTimer(this._allocationLifetime)
     return
   }
   // otherwise execute refresh operation using the default TURN allocation timeout to retrieve actual lifetime
   this._turn.refreshP(TurnClient.DEFAULT_ALLOCATION_LIFETIME)
     .then(function (lifetime) {
-      debugLog('activating refresh loop -- allocation lifetime ' + lifetime)
+      self._log.debug('activating refresh loop -- allocation lifetime ' + lifetime)
       self._allocationLifetime = lifetime
       self._startRefreshTimer(self._allocationLifetime)
     })
     .catch(function (error) {
-      errorLog(error)
+      self._log.error(error)
       self._error(error)
     })
 }
@@ -339,12 +342,12 @@ TurnTransport.prototype._startRefreshTimer = function (lifetime) {
   this._refreshTimer = setInterval(function () {
     self._turn.refreshP(lifetime)
       .then(function (duration) {
-        debugLog('executed refresh operation, retrieving lifetime ' + duration)
+        self._log.debug('executed refresh operation, retrieving lifetime ' + duration)
       })
       .catch(function (error) {
         self._stopRefreshTimer()
         var errorMsg = 'error while sending TURN refresh message: ' + error
-        errorLog(errorMsg)
+        self._log.error(errorMsg)
         self._error(errorMsg)
       })
   }, lifetime * 1000 - TurnTransport.TIMEOUT_MARGIN)
@@ -359,12 +362,12 @@ TurnTransport.prototype._startCreatePermissionTimer = function (address) {
   this._createPermissionTimer = setInterval(function () {
     self._turn.createPermissionP(address)
       .then(function () {
-        debugLog('executed create permission refresh')
+        self._log.debug('executed create permission refresh')
       })
       .catch(function (error) {
         self._stopCreatePermissionTimer()
         var errorMsg = 'error while refreshing TURN permission: ' + error
-        errorLog(errorMsg)
+        self._log.error(errorMsg)
         self._error(errorMsg)
       })
   }, TurnClient.CREATE_PERMISSION_LIFETIME * 1000 - TurnTransport.TIMEOUT_MARGIN)
@@ -379,12 +382,12 @@ TurnTransport.prototype._startChannelBindTimer = function (address, port, channe
   this._channelBindTimer = setInterval(function () {
     self._turn.bindChannelP(address, port, channel)
       .then(function (channel) {
-        debugLog('executed bind channel refresh, retrieving channel ' + channel)
+        self._log.debug('executed bind channel refresh, retrieving channel ' + channel)
       })
       .catch(function (error) {
         self._stopChannelBindTimer()
         var errorMsg = 'failure while refreshing channel binding: ' + error
-        errorLog(errorMsg)
+        self._log.error(errorMsg)
         self._error(errorMsg)
       })
   }, TurnClient.CHANNEL_BINDING_LIFETIME * 1000 - TurnTransport.TIMEOUT_MARGIN)

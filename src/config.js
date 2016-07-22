@@ -1,7 +1,12 @@
 'use strict'
 
-var debug = require('debug')
-var debugLog = debug('1tp:config')
+var winston = require('winston')
+var winstonWrapper = require('winston-meta-wrapper')
+
+var _log = winstonWrapper(winston)
+_log.addMeta({
+  module: '1tp:config'
+})
 
 var turnAddr, turnPort, turnUser, turnPass, onetpRegistrar
 
@@ -13,9 +18,9 @@ try {
   turnUser = config.turn.username
   turnPass = config.turn.password
   onetpRegistrar = config.registrar
-  debugLog('config.json found, values = ' + JSON.stringify(config))
+  _log.debug('config.json found, values = ' + JSON.stringify(config))
 } catch (error) {
-  debugLog('could not find config.json')
+  _log.debug('could not find config.json')
 }
 turnAddr = (turnAddr === undefined) ? process.env.TURN_ADDR : turnAddr
 turnPort = (turnPort === undefined) ? process.env.TURN_PORT : turnPort
@@ -23,11 +28,11 @@ turnUser = (turnUser === undefined) ? process.env.TURN_USER : turnUser
 turnPass = (turnPass === undefined) ? process.env.TURN_PASS : turnPass
 onetpRegistrar = (onetpRegistrar === undefined) ? process.env.ONETP_REGISTRAR : onetpRegistrar
 
-debugLog('turnAddr = ' + turnAddr)
-debugLog('turnPort = ' + turnPort)
-debugLog('turnUser = ' + turnUser)
-debugLog('turnPass = ' + turnPass)
-debugLog('onetpRegistrar = ' + onetpRegistrar)
+_log.debug('turnAddr = ' + turnAddr)
+_log.debug('turnPort = ' + turnPort)
+_log.debug('turnUser = ' + turnUser)
+_log.debug('turnPass = ' + turnPass)
+_log.debug('onetpRegistrar = ' + onetpRegistrar)
 
 module.exports.turnAddr = turnAddr
 module.exports.turnPort = turnPort

@@ -5,20 +5,25 @@ var hat = require('hat')
 var io = require('socket.io-client')
 var merge = require('merge')
 var util = require('util')
+var winston = require('winston')
+var winstonWrapper = require('winston-meta-wrapper')
 
 var signalingType = 'websocket-signaling'
-
-var debug = require('debug')
-var debugLog = debug('1tp:transports:signaling:websocket')
-var errorLog = debug('1tp:transports:signaling:websocket:error')
 
 function WebSocketSignaling (wsOpts) {
   if (!(this instanceof WebSocketSignaling)) {
     return new WebSocketSignaling(wsOpts)
   }
+  // logging
+  this._log = winstonWrapper(winston)
+  this._log.addMeta({
+    module: '1tp:transports:signaling:websocket'
+  })
+  // init
   this._opts = merge(Object.create(WebSocketSignaling.DEFAULTS), wsOpts)
   AbstractSignaling.call(this)
-  debugLog('created websocket signaling connector with args ' + JSON.stringify(this._opts))
+  // done
+  this._log.debug('created websocket signaling connector with args ' + JSON.stringify(this._opts))
 }
 
 WebSocketSignaling.DEFAULTS = {
@@ -35,14 +40,14 @@ WebSocketSignaling.prototype.register = function (callback, requestedRegistratio
   var uid, url
   if (this._socket) {
     var onlyOneConnectionError = 'only one connection allowed -- ignoring request'
-    errorLog(onlyOneConnectionError)
+    this._log.error(onlyOneConnectionError)
     onFailure(onlyOneConnectionError)
   }
   if (requestedRegistrationInfo !== undefined) {
     // verify registration info
     if (requestedRegistrationInfo.type !== signalingType) {
       var signalingTypeError = 'incorrect registrationInfo: unexpected transportType -- ignoring request'
-      errorLog(signalingTypeError)
+      this._log.error(signalingTypeError)
       onFailure(signalingTypeError)
       return
     }
@@ -74,17 +79,17 @@ WebSocketSignaling.prototype.register = function (callback, requestedRegistratio
 WebSocketSignaling.prototype.deregister = function (registrationInfo, onSuccess, onFailure) {
   if (registrationInfo.type !== signalingType) {
     var signalingTypeError = 'incorrect destinationInfo: unexpected signaling type -- ignoring request'
-    errorLog(signalingTypeError)
+    this._log.error(signalingTypeError)
     onFailure(signalingTypeError)
   }
   if (registrationInfo.uid === undefined) {
     var signalingIdUndefinedError = 'incorrect destinationInfo: undefined uid -- ignoring request'
-    errorLog(signalingIdUndefinedError)
+    this._log.error(signalingIdUndefinedError)
     onFailure(signalingIdUndefinedError)
   }
   if (registrationInfo.uid !== this._uid) {
     var signalingIdError = 'incorrect destinationInfo: unknown uid -- ignoring request'
-    errorLog(signalingIdError)
+    this._log.error(signalingIdError)
     onFailure(signalingIdError)
   }
   // send deregistration message over socket
@@ -97,7 +102,7 @@ WebSocketSignaling.prototype.deregister = function (registrationInfo, onSuccess,
       // failure
       if (response !== '200') {
         var deregistrationError = 'deregistration failure: ' + message
-        errorLog(deregistrationError)
+        self._log.error(deregistrationError)
         onFailure(deregistrationError)
       }
       // success
@@ -111,30 +116,31 @@ WebSocketSignaling.prototype.deregister = function (registrationInfo, onSuccess,
 WebSocketSignaling.prototype.send = function (message, destinationInfo, onSuccess, onFailure) {
   if (!this._callback) {
     var notRegisteredError = 'cannot send message when socket is not registered -- ignoring request'
-    errorLog(notRegisteredError)
+    this._log.error(notRegisteredError)
     onFailure(notRegisteredError)
   }
   if (destinationInfo.type !== signalingType) {
     var signalingTypeError = 'incorrect destinationInfo: unexpected signaling type -- ignoring request'
-    errorLog(signalingTypeError)
+    this._log.error(signalingTypeError)
     onFailure(signalingTypeError)
   }
   if (destinationInfo.uid === undefined) {
     var signalingIdError = 'incorrect destinationInfo: undefined uid -- ignoring request'
-    errorLog(signalingIdError)
+    this._log.error(signalingIdError)
     onFailure(signalingIdError)
   }
   var signalingMsg = {}
   signalingMsg.content = message
   signalingMsg.to = destinationInfo.uid
-  debugLog('sending message ' + JSON.stringify(signalingMsg))
+  this._log.debug('sending message ' + JSON.stringify(signalingMsg))
+  var self = this
   this._socket.emit('signaling',
     signalingMsg,
     function (response, message) {
       // failure
       if (response !== '200') {
         var sendError = 'Send error: ' + message
-        errorLog(sendError)
+        self._log.error(sendError)
         onFailure(sendError)
       }
       // success
@@ -152,17 +158,17 @@ WebSocketSignaling.prototype.close = function (onSuccess, onFailure) {
     onSuccess()
     return
   }
-  debugLog('no connected socket found -- ignoring request')
+  this._log.debug('no connected socket found -- ignoring request')
   onSuccess()
 }
 
 WebSocketSignaling.prototype.onIncomingMessage = function () {
   var self = this
   return function (message, reply) {
-    debugLog('incoming message ' + JSON.stringify(message))
+    self._log.debug('incoming message ' + JSON.stringify(message))
     if (!self._callback) {
       var noRegisteredCallbackError = 'cannot find callback to pass message -- ignoring request'
-      errorLog(noRegisteredCallbackError)
+      self._log.error(noRegisteredCallbackError)
       throw new Error(noRegisteredCallbackError)
     }
     self._callback(message.content)
@@ -171,15 +177,16 @@ WebSocketSignaling.prototype.onIncomingMessage = function () {
 }
 
 WebSocketSignaling.prototype.onPing = function () {
+  var self = this
   return function (message) {
-    debugLog('incoming ping ' + JSON.stringify(message))
+    self._log.debug('incoming ping ' + JSON.stringify(message))
   }
 }
 
 WebSocketSignaling.prototype.onConnected = function (callback, registrationInfo, onSuccess, onFailure) {
   var self = this
   return function () {
-    debugLog('connected to ' + self._opts.url)
+    self._log.debug('connected to ' + self._opts.url)
     // send registration message over socket
     var signalingMessage = {}
     signalingMessage.username = registrationInfo.uid
@@ -189,7 +196,7 @@ WebSocketSignaling.prototype.onConnected = function (callback, registrationInfo,
         // failure
         if (response !== '200') {
           var registrationError = 'registration failure: ' + message
-          errorLog(registrationError)
+          self._log.error(registrationError)
           onFailure(registrationError)
         }
         // success
@@ -197,7 +204,7 @@ WebSocketSignaling.prototype.onConnected = function (callback, registrationInfo,
         self._uid = registrationInfo.uid
         // done
         onSuccess(registrationInfo)
-        debugLog('registration successful -- registrationInfo = ' + JSON.stringify(registrationInfo))
+        self._log.debug('registration successful -- registrationInfo = ' + JSON.stringify(registrationInfo))
       }
     )
   }
@@ -206,7 +213,7 @@ WebSocketSignaling.prototype.onConnected = function (callback, registrationInfo,
 WebSocketSignaling.prototype.onDisconnected = function () {
   var self = this
   return function () {
-    debugLog('disconnected from ' + self._opts.url)
+    self._log.debug('disconnected from ' + self._opts.url)
   }
 }
 

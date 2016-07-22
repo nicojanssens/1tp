@@ -8,10 +8,8 @@ var myUtils = require('../utils')
 var netstring = require('netstring')
 var UdpStream = require('./streams/udp')
 var util = require('util')
-
-var debug = require('debug')
-var debugLog = debug('1tp:transports:udp')
-var errorLog = debug('1tp:transports:udp:error')
+var winston = require('winston')
+var winstonWrapper = require('winston-meta-wrapper')
 
 /**
  * Udp transport
@@ -26,6 +24,12 @@ function UdpTransport (dgramOpts) {
   if (!(this instanceof UdpTransport)) {
     return new UdpTransport(dgramOpts)
   }
+  // logging
+  this._log = winstonWrapper(winston)
+  this._log.addMeta({
+    module: '1tp:transports:udp'
+  })
+  // init
   AbstractTransport.call(this)
   // create and configure dgram socket
   var opts = merge(Object.create(UdpTransport.DEFAULTS), dgramOpts)
@@ -35,7 +39,7 @@ function UdpTransport (dgramOpts) {
   // accept new incoming connections
   this._acceptIncomingConnections = true
   // done
-  debugLog('created udp transport with args ' + JSON.stringify(opts))
+  this._log.debug('created udp transport with args ' + JSON.stringify(opts))
 }
 
 // Inherit from abstract transport
@@ -60,13 +64,13 @@ UdpTransport.prototype.listen = function (listeningInfo, onSuccess, onFailure) {
     // verify listeningInfo
     if (listeningInfo.transportType !== this.transportType()) {
       var transportTypeError = 'incorrect listeningInfo: unexpected transportType -- ignoring request'
-      errorLog(transportTypeError)
+      this._log.error(transportTypeError)
       this._error(transportTypeError, onFailure)
       return
     }
     if (listeningInfo.transportInfo === undefined) {
       var transportInfoUndefined = 'incorrect connectionInfo: transportInfo is undefined'
-      errorLog(transportInfoUndefined)
+      this._log.error(transportInfoUndefined)
       this._error(transportInfoUndefined, onFailure)
       return
     }
@@ -76,7 +80,7 @@ UdpTransport.prototype.listen = function (listeningInfo, onSuccess, onFailure) {
   var self = this
   // fire up
   this._socket.bind(port, address, function () {
-    debugLog('listening on address:' + address + ', port:' + port)
+    self._log.debug('listening on address:' + address + ', port:' + port)
     // create connection info
     var myConnectionInfo = {
       transportType: self.transportType(),
@@ -111,23 +115,23 @@ UdpTransport.prototype.listen = function (listeningInfo, onSuccess, onFailure) {
 }
 
 UdpTransport.prototype.connect = function (peerConnectionInfo, onSuccess, onFailure) {
-  debugLog('connect to ' + JSON.stringify(peerConnectionInfo))
+  this._log.debug('connect to ' + JSON.stringify(peerConnectionInfo))
   // verify peerConnectionInfo
   if (peerConnectionInfo.transportType !== this.transportType()) {
     var transportTypeError = 'incorrect connectionInfo: unexpected transportType -- Ignoring request'
-    errorLog(transportTypeError)
+    this._log.error(transportTypeError)
     this._error(transportTypeError, onFailure)
     return
   }
   if (peerConnectionInfo.transportInfo === undefined) {
     var transportInfoUndefined = 'incorrect connectionInfo: transportInfo is undefined'
-    errorLog(transportInfoUndefined)
+    this._log.error(transportInfoUndefined)
     this._error(transportInfoUndefined, onFailure)
     return
   }
   if (peerConnectionInfo.transportInfo.address === undefined || peerConnectionInfo.transportInfo.port === undefined) {
     var addressError = 'incorrect connectionInfo: address and/or port attribute is undefined'
-    errorLog(addressError)
+    this._log.error(addressError)
     this._error(addressError, onFailure)
     return
   }
@@ -139,7 +143,7 @@ UdpTransport.prototype.connect = function (peerConnectionInfo, onSuccess, onFail
   this._connectOnFailure = onFailure
   this._peerConnectionInfo = peerConnectionInfo
   // init session
-  debugLog('send SYN packet for udp session ' + stream._sessionId)
+  this._log.debug('send SYN packet for udp session ' + stream._sessionId)
   stream._sendSignalingMessage(UdpStream.PACKET.SYN)
 }
 
@@ -162,12 +166,12 @@ UdpTransport.prototype._createDgramSocket = function (dgramOpts) {
   this._socket = dgram.createSocket(dgramOpts)
   this._socket.on('message', this._onMessage())
   this._socket.on('close', function () {
-    debugLog('udp socket closed')
+    self._log.debug('udp socket closed')
   // TODO
   })
   var self = this
   this._socket.on('error', function (error) {
-    errorLog(error)
+    self._log.error(error)
     self._error(error)
   // TODO
   })
@@ -179,7 +183,7 @@ UdpTransport.prototype._onMessage = function () {
     var message = _parse(bytes)
     if (message.version === undefined) {
       var undefinedVersionError = 'incorrect signaling message: undefined version -- ignoring request'
-      errorLog(undefinedVersionError)
+      this._log.error(undefinedVersionError)
       this._error(undefinedVersionError)
       return
     }
@@ -205,20 +209,20 @@ UdpTransport.prototype._onMessage = function () {
 UdpTransport.prototype._processIncomingDgram = function (message) {
   switch (message.type) {
     case UdpStream.PACKET.SYN:
-      debugLog('incoming SYN packet')
+      this._log.debug('incoming SYN packet')
       // if transport is not close -- i.e. it accepts incoming connections
       if (this._acceptIncomingConnections) {
         // send syn-ack
         var stream = this._streams[message.sessionId]
-        debugLog('send SYN ACK for udp session ' + stream._sessionId)
+        this._log.debug('send SYN ACK for udp session ' + stream._sessionId)
         stream._sendSignalingMessage(UdpStream.PACKET.SYN_ACK)
       } else {
-        debugLog('not accepting new connections -- dropping SYN on the floor')
+        this._log.debug('not accepting new connections -- dropping SYN on the floor')
       }
       // done
       break
     case UdpStream.PACKET.SYN_ACK:
-      debugLog('incoming SYN-ACK packet')
+      this._log.debug('incoming SYN-ACK packet')
       // fire connect event
       var stream = this._streams[message.sessionId]
       var peerConnectionInfo = this._peerConnectionInfo
@@ -227,13 +231,13 @@ UdpTransport.prototype._processIncomingDgram = function (message) {
       // done
       break
     case UdpStream.PACKET.DATA:
-      debugLog('incoming DATA packet')
+      this._log.debug('incoming DATA packet')
       // write message to stream
       this._streams[message.sessionId].push(message.data)
       // done
       break
     case UdpStream.PACKET.FIN:
-      debugLog('incoming FIN packet')
+      this._log.debug('incoming FIN packet')
       // send end of the stream (EOF)
       this._streams[message.sessionId].push(null)
       // deregister stream
@@ -241,7 +245,7 @@ UdpTransport.prototype._processIncomingDgram = function (message) {
       // done
       break
     case UdpStream.PACKET.RST:
-      debugLog('incoming RST packet')
+      this._log.debug('incoming RST packet')
       // destroy stream
       this._streams[message.sessionId]._destroy()
       // deregister stream
@@ -250,7 +254,7 @@ UdpTransport.prototype._processIncomingDgram = function (message) {
       break
     default:
       var errorMsg = "don't know how to process message type " + message.type + ' -- dropping message on the floor'
-      errorLog(errorMsg)
+      this._log.error(errorMsg)
       this._error(errorMsg)
   }
 }
@@ -264,7 +268,7 @@ UdpTransport.prototype._createUdpStream = function (peerAddress, streamId) {
   // create new UpdStream
   var stream = new UdpStream(peerAddress, streamId, this._socket, this.version())
   this._streams[stream._sessionId] = stream
-  debug('created new stream for ' + JSON.stringify(peerAddress))
+  this._log.debug('created new stream for ' + JSON.stringify(peerAddress))
   return stream
 }
 

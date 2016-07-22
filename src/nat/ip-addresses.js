@@ -1,12 +1,16 @@
 'use strict'
 
-var debug = require('debug')
-var debugLog = debug('1tp:nat:ip-addresses')
-var errorLog = debug('1tp:nat:ip-addresses:error')
 var publicIp = require('public-ip')
 var net = require('net')
 var os = require('os')
 var Q = require('q')
+var winston = require('winston')
+var winstonWrapper = require('winston-meta-wrapper')
+
+var _log = winstonWrapper(winston)
+_log.addMeta({
+  module: '1tp:nat:ip-addresses'
+})
 
 function getLocalIpAddress (onSuccess, onFailure) {
   var socket = net.createConnection(80, 'www.google.com')
@@ -23,11 +27,11 @@ function getLocalIpAddressP () {
   var deferred = Q.defer()
   getLocalIpAddress(
     function (address) {
-      debugLog('found private active IP network address ' + address)
+      _log.debug('found private active IP network address ' + address)
       deferred.resolve(address)
     },
     function (error) {
-      errorLog('could not find private active IP network address.' + error)
+      _log.error('could not find private active IP network address.' + error)
       deferred.reject(error)
     }
   )
@@ -36,14 +40,14 @@ function getLocalIpAddressP () {
 
 // returns node's public IP address -- i.e. address visible beyond the latest GW
 function getPublicIpAddressP () {
-  debugLog('get public IP address request')
+  _log.debug('get public IP address request')
   var deferred = Q.defer()
   publicIp(function (error, ip) {
     if (error) {
-      errorLog('could not determine public IP address. ' + error)
+      _log.error('could not determine public IP address. ' + error)
       deferred.reject(error)
     } else {
-      debugLog('retrieved public IP address ' + ip)
+      _log.debug('retrieved public IP address ' + ip)
       deferred.resolve(ip)
     }
   })
