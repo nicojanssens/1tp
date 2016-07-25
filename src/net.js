@@ -35,7 +35,7 @@ var Server = function () {
   var transports = arguments[0]
   if (transports === undefined || typeof transports !== 'object') {
     this._log.debug('no transports defined, using default configuration')
-    transports = getDefaultTransports()
+    transports = _getDefaultTransports()
   }
   // last optional argument -> callback
   var connectionListener = arguments[arguments.length - 1]
@@ -157,7 +157,7 @@ var Socket = function (transports) {
   // verify transports
   if (transports === undefined) {
     this._log.debug('no transports defined, using default configuration')
-    transports = getDefaultTransports()
+    transports = _getDefaultTransports()
   }
   // create array if single elem
   this._transports = Array.isArray(transports) ? transports : [transports]
@@ -171,7 +171,7 @@ var Socket = function (transports) {
 
 inherits(Socket, ProxyStream)
 
-Socket.prototype.connect = function (connectionInfo, connectionListener) {
+Socket.prototype.connect = function (connectionInfo, connectListener) {
   // verify if connectionInfo is defined
   if (connectionInfo === undefined) {
     var connectionInfoUndefinedError = 'incorrect args: connectionInfo is undefined'
@@ -179,8 +179,8 @@ Socket.prototype.connect = function (connectionInfo, connectionListener) {
     this._error(connectionInfoUndefinedError)
   }
   // register connectionListener -- if this is a function
-  if (typeof connectionListener === 'function') {
-    this.once('connect', connectionListener)
+  if (typeof connectListener === 'function') {
+    this.once('connect', connectListener)
   }
   // create array of connection infos
   connectionInfo = Array.isArray(connectionInfo) ? connectionInfo : [connectionInfo]
@@ -271,7 +271,7 @@ var createServer = function () {
   var transports = arguments[0]
   if (transports === undefined || typeof transports !== 'object') {
     _log.debug('no transports defined, using default configuration')
-    transports = getDefaultTransports()
+    transports = _getDefaultTransports()
   }
   // last optional argument -> callback
   var connectionListener = arguments[arguments.length - 1]
@@ -290,13 +290,13 @@ var createConnection = function () {
   var transports = arguments[1]
   if (transports === undefined || typeof transports !== 'object') {
     _log.debug('no transports defined, using default configuration')
-    transports = getDefaultTransports()
+    transports = _getDefaultTransports()
   }
   // last optional argument -> callback
-  var connectionListener = arguments[arguments.length - 1]
+  var connectListener = arguments[arguments.length - 1]
   // create socket and init connection handshake
   var socket = new Socket(transports)
-  socket.connect(connectionInfo, connectionListener)
+  socket.connect(connectionInfo, connectListener)
   // done
   return socket
 }
@@ -316,7 +316,7 @@ var _createConnectTimeoutPromise = function (transportSpecs) {
   return connectTimeoutPromise
 }
 
-var getDefaultTransports = function () {
+var _getDefaultTransports = function () {
   var transports = []
   transports.push(new UdpTransport())
   transports.push(new TcpTransport())
