@@ -1,0 +1,9 @@
+{
+  "turn": {
+    "addr": "ADDR",
+    "port": "PORT",
+    "username": "USER",
+    "password": "PASS"
+  },
+  "registrar": "http://onetp-server/"
+}
