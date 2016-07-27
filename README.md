@@ -169,17 +169,17 @@ Not implemented yet.
 ### `var socket = new Socket([transports])`
 Create a new 1tp socket (client) object.
 
-The optional `transports` argument specifies which transport  protocols this socket should use to establish a connection with a 1tp server. See above for more details about the specification of these transport protocols.
+The optional `transports` argument specifies which transport protocols this socket should use to establish a connection with a 1tp server. See above for more details about the specification of these transport protocols.
 
 ### `socket.connect(connectionInfo[, connectListener])`
 Setup a connection with a 1tp server.
 
-The `connectionInfo` argument specifies the end-point to connect with. As specified above, this `connectionInfo` is an array of transport specific endpoint information.
+The `connectionInfo` argument specifies the 1tp server to connect with. As specified above, this `connectionInfo` object is a collection of transport specific endpoint information.
 
 The optional `connectListener` argument is automatically set as a listener for the `connect` event.
 
 ### `socket.isConnected()`
-Returns true if one of the transport protocols manages to establish a connection with a 1tp server.
+Returns true if one of the transport protocols has established a connection with a 1tp server.
 
 ### `socket.destroy()`
 Not implemented yet.
@@ -205,6 +205,19 @@ The `connectionInfo` argument specifies the end-point to connect with. As specif
 The optional `transports` argument specifies which transport  protocols this socket should use to establish a connection with a 1tp server. See above for more details about the specification of these transport protocols.
 
 The optional `connectListener` argument is automatically set as a listener for the `connect` event.
+
+## Events
+
+### `server.on('connection', function(socket) {})`
+Emitted when a new connection is made. `socket` is an instance of `net.Socket`.
+
+### `server.on('listening', function() {})`
+Emitted once all registered transport protocols are accepting connections after calling `server.listen`.
+
+### `server.on('error', function(error) {})`
+Emitted when an error occurs.  
+
+
 
 ## Examples
 See examples directory.
