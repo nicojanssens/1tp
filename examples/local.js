@@ -49,7 +49,6 @@ onetpServer.on('listening', function () {
   onetpClient.on('data', function (data) {
     console.log(data.toString())
   })
-
 })
 // launch server
 onetpServer.listen()
