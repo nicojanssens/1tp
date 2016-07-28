@@ -3,6 +3,7 @@
 var Duplex = require('stream').Duplex
 var inherits = require('util').inherits
 var PassThrough = require('stream').PassThrough
+var timers = require('timers')
 var winston = require('winston')
 var winstonWrapper = require('winston-meta-wrapper')
 
@@ -48,6 +49,7 @@ ProxyStream.prototype.connectStream = function (stream) {
 }
 
 ProxyStream.prototype._read = function (size) {
+  this._unrefTimer()
   this._readFromInboundPassThrough(size)
 }
 
@@ -67,6 +69,7 @@ ProxyStream.prototype._write = function (chunk, encoding, done) {
     this._log.error(noStreamError)
     throw new Error(noStreamError)
   }
+  this._unrefTimer()
   this._outboundPassThrough.write(chunk, encoding, done)
 }
 
@@ -81,6 +84,39 @@ ProxyStream.prototype.end = function () {
 ProxyStream.prototype._end = function () {
   // end writestream
   ProxyStream.super_.prototype.end.call(this)
+}
+
+// TODO: implement destroy functionality
+ProxyStream.prototype._destroy = function () {
+  for (var s = this; s !== null; s = s._parent) {
+    timers.unenroll(s)
+  }
+}
+
+/** timer usage is heavily inspired by https://github.com/nodejs/node/blob/master/lib/net.js */
+ProxyStream.prototype.setTimeout = function (msecs, callback) {
+  if (msecs === 0) {
+    timers.unenroll(this)
+    if (callback) {
+      this.removeListener('timeout', callback)
+    }
+  } else {
+    timers.enroll(this, msecs)
+    timers._unrefActive(this)
+    if (callback) {
+      this.once('timeout', callback)
+    }
+  }
+  return this
+}
+
+ProxyStream.prototype._onTimeout = function () {
+  this._log.debug('timeout')
+  this.emit('timeout')
+}
+
+ProxyStream.prototype._unrefTimer = function unrefTimer () {
+  timers._unrefActive(this)
 }
 
 module.exports = ProxyStream

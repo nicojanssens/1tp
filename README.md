@@ -187,6 +187,13 @@ Not implemented yet.
 ### `socket.end()`
 Not implemented yet.
 
+### `socket.setTimeout(timeout[, callback])`
+Sets the socket to timeout after `timeout` milliseconds of inactivity. The socket then fires a `timeout` event.  
+
+If `timeout` is 0, then the existing idle timeout is disabled.
+
+The optional `callback` is automatically set as a one time listener for the `timeout` event.
+
 ### `socket.write(data[, encoding][, callback])`
 Send data on the socket.
 
@@ -212,7 +219,7 @@ The optional `connectListener` argument is automatically set as a listener for t
 Emitted when a socket connection is successfully established -- i.e. one of the transport protocols has established a connection with a 1tp server.
 
 ### `server.on('connection', function(socket) {})`
-Emitted when a new connection is made. `socket` is an instance of `net.Socket`.
+Emitted when a new connection is made. `socket` is an instance of 1tp's `net.Socket`.
 
 ### `server.on('error', function(error) {})`
 Emitted when an error occurs.  
@@ -231,6 +238,9 @@ Emitted when the connected socket has ended its write stream. WiP.
 
 ### `socket.on('error', function(error) {})`
 Emitted when an error occurs.
+
+### `socket.on('timeout', function() {})`
+Emitted if the socket times out from inactivity -- notifying that the socket has been idle.
 
 ## Examples
 See examples directory.
