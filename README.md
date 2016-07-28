@@ -52,7 +52,7 @@ serverTransports.push(new TurnTransport({
   turnPassword: PASSWORD,
   //signaling: localSignaling,
   signaling: new WebSocketSignaling({
-    url: ONETP-REGISTRAR
+    url: ONETP_REGISTRAR
   })
 }))
 // create server instance
@@ -75,7 +75,7 @@ onetpServer.on('listening', function () {
     turnPassword: PASSWORD,
     //signaling: localSignaling,
     signaling: new WebSocketSignaling({
-      url: ONETP-REGISTRAR
+      url: ONETP_REGISTRAR
     })
   }))
   //
