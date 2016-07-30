@@ -207,13 +207,14 @@ UdpTransport.prototype._onMessage = function () {
 }
 
 UdpTransport.prototype._processIncomingDgram = function (message) {
+  var stream
   switch (message.type) {
     case UdpStream.PACKET.SYN:
       this._log.debug('incoming SYN packet')
       // if transport is not close -- i.e. it accepts incoming connections
       if (this._acceptIncomingConnections) {
         // send syn-ack
-        var stream = this._streams[message.sessionId]
+        stream = this._streams[message.sessionId]
         this._log.debug('send SYN ACK for udp session ' + stream._sessionId)
         stream._sendSignalingMessage(UdpStream.PACKET.SYN_ACK)
       } else {
@@ -224,7 +225,7 @@ UdpTransport.prototype._processIncomingDgram = function (message) {
     case UdpStream.PACKET.SYN_ACK:
       this._log.debug('incoming SYN-ACK packet')
       // fire connect event
-      var stream = this._streams[message.sessionId]
+      stream = this._streams[message.sessionId]
       var peerConnectionInfo = this._peerConnectionInfo
       var onSuccess = this._connectOnSuccess
       this._fireConnectEvent(stream, peerConnectionInfo, onSuccess)
