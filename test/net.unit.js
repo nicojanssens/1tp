@@ -134,7 +134,9 @@ describe('net api', function () {
     var transports = []
     transports.push(new UdpTransport())
     transports.push(new TcpTransport())
-    var server = new Server(transports)
+    var server = new Server({
+      transports: transports
+    })
     var registrationInfo = [{
       transportType: 'udp',
       transportInfo: {
