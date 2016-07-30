@@ -26,7 +26,11 @@ var Server = function (options) {
   if (!(this instanceof Server)) {
     return new Server(options)
   }
-  if (!options) {
+  var connectionListener
+  if (!options && typeof options !== 'function') {
+    options = {}
+  } else if (typeof options === 'function') {
+    connectionListener = options
     options = {}
   }
   // logging
@@ -44,7 +48,9 @@ var Server = function (options) {
     transports = _getDefaultTransports()
   }
   // last optional argument -> callback
-  var connectionListener = arguments[arguments.length - 1]
+  if (!connectionListener) {
+    connectionListener = arguments[arguments.length - 1]
+  }
   // register connectionListener -- if this is a function
   if (typeof connectionListener === 'function') {
     this.once('connection', connectionListener)
