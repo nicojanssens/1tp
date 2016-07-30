@@ -111,7 +111,7 @@ Server.prototype.address = function () {
 }
 
 Server.prototype.close = function () {
-  transports.forEach(function (transport) {
+  this.transports.forEach(function (transport) {
     transport.blockIncomingConnections()
   })
 }
