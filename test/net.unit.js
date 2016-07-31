@@ -37,10 +37,14 @@ describe('net api', function () {
         turnProtocol: new TurnProtocols.TCP(),
         turnUsername: turnUser,
         turnPassword: turnPwd,
-        signaling: new WebSocketSignaling({url: registrar})
+        signaling: new WebSocketSignaling({
+          url: registrar
+        })
       })
     )
-    var server = new Server(transports)
+    var server = new Server({
+      transports: transports
+    })
     server.listen(function () {
       expect(server.address()).to.not.be.undefined
       done()
@@ -58,7 +62,9 @@ describe('net api', function () {
   it('should bind new server using UDP -- no callback', function (done) {
     var transports = []
     transports.push(new UdpTransport())
-    var server = new Server(transports)
+    var server = new Server({
+      transports: transports
+    })
     server.on('listening', function () {
       expect(server.address()).to.not.be.undefined
       done()
@@ -70,7 +76,9 @@ describe('net api', function () {
     var transports = []
     transports.push(new UdpTransport())
     transports.push(new TcpTransport())
-    var server = new Server(transports)
+    var server = new Server({
+      transports: transports
+    })
     var registrationInfo = [{
       transportType: 'udp',
       transportInfo: {
@@ -100,7 +108,9 @@ describe('net api', function () {
     var transports = []
     transports.push(new UdpTransport())
     transports.push(new TcpTransport())
-    var server = new Server(transports)
+    var server = new Server({
+      transports: transports
+    })
     var registrationInfo = [{
       transportType: 'udp',
       transportInfo: {
@@ -124,7 +134,9 @@ describe('net api', function () {
     var transports = []
     transports.push(new UdpTransport())
     transports.push(new TcpTransport())
-    var server = new Server(transports)
+    var server = new Server({
+      transports: transports
+    })
     var registrationInfo = [{
       transportType: 'udp',
       transportInfo: {

@@ -22,23 +22,35 @@ _log.addMeta({
 
 // Server class
 
-var Server = function () {
+var Server = function (options) {
   if (!(this instanceof Server)) {
-    return new Server()
+    return new Server(options)
+  }
+  var connectionListener
+  if (!options && typeof options !== 'function') {
+    options = {}
+  } else if (typeof options === 'function') {
+    connectionListener = options
+    options = {}
   }
   // logging
-  this._log = winstonWrapper(winston)
+  if (!options.logger) {
+    options.logger = winston
+  }
+  this._log = winstonWrapper(options.logger)
   this._log.addMeta({
     module: '1tp:net:server'
   })
   // first optional argument -> transports
-  var transports = arguments[0]
+  var transports = options.transports
   if (transports === undefined || typeof transports !== 'object') {
     this._log.debug('no transports defined, using default configuration')
     transports = _getDefaultTransports()
   }
   // last optional argument -> callback
-  var connectionListener = arguments[arguments.length - 1]
+  if (!connectionListener) {
+    connectionListener = arguments[arguments.length - 1]
+  }
   // register connectionListener -- if this is a function
   if (typeof connectionListener === 'function') {
     this.once('connection', connectionListener)
@@ -111,7 +123,7 @@ Server.prototype.address = function () {
 }
 
 Server.prototype.close = function () {
-  transports.forEach(function (transport) {
+  this.transports.forEach(function (transport) {
     transport.blockIncomingConnections()
   })
 }
@@ -145,22 +157,29 @@ Server.prototype._onIncomingConnection = function () {
 
 // Socket class
 
-var Socket = function (transports) {
+var Socket = function (options) {
   if (!(this instanceof Socket)) {
-    return new Socket(transports)
+    return new Socket(options)
   }
+  if (!options) {
+    options = {}
+  }
+
   // logging
-  this._log = winstonWrapper(winston)
+  if (!options.logger) {
+    options.logger = winston
+  }
+  this._log = winstonWrapper(options.logger)
   this._log.addMeta({
     module: '1tp:net:socket'
   })
   // verify transports
-  if (transports === undefined) {
+  if (options.transports === undefined) {
     this._log.debug('no transports defined, using default configuration')
-    transports = _getDefaultTransports()
+    options.transports = _getDefaultTransports()
   }
   // create array if single elem
-  this._transports = Array.isArray(transports) ? transports : [transports]
+  this._transports = Array.isArray(options.transports) ? options.transports : [options.transports]
   // init proxy stream
   ProxyStream.call(this)
   // register _error handler

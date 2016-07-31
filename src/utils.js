@@ -48,7 +48,7 @@ var timeoutResolvePromise = function (promise, ms, callback) {
     clearTimeout(timeoutId)
     deferred.resolve(value)
   // when target promise fails
-  }).catch(function (error) {
+  }).catch(function (errorObject) {
     // remove timer and resolve this promise without args
     clearTimeout(timeoutId)
     deferred.resolve()
