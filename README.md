@@ -114,7 +114,7 @@ The `transports` argument specifies an optional array of transport protocols thi
 
 When creating a server instance without specifying which transports to use, 1tp
   * always activates TCP and UDP transports, and
-  * activates TURN if environment variables `TURN_ADDR`, `TURN_PORT`, `TURN_USER`, `TURN_PASS` and `ONETP_REGISTRAR` are all set OR if config.json is present (the structure of this file is defined in config.json.template)  
+  * activates TURN if environment variables `TURN_ADDR`, `TURN_PORT`, `TURN_USER`, `TURN_PASS` and `ONETP_REGISTRAR` are all set ~~OR if config.json is present (the structure of this file is defined in config.json.template)~~  
 
 ### `server.listen([listeningInfo][, callback])`
 Instruct the 1tp server to begin accepting connections.

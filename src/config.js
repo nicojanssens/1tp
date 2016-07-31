@@ -11,17 +11,18 @@ _log.addMeta({
 var turnAddr, turnPort, turnUser, turnPass, onetpRegistrar
 
 // check if config.json can be found, and parse it's values
-try {
-  var config = require('../config.json')
-  turnAddr = config.turn.addr
-  turnPort = config.turn.port
-  turnUser = config.turn.username
-  turnPass = config.turn.password
-  onetpRegistrar = config.registrar
-  _log.debug('config.json found, values = ' + JSON.stringify(config))
-} catch (error) {
-  _log.debug('could not find config.json')
-}
+/** tmp removed to avoid issues with browserify when config file is missing -- see issue #13 */
+// try {
+//   var config = require('../config.json')
+//   turnAddr = config.turn.addr
+//   turnPort = config.turn.port
+//   turnUser = config.turn.username
+//   turnPass = config.turn.password
+//   onetpRegistrar = config.registrar
+//   _log.debug('config.json found, values = ' + JSON.stringify(config))
+// } catch (error) {
+//   _log.debug('could not find config.json')
+// }
 turnAddr = (turnAddr === undefined) ? process.env.TURN_ADDR : turnAddr
 turnPort = (turnPort === undefined) ? process.env.TURN_PORT : turnPort
 turnUser = (turnUser === undefined) ? process.env.TURN_USER : turnUser
