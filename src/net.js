@@ -22,35 +22,23 @@ _log.addMeta({
 
 // Server class
 
-var Server = function (options) {
+var Server = function () {
   if (!(this instanceof Server)) {
-    return new Server(options)
-  }
-  var connectionListener
-  if (!options && typeof options !== 'function') {
-    options = {}
-  } else if (typeof options === 'function') {
-    connectionListener = options
-    options = {}
+    return new Server()
   }
   // logging
-  if (!options.logger) {
-    options.logger = winston
-  }
-  this._log = winstonWrapper(options.logger)
+  this._log = winstonWrapper(winston)
   this._log.addMeta({
     module: '1tp:net:server'
   })
   // first optional argument -> transports
-  var transports = options.transports
+  var transports = arguments[0]
   if (transports === undefined || typeof transports !== 'object') {
     this._log.debug('no transports defined, using default configuration')
     transports = _getDefaultTransports()
   }
   // last optional argument -> callback
-  if (!connectionListener) {
-    connectionListener = arguments[arguments.length - 1]
-  }
+  var connectionListener = arguments[arguments.length - 1]
   // register connectionListener -- if this is a function
   if (typeof connectionListener === 'function') {
     this.once('connection', connectionListener)
@@ -157,29 +145,22 @@ Server.prototype._onIncomingConnection = function () {
 
 // Socket class
 
-var Socket = function (options) {
+var Socket = function (transports) {
   if (!(this instanceof Socket)) {
-    return new Socket(options)
+    return new Socket(transports)
   }
-  if (!options) {
-    options = {}
-  }
-
   // logging
-  if (!options.logger) {
-    options.logger = winston
-  }
-  this._log = winstonWrapper(options.logger)
+  this._log = winstonWrapper(winston)
   this._log.addMeta({
     module: '1tp:net:socket'
   })
   // verify transports
-  if (options.transports === undefined) {
+  if (transports === undefined) {
     this._log.debug('no transports defined, using default configuration')
-    options.transports = _getDefaultTransports()
+    transports = _getDefaultTransports()
   }
   // create array if single elem
-  this._transports = Array.isArray(options.transports) ? options.transports : [options.transports]
+  this._transports = Array.isArray(transports) ? transports : [transports]
   // init proxy stream
   ProxyStream.call(this)
   // register _error handler
@@ -295,6 +276,9 @@ var createServer = function () {
   // last optional argument -> callback
   var connectionListener = arguments[arguments.length - 1]
   // create new server instance
+  var options = {
+    transports: transports,
+  }
   return new Server(transports, connectionListener)
 }
 

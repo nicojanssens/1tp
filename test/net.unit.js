@@ -42,9 +42,7 @@ describe('net api', function () {
         })
       })
     )
-    var server = new Server({
-      transports: transports
-    })
+    var server = new Server(transports)
     server.listen(function () {
       expect(server.address()).to.not.be.undefined
       done()
@@ -62,9 +60,7 @@ describe('net api', function () {
   it('should bind new server using UDP -- no callback', function (done) {
     var transports = []
     transports.push(new UdpTransport())
-    var server = new Server({
-      transports: transports
-    })
+    var server = new Server(transports)
     server.on('listening', function () {
       expect(server.address()).to.not.be.undefined
       done()
@@ -76,9 +72,7 @@ describe('net api', function () {
     var transports = []
     transports.push(new UdpTransport())
     transports.push(new TcpTransport())
-    var server = new Server({
-      transports: transports
-    })
+    var server = new Server(transports)
     var registrationInfo = [{
       transportType: 'udp',
       transportInfo: {
@@ -108,9 +102,7 @@ describe('net api', function () {
     var transports = []
     transports.push(new UdpTransport())
     transports.push(new TcpTransport())
-    var server = new Server({
-      transports: transports
-    })
+    var server = new Server(transports)
     var registrationInfo = [{
       transportType: 'udp',
       transportInfo: {
@@ -134,9 +126,7 @@ describe('net api', function () {
     var transports = []
     transports.push(new UdpTransport())
     transports.push(new TcpTransport())
-    var server = new Server({
-      transports: transports
-    })
+    var server = new Server(transports)
     var registrationInfo = [{
       transportType: 'udp',
       transportInfo: {
