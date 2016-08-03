@@ -27,10 +27,7 @@ var Server = function () {
     return new Server()
   }
   // logging
-  this._log = winstonWrapper(winston)
-  this._log.addMeta({
-    module: '1tp:net:server'
-  })
+  this.setLogger(winston)
   // first optional argument -> transports
   var transports = arguments[0]
   if (transports === undefined || typeof transports !== 'object') {
@@ -57,6 +54,13 @@ var Server = function () {
 
 // Inherit EventEmitter
 inherits(Server, events.EventEmitter)
+
+Server.prototype.setLogger = function (logger) {
+  this._log = winstonWrapper(logger)
+  this._log.addMeta({
+    module: '1tp:net:server'
+  })
+}
 
 Server.prototype.listen = function () {
   // first optional argument -> listeningInfo
@@ -150,10 +154,7 @@ var Socket = function (transports) {
     return new Socket(transports)
   }
   // logging
-  this._log = winstonWrapper(winston)
-  this._log.addMeta({
-    module: '1tp:net:socket'
-  })
+  this.setLogger(winston)
   // verify transports
   if (transports === undefined) {
     this._log.debug('no transports defined, using default configuration')
@@ -170,6 +171,13 @@ var Socket = function (transports) {
 }
 
 inherits(Socket, ProxyStream)
+
+Socket.prototype.setLogger = function (logger) {
+  this._log = winstonWrapper(logger)
+  this._log.addMeta({
+    module: '1tp:net:socket'
+  })
+}
 
 Socket.prototype.connect = function (connectionInfo, connectListener) {
   // verify if connectionInfo is defined
