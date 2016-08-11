@@ -11,6 +11,7 @@ Goal of 1tp is to offer a single solution for connecting any two available endpo
 - stream based API, highly inspired by node's net API
 - current version includes UDP, TCP and TURN connectors -- extending UDP with hole punching + integrating other transports such as WebRTC, websockets, GCM and tor is WiP.
 - connection setup mechanism tries to select the 'cheapest' transport
+- can be browserified (to be used in chrome apps)
 
 ## Install
 
