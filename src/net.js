@@ -285,9 +285,6 @@ var createServer = function () {
   // last optional argument -> callback
   var connectionListener = arguments[arguments.length - 1]
   // create new server instance
-  var options = {
-    transports: transports
-  }
   return new Server(transports, connectionListener)
 }
 
