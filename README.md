@@ -1,4 +1,5 @@
 [![CircleCI](https://circleci.com/gh/MicroMinion/1tp.svg?style=shield)](https://circleci.com/gh/MicroMinion/1tp)
+[![npm](https://img.shields.io/npm/v/1tp.svg)](https://npmjs.org/package/1tp)
 
 # 1tp
 One transport protocol to rule them all -- offering net socket abstraction on top of various communication protocols
