@@ -2,7 +2,7 @@
 
 var turn = require('turn-js')
 var TurnTransports = turn.transports
-var TurnStream = require('../../src/transports/streams/turn')
+var TurnStream = require('../../lib/transports/streams/turn')
 
 var chai = require('chai')
 var expect = chai.expect

@@ -1,7 +1,7 @@
 'use strict'
 
 var events = require('events')
-var myUtils = require('../src/utils')
+var myUtils = require('../lib/utils')
 var Q = require('q')
 var util = require('util')
 

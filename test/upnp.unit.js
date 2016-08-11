@@ -1,7 +1,7 @@
 'use strict'
 
-var ipAddresses = require('../src/nat/ip-addresses')
-var upnp = require('../src/nat/upnp')
+var ipAddresses = require('../lib/nat/ip-addresses')
+var upnp = require('../lib/nat/upnp')
 var yn = require('yn')
 
 var chai = require('chai')

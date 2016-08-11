@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
-  transports: require('./src/transports/index.js'),
-  net: require('./src/net.js'),
-  signaling: require('./src/signaling/index.js')
+  transports: require('./lib/transports/index.js'),
+  net: require('./lib/net.js'),
+  signaling: require('./lib/signaling/index.js')
 }

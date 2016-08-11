@@ -1,16 +1,16 @@
 'use strict'
 
-var net = require('../src/net')
+var net = require('../lib/net')
 var Server = net.Server
 var Socket = net.Socket
 
-var onetpTransports = require('../src/transports')
+var onetpTransports = require('../lib/transports')
 var TcpTransport = onetpTransports.tcp
 var TurnTransport = onetpTransports.turn
 var UdpTransport = onetpTransports.udp
 var TurnProtocols = require('turn-js').transports
 
-var WebSocketSignaling = require('../src/signaling').websocket
+var WebSocketSignaling = require('../lib/signaling').websocket
 
 var chai = require('chai')
 var expect = chai.expect

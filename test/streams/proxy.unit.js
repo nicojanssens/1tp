@@ -1,7 +1,7 @@
 'use strict'
 
 var PassThrough = require('stream').PassThrough
-var ProxyStream = require('../../src/stream')
+var ProxyStream = require('../../lib/stream')
 
 var chai = require('chai')
 var expect = chai.expect
