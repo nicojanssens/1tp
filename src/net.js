@@ -263,7 +263,8 @@ Socket.prototype.isConnected = function () {
 Socket.prototype.destroy = function () {
   var errorMsg = 'socket.destroy function not yet implemented'
   this._log.error(errorMsg)
-// this._error(errorMsg)
+  // this._error(errorMsg)
+  this.emit('close')
 }
 
 Socket.prototype.end = function () {
@@ -285,7 +286,7 @@ var createServer = function () {
   var connectionListener = arguments[arguments.length - 1]
   // create new server instance
   var options = {
-    transports: transports,
+    transports: transports
   }
   return new Server(transports, connectionListener)
 }
