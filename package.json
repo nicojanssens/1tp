@@ -1,6 +1,6 @@
 {
   "name": "1tp",
-  "version": "0.5.2",
+  "version": "0.5.1",
   "description": "One transport protocol to rule them all -- offering a net-like stream API on top of various communication protocols",
   "main": "index.js",
   "keywords": [
@@ -25,7 +25,14 @@
   "engines": {
     "node": ">=4.0.0"
   },
+  "browser": {
+    "dgram": "chrome-dgram",
+    "net": "chrome-net",
+    "winston": "./lib/logger"
+  },
   "dependencies": {
+    "chrome-dgram": "^3.0.0",
+    "chrome-net": "^3.3.0",
     "hat": "0.0.3",
     "merge": "^1.2.0",
     "nat-upnp": "^1.0.0",
@@ -54,7 +61,10 @@
     "url": "git://github.com/microminion/1tp.git"
   },
   "scripts": {
-    "2npm": "publish",
-    "test": "./node_modules/.bin/mocha test/*.unit.js test/streams/*.unit.js"
+    "build": "browserify -s OneTP -e ./ | uglifyjs -c warnings=false -m > 1tp.min.js",
+    "build-debug": "browserify -s OneTP -e ./ > 1tp.debug.js",
+    "size": "npm run build && cat 1tp.min.js | gzip | wc -c",
+    "test-node": "./node_modules/.bin/mocha test/*.unit.js test/streams/*.unit.js",
+    "2npm": "publish"
   }
 }
