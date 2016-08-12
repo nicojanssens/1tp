@@ -27,9 +27,7 @@
   },
   "browser": {
     "dgram": "chrome-dgram",
-    "nat-upnp": false,
     "net": "chrome-net",
-    "public-ip": false,
     "winston": "./lib/logger"
   },
   "dependencies": {
