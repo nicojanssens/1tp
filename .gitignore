@@ -1,3 +1,4 @@
 node_modules
 config.json
 test/all*.sh
+test/browserify/chrome-app/bundle.js
