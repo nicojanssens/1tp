@@ -1,0 +1,31 @@
+{
+  "manifest_version": 2,
+
+  "name": "1tp test",
+  "description": "1tp test",
+  "version": "0.1.0",
+
+  "app": {
+    "background": {
+      "scripts": ["background.js"]
+    }
+  },
+
+  "permissions": [
+    "*://*/*"
+  ],
+
+  "sockets": {
+    "udp": {
+      "bind": "*",
+      "send": "*"
+    },
+    "tcp": {
+      "connect": "*"
+    },
+    "tcpServer": {
+      "listen": "*"
+    }
+  }
+
+}
