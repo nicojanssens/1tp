@@ -56,6 +56,10 @@ describe('net api', function () {
     )
     var server = net.createServer(transports, function (connection) {
       console.log('connection established')
+      connection.on('data', function (data) {
+        console.log('received message ' + data)
+        connection.write('world')
+      })
     })
     server.listen(function () {
       launchChrome(server.address())
