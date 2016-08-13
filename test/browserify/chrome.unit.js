@@ -42,18 +42,18 @@ describe('net api', function () {
     var transports = []
     transports.push(new UdpTransport())
     transports.push(new TcpTransport())
-    // transports.push(
-    //   new TurnTransport({
-    //     turnServer: turnAddr,
-    //     turnPort: turnPort,
-    //     turnProtocol: new TurnProtocols.TCP(),
-    //     turnUsername: turnUser,
-    //     turnPassword: turnPwd,
-    //     signaling: new WebSocketSignaling({
-    //       url: registrar
-    //     })
-    //   })
-    // )
+    transports.push(
+      new TurnTransport({
+        turnServer: turnAddr,
+        turnPort: turnPort,
+        turnProtocol: new TurnProtocols.TCP(),
+        turnUsername: turnUser,
+        turnPassword: turnPwd,
+        signaling: new WebSocketSignaling({
+          url: registrar
+        })
+      })
+    )
     var server = net.createServer(transports, function (connection) {
       console.log('connection established')
       connection.on('data', function (data) {

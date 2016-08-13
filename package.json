@@ -1,6 +1,6 @@
 {
   "name": "1tp",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "One transport protocol to rule them all -- offering a net-like stream API on top of various communication protocols",
   "main": "index.js",
   "keywords": [
@@ -28,7 +28,6 @@
   "browser": {
     "dgram": "chrome-dgram",
     "net": "chrome-net",
-    "netstring": "my-temp-netstring",
     "winston": "./lib/logger"
   },
   "dependencies": {
@@ -38,8 +37,6 @@
     "hat": "0.0.3",
     "merge": "^1.2.0",
     "nat-upnp": "^1.0.0",
-    "netstring": "^0.3.0",
-    "my-temp-netstring": "https://github.com/nicojanssens/node-netstring.git",
     "netstring-stream": "^0.1.2",
     "public-ip": "^1.1.0",
     "q": "^1.4.1",

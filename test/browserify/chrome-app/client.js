@@ -24,20 +24,20 @@ console.log(turnPwd)
 console.log(registrar)
 
 var transports = []
-//transports.push(new UdpTransport())
+transports.push(new UdpTransport())
 transports.push(new TcpTransport())
-// transports.push(
-//   new TurnTransport({
-//     turnServer: turnAddr,
-//     turnPort: turnPort,
-//     turnProtocol: new TurnProtocols.TCP(),
-//     turnUsername: turnUser,
-//     turnPassword: turnPwd,
-//     signaling: new WebSocketSignaling({
-//       url: registrar
-//     })
-//   })
-// )
+transports.push(
+  new TurnTransport({
+    turnServer: turnAddr,
+    turnPort: turnPort,
+    turnProtocol: new TurnProtocols.TCP(),
+    turnUsername: turnUser,
+    turnPassword: turnPwd,
+    signaling: new WebSocketSignaling({
+      url: registrar
+    })
+  })
+)
 var client = net.createConnection(serverInfo, transports, function () {
   console.log('connection established')
   client.on('data', function (data) {
