@@ -65,30 +65,30 @@ describe('net api', function () {
       launchChrome(server.address())
     })
 
-    // var server = dgram.createSocket('udp4')
-    // server.on('error',  function (error) {
-    //   console.error(error)
-    //   server.close()
-    //   if (child) {
-    //     child.kill()
-    //     done(error)
-    //   }
-    // })
-    // server.on('message', function (message) {
-    //   console.log('receiving message ' + message)
-    //   child.kill()
-    //   if (message.toString() === 'done') {
-    //     done()
-    //   } else {
-    //     done(message)
-    //   }
-    // })
-    // server.on('listening', function () {
-    //   var address = server.address()
-    //   console.log('server listening ' + address.address + ':' + address.port)
-    //   launchChrome(address.port)
-    // })
-    // // start udp server
-    // server.bind()
+  // var server = dgram.createSocket('udp4')
+  // server.on('error',  function (error) {
+  //   console.error(error)
+  //   server.close()
+  //   if (child) {
+  //     child.kill()
+  //     done(error)
+  //   }
+  // })
+  // server.on('message', function (message) {
+  //   console.log('receiving message ' + message)
+  //   child.kill()
+  //   if (message.toString() === 'done') {
+  //     done()
+  //   } else {
+  //     done(message)
+  //   }
+  // })
+  // server.on('listening', function () {
+  //   var address = server.address()
+  //   console.log('server listening ' + address.address + ':' + address.port)
+  //   launchChrome(address.port)
+  // })
+  // // start udp server
+  // server.bind()
   })
 })

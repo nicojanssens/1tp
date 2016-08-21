@@ -6,7 +6,6 @@ var ProxyStream = require('../../lib/stream')
 var chai = require('chai')
 var expect = chai.expect
 
-
 describe('Testing proxy stream', function () {
   this.timeout(10000)
 
