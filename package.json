@@ -25,11 +25,6 @@
   "engines": {
     "node": ">=4.0.0"
   },
-  "browser": {
-    "dgram": "chrome-dgram",
-    "net": "chrome-net",
-    "winston": "./lib/logger"
-  },
   "dependencies": {
     "chrome-dgram": "^3.0.0",
     "chrome-net": "^3.3.0",
@@ -41,9 +36,9 @@
     "public-ip": "^1.1.0",
     "q": "^1.4.1",
     "socket.io-client": "1.4.5",
-    "turn-js": "*",
+    "turn-js": "0.3.16",
     "winston": "^2.2.0",
-    "winston-meta-wrapper": "^1.0.0"
+    "winston-meta-wrapper": "^1.1.0"
   },
   "devDependencies": {
     "apprtc-socket": "*",
