@@ -23,11 +23,6 @@ console.log(turnUser)
 console.log(turnPwd)
 console.log(registrar)
 
-function done(error) {
-  var message = (error === undefined)? 'done': error
-  client.write(message)
-}
-
 var transports = []
 transports.push(new UdpTransport())
 transports.push(new TcpTransport())
@@ -43,11 +38,9 @@ transports.push(
     })
   })
 )
-var client = net.createConnection(serverInfo, transports, function () {
-  console.log('connection established')
-  client.on('data', function (data) {
-    console.log('received message ' + data)
-    done()
-  })
-  client.write('hello')
+var server = net.createServer(transports, function (connection) {
+  // do nothing
+})
+server.listen(function () {
+  console.log(JSON.stringify(server.address()))
 })
