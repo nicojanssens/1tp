@@ -25,6 +25,11 @@
   "engines": {
     "node": ">=4.0.0"
   },
+  "browser": {
+    "dgram": "chrome-dgram",
+    "net": "chrome-net",
+    "winston": "./lib/logger"
+  },
   "dependencies": {
     "chrome-dgram": "^3.0.0",
     "chrome-net": "^3.3.0",
