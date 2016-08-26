@@ -25,11 +25,6 @@
   "engines": {
     "node": ">=4.0.0"
   },
-  "browser": {
-    "dgram": "chrome-dgram",
-    "net": "chrome-net",
-    "winston": "./lib/logger"
-  },
   "dependencies": {
     "chrome-dgram": "^3.0.0",
     "chrome-net": "^3.3.0",
@@ -53,12 +48,19 @@
     "chai": "^3.5.0",
     "chai-as-promised": "^5.2.0",
     "envify": "^3.4.1",
+    "gulp": "^3.9.1",
+    "gulp-if": "^2.0.1",
+    "gulp-size": "^2.1.0",
+    "gulp-uglify": "^2.0.0",
     "merge": "^1.2.0",
     "mocha": "^2.4.5",
     "once": "1.x",
     "publish": "^0.6.0",
+    "rimraf": "^2.5.4",
     "through2": "^0.6.5",
     "uglify-js": "^2.7.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
     "yargs": "^3.32.0",
     "yn": "^1.2.0"
   },
@@ -67,11 +69,10 @@
     "url": "git://github.com/microminion/1tp.git"
   },
   "scripts": {
-    "build": "browserify -s OneTP -e -t [ babelify --global --presets [ es2015 ] ] ./ | uglifyjs -c warnings=false -m > 1tp.min.js",
-    "build-debug": "browserify -s OneTP -e ./ > 1tp.debug.js",
-    "size": "npm run build && cat 1tp.min.js | gzip | wc -c",
+    "browserify": "gulp browserify",
+    "browserify-prod": "gulp browserify --production",
     "test-node": "./node_modules/.bin/mocha test/*.unit.js test/streams/*.unit.js",
-    "clean": "rm -f 1tp.*.js && rm -rf node_modules",
+    "clean": "rimraf build && rimraf node_modules && rm test/browserify/chrome-app/bundle.js && rm test/browserify/cordova-app/www/js/bundle.js",
     "2npm": "publish"
   }
 }

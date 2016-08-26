@@ -4,7 +4,8 @@ machine:
 test:
   override:
     - npm run test-node
-    - npm run build
+    - npm run browserify
+    - npm run browserify-prod
 deployment:
     npm:
       branch: master

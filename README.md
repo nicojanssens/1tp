@@ -11,7 +11,7 @@ Goal of 1tp is to offer a single solution for connecting any two available endpo
 - stream based API, highly inspired by node's net API
 - current version includes UDP, TCP and TURN connectors -- extending UDP with hole punching + integrating other transports such as WebRTC, websockets, GCM and tor is WiP.
 - connection setup mechanism tries to select the 'cheapest' transport
-- can be browserified (to be used in chrome apps)
+- can be browserified (to be used in chrome and cordova apps)
 
 ## Install
 
@@ -243,6 +243,18 @@ Emitted when an error occurs.
 
 ### `socket.on('timeout', function() {})`
 Emitted if the socket times out from inactivity -- notifying that the socket has been idle.
+
+## Chrome and cordova apps
+
+```
+gulp browserify [--production]
+```
+Puts `udp-hole-puncher.debug.js` and `udp-hole-puncher.min.js` in `build` folder. Can be used in chrome and cordova app. When integrating 1tp in a cordova app, use `cordova-plugin-chrome-apps-sockets-udp` and `cordova-plugin-chrome-apps-sockets-tcp`:
+```
+cordova plugin add https://github.com/MobileChromeApps/cordova-plugin-chrome-apps-sockets-udp
+cordova plugin add https://github.com/MobileChromeApps/cordova-plugin-chrome-apps-sockets-tcp
+```
+
 
 ## Examples
 See examples directory.
