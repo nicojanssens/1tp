@@ -2,3 +2,7 @@ node_modules
 config.json
 test/all*.sh
 test/browserify/chrome-app/bundle.js
+test/browserify/cordova-app/platforms
+test/browserify/cordova-app/plugins
+test/browserify/cordova-app/www/js/bundle.js
+build
