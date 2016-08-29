@@ -47,14 +47,13 @@
     "browserify": "^13.1.0",
     "chai": "^3.5.0",
     "chai-as-promised": "^5.2.0",
-    "envify": "^3.4.1",
+    "envify":"^3.4.1",
     "gulp": "^3.9.1",
     "gulp-if": "^2.0.1",
     "gulp-size": "^2.1.0",
     "gulp-uglify": "^2.0.0",
     "merge": "^1.2.0",
     "mocha": "^2.4.5",
-    "once": "1.x",
     "publish": "^0.6.0",
     "rimraf": "^2.5.4",
     "through2": "^0.6.5",
@@ -72,7 +71,9 @@
     "browserify": "gulp browserify",
     "browserify-prod": "gulp browserify --production",
     "test-node": "./node_modules/.bin/mocha test/*.unit.js test/streams/*.unit.js",
-    "clean": "rimraf build && rimraf node_modules && rm test/browserify/chrome-app/bundle.js && rm test/browserify/cordova-app/www/js/bundle.js",
+    "clean-test-chrome-app": "rimraf test/browserify/chrome-app/bundle.js",
+    "clean-test-cordova-app": "rimraf test/browserify/cordova-app/www/js/bundle.js && rimraf test/browserify/cordova-app/platforms &&  rimraf test/browserify/cordova-app/plugins",
+    "clean": "rimraf build && rimraf node_modules && npm run clean-test-cordova-app && npm run clean-test-chrome-app",
     "2npm": "publish"
   }
 }
