@@ -27,8 +27,6 @@ console.log('test socket port: ' + testSocketPort)
 // create socket
 var socket = dgram.createSocket('udp4')
 socket.on('error', onError)
-// launch 1tp server
-launchOneTpServer()
 
 function done(error) {
   var message = (error === undefined)? 'done': error
@@ -43,12 +41,12 @@ function onError (error) {
 function launchOneTpServer() {
   var transports = []
   transports.push(new UdpTransport())
-  transports.push(new TcpTransport())
+  //transports.push(new TcpTransport())
   transports.push(
     new TurnTransport({
       turnServer: turnAddr,
       turnPort: turnPort,
-      turnProtocol: new TurnProtocols.TCP(),
+      turnProtocol: new TurnProtocols.UDP(),
       turnUsername: turnUser,
       turnPassword: turnPwd,
       signaling: new WebSocketSignaling({
@@ -57,12 +55,19 @@ function launchOneTpServer() {
     })
   )
   console.log('listen')
-  var server = net.createServer(transports, function (connection) {
+  var onetpServer = net.createServer(transports, function (connection) {
     // do nothing
   })
-  server.listen(function () {
+  onetpServer.listen(function () {
     console.log('listening')
-    console.log(JSON.stringify(server.address()))
+    console.log(JSON.stringify(onetpServer.address()))
     done()
   })
+}
+
+// start test
+if (window.cordova === undefined) {
+  launchOneTpServer()
+} else {
+  document.addEventListener('deviceready', launchOneTpServer, false)
 }

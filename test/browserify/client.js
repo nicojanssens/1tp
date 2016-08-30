@@ -23,31 +23,42 @@ console.log('turn user: ' + turnUser)
 console.log('turn password: ' + turnPwd)
 console.log('1tp registrar: ' + registrar)
 
+var onetpClient
+
 function done(error) {
   var message = (error === undefined)? 'done': error
-  client.write(message)
+  onetpClient.write(message)
 }
 
-var transports = []
-transports.push(new UdpTransport())
-transports.push(new TcpTransport())
-transports.push(
-  new TurnTransport({
-    turnServer: turnAddr,
-    turnPort: turnPort,
-    turnProtocol: new TurnProtocols.TCP(),
-    turnUsername: turnUser,
-    turnPassword: turnPwd,
-    signaling: new WebSocketSignaling({
-      url: registrar
+function launchOneTpClient() {
+  var transports = []
+  transports.push(new UdpTransport())
+//  transports.push(new TcpTransport())
+  transports.push(
+    new TurnTransport({
+      turnServer: turnAddr,
+      turnPort: turnPort,
+      turnProtocol: new TurnProtocols.UDP(),
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
+      signaling: new WebSocketSignaling({
+        url: registrar
+      })
     })
+  )
+  onetpClient = net.createConnection(serverInfo, transports, function () {
+    console.log('connection established')
+    onetpClient.on('data', function (data) {
+      console.log('received message ' + data)
+      done()
+    })
+    onetpClient.write('hello')
   })
-)
-var client = net.createConnection(serverInfo, transports, function () {
-  console.log('connection established')
-  client.on('data', function (data) {
-    console.log('received message ' + data)
-    done()
-  })
-  client.write('hello')
-})
+}
+
+// start test
+if (window.cordova === undefined) {
+  launchOneTpClient()
+} else {
+  document.addEventListener('deviceready', launchOneTpClient, false)
+}
