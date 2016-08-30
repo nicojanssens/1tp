@@ -1,27 +1,27 @@
 'use strict'
 
-var net = require('../../../lib/net')
+var net = require('../../lib/net')
 
-var onetpTransports = require('../../../lib/transports')
+var onetpTransports = require('../../lib/transports')
 var TcpTransport = onetpTransports.tcp
 var UdpTransport = onetpTransports.udp
 var TurnTransport = onetpTransports.turn
 var TurnProtocols = require('turn-js').transports
-var WebSocketSignaling = require('../../../lib/signaling').websocket
+var WebSocketSignaling = require('../../lib/signaling').websocket
 
-var serverInfo = process.env.serverInfo
+var serverInfo = process.env.onetpServerAddress
 var turnAddr = process.env.turnAddr
 var turnPort = process.env.turnPort
 var turnUser = process.env.turnUser
 var turnPwd = process.env.turnPwd
 var registrar = process.env.registrar
 
-console.log(JSON.stringify(serverInfo))
-console.log(turnAddr)
-console.log(turnPort)
-console.log(turnUser)
-console.log(turnPwd)
-console.log(registrar)
+console.log('server info: ' + JSON.stringify(serverInfo))
+console.log('turn address: ' + turnAddr)
+console.log('turn port: ' + turnPort)
+console.log('turn user: ' + turnUser)
+console.log('turn password: ' + turnPwd)
+console.log('1tp registrar: ' + registrar)
 
 function done(error) {
   var message = (error === undefined)? 'done': error
