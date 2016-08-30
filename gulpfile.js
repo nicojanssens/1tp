@@ -4,6 +4,7 @@ var argv = require('yargs').argv
 var babelify = require('babelify')
 var browserify = require('browserify')
 var buffer = require('vinyl-buffer')
+var envify = require('envify/custom')
 var gulp = require('gulp')
 var gulpif = require('gulp-if')
 var path = require('path')
@@ -27,25 +28,38 @@ function browserifyTask() {
   return bundle(entry, modules, destFile, destFolder, argv.production)
 }
 
-function bundle(entry, replacements, destFile, destFolder, production) {
+function bundle(entry, replacements, destFile, destFolder, production, env) {
+  // check if env is defined
+  env = (env === undefined)? {}: env
+  // set browserify options
   var options = {
     entries: entry,
     extensions: ['.js'],
     debug: production ? false : true
   }
+  // create bundler
   var bundler = browserify(options)
+  // replace libs
   for (var originalModule in replacements) {
     var replacementModule = replacements[originalModule]
     bundler = bundler.require(replacementModule, {
        expose: originalModule
     })
   }
+  // babelify transformation
   bundler.transform(
     babelify, {
       global: true,
       presets: ['es2015']
     }
   )
+  // envify transformation
+  bundler.transform(
+    envify(env), {
+      global: true
+    }
+  )
+  // bundle
   return bundler.bundle()
     .on('error', function (err) {
       console.log(err.toString());
