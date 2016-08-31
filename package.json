@@ -28,7 +28,6 @@
   "dependencies": {
     "chrome-dgram": "^3.0.0",
     "chrome-net": "^3.3.0",
-    "debug": "^2.2.0",
     "hat": "0.0.3",
     "merge": "^1.2.0",
     "nat-upnp": "^1.0.0",
@@ -38,6 +37,7 @@
     "socket.io-client": "1.4.5",
     "turn-js": "0.3.16",
     "winston": "^2.2.0",
+    "winston-browser": "^1.0.0",
     "winston-meta-wrapper": "^1.1.0"
   },
   "devDependencies": {

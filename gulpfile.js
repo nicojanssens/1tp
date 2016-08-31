@@ -16,7 +16,7 @@ var modules = {}
 modules = {
   'dgram': 'chrome-dgram',
   'net': 'chrome-net',
-  'winston': './lib/logger'
+  'winston': 'winston-browser'
 }
 
 gulp.task('browserify', browserifyTask)

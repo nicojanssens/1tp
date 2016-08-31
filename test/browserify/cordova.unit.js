@@ -24,7 +24,7 @@ var testSocketPort = 23456
 var modules  = {
   'dgram': 'chrome-dgram',
   'net': 'chrome-net',
-  'winston': '../../lib/logger'
+  'winston': 'winston-browser'
 }
 
 describe('net api', function () {
