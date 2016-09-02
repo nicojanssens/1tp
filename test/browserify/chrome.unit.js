@@ -20,6 +20,9 @@ var turnPwd = process.env.TURN_PASS
 var registrar = process.env.ONETP_REGISTRAR
 var testSocketPort = 23456
 
+var winston = require('winston')
+winston.level = 'debug'
+
 var modules  = {
   'dgram': 'chrome-dgram',
   'net': 'chrome-net',
@@ -27,7 +30,7 @@ var modules  = {
 }
 
 describe('net api', function () {
-  this.timeout(30000)
+  this.timeout(50000)
 
   it('should establish connection with 1tp client in chrome app', function (done) {
     var child
