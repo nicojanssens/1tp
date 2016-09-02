@@ -1,14 +1,6 @@
 'use strict'
 
 var dgram = require('dgram') // browserify will replace this with chrome-dgram
-var net = require('../../lib/net')
-
-var onetpTransports = require('../../lib/transports')
-var TcpTransport = onetpTransports.tcp
-var UdpTransport = onetpTransports.udp
-var TurnTransport = onetpTransports.turn
-var TurnProtocols = require('turn-js').transports
-var WebSocketSignaling = require('../../lib/signaling').websocket
 
 var turnAddr = process.env.turnAddr
 var turnPort = process.env.turnPort
@@ -38,7 +30,16 @@ function onError (error) {
   done(error)
 }
 
-function launchOneTpServer() {
+function runTest() {
+  var net = require('../../lib/net')
+
+  var onetpTransports = require('../../lib/transports')
+  var TcpTransport = onetpTransports.tcp
+  var UdpTransport = onetpTransports.udp
+  var TurnTransport = onetpTransports.turn
+  var TurnProtocols = require('turn-js').transports
+  var WebSocketSignaling = require('../../lib/signaling').websocket
+
   var transports = []
   transports.push(new UdpTransport())
   //transports.push(new TcpTransport())
@@ -65,9 +66,14 @@ function launchOneTpServer() {
   })
 }
 
+function onDeviceReady() {
+  console.log('device ready')
+  runTest()
+}
+
 // start test
 if (window.cordova === undefined) {
-  launchOneTpServer()
+  runTest()
 } else {
-  document.addEventListener('deviceready', launchOneTpServer, false)
+  document.addEventListener('deviceready', onDeviceReady, false)
 }
