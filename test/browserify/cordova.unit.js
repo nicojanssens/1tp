@@ -21,6 +21,9 @@ var turnPwd = process.env.TURN_PASS
 var registrar = process.env.ONETP_REGISTRAR
 var testSocketPort = 23456
 
+var winston = require('winston')
+winston.level = 'debug'
+
 var modules  = {
   'dgram': 'chrome-dgram',
   'net': 'chrome-net',
@@ -28,7 +31,7 @@ var modules  = {
 }
 
 describe('net api', function () {
-  this.timeout(600000)
+  this.timeout(80000)
 
   it('should establish connection with 1tp client in cordova app', function (done) {
     var child
@@ -98,10 +101,14 @@ describe('net api', function () {
     // launch chrome app
     function onBundleReady () {
       console.log('clean browserify build, launching cordova emulator -- please wait a few seconds')
-      var env = { cwd: path.join(__dirname, './cordova-app') }
-      child = cp.exec(path.join(__dirname, './cordova-app', 'start.sh'), env, function (err, stdout, stderr) {
-        if (err) {
-          done(err)
+      var options = {
+        cwd: path.join(__dirname, './cordova-app'),
+        maxBuffer: 1000*1024
+      }
+      child = cp.exec(path.join(__dirname, './cordova-app', 'start.sh'), options, function (error, stdout, stderr) {
+        if (error) {
+          console.error(error)
+          done(error)
         }
         // console.log(stdout)
       })
