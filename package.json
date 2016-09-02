@@ -35,7 +35,7 @@
     "public-ip": "^1.1.0",
     "q": "^1.4.1",
     "socket.io-client": "1.4.5",
-    "turn-js": "0.3.16",
+    "turn-js": "^0.3.17",
     "winston": "^2.2.0",
     "winston-browser": "^1.0.0",
     "winston-meta-wrapper": "^1.1.0"
