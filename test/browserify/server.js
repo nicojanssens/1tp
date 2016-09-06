@@ -1,6 +1,8 @@
 'use strict'
 
 var dgram = require('dgram') // browserify will replace this with chrome-dgram
+var chai = require('chai')
+var expect = chai.expect
 
 var turnAddr = process.env.turnAddr
 var turnPort = process.env.turnPort
@@ -55,14 +57,17 @@ function runTest() {
       })
     })
   )
-  console.log('listen')
   var onetpServer = net.createServer(transports, function (connection) {
     // do nothing
   })
   onetpServer.listen(function () {
-    console.log('listening')
-    console.log(JSON.stringify(onetpServer.address()))
-    done()
+    if (onetpServer.address() === undefined) {
+      done('server address undefined')
+    } else if (onetpServer.address().length == 0) {
+      done('server address empty')
+    } else {
+      done()
+    }
   })
 }
 
