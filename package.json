@@ -32,6 +32,7 @@
     "merge": "^1.2.0",
     "nat-upnp": "^1.0.0",
     "netstring-stream": "^0.1.2",
+    "ip": "^1.1.3",
     "public-ip": "^1.1.0",
     "q": "^1.4.1",
     "socket.io-client": "1.4.5",
@@ -68,8 +69,10 @@
     "url": "git://github.com/microminion/1tp.git"
   },
   "scripts": {
-    "browserify": "gulp browserify",
-    "browserify-prod": "gulp browserify --production",
+    "chromiumify": "gulp chromiumify",
+    "chromiumify-prod": "gulp chromiumify --production",
+    "cordovaify": "gulp cordovaify",
+    "cordovaify-prod": "gulp cordovaify --production",
     "test-node": "./node_modules/.bin/mocha test/*.unit.js test/streams/*.unit.js",
     "clean-test-chrome-app": "rimraf test/browserify/chrome-app/bundle.js",
     "clean-test-cordova-app": "rimraf test/browserify/cordova-app/www/js/bundle.js && rimraf test/browserify/cordova-app/platforms &&  rimraf test/browserify/cordova-app/plugins",

@@ -4,8 +4,10 @@ machine:
 test:
   override:
     - npm run test-node
-    - npm run browserify
-    - npm run browserify-prod
+    - npm run chromiumify
+    - npm run chromiumify-prod
+    - npm run cordovaify
+    - npm run cordovaify-prod
 deployment:
     npm:
       branch: master
