@@ -12,7 +12,10 @@
   },
 
   "permissions": [
-    "*://*/*"
+      "system.network",
+      {
+          "socket": ["tcp-connect", "tcp-listen", "udp-send-to", "udp-bind"]
+      }
   ],
 
   "sockets": {

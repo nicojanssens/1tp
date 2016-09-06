@@ -1,10 +1,11 @@
 'use strict'
 
-var chrome = require('./chrome')
+var cp = require('child_process')
 var dgram = require('dgram')
 var gulp = require('gulp')
 var gulpfile = require('../../gulpfile')
 var net = require('../../lib/net')
+var path = require('path')
 
 var onetpTransports = require('../../lib/transports')
 var TcpTransport = onetpTransports.tcp
@@ -30,9 +31,9 @@ var modules  = {
 }
 
 describe('net api', function () {
-  this.timeout(50000)
+  this.timeout(80000)
 
-  it('should establish connection with 1tp client in chrome app', function (done) {
+  it('should establish connection with 1tp client in cordova app', function (done) {
     var child
     var onetpServerAddress
     // create 1tp server
@@ -43,7 +44,7 @@ describe('net api', function () {
       new TurnTransport({
         turnServer: turnAddr,
         turnPort: turnPort,
-        turnProtocol: new TurnProtocols.TCP(),
+        turnProtocol: new TurnProtocols.UDP(),
         turnUsername: turnUser,
         turnPassword: turnPwd,
         signaling: new WebSocketSignaling({
@@ -74,12 +75,12 @@ describe('net api', function () {
       onetpServerAddress = server.address()
       console.log('1tp server listening at ' + JSON.stringify(onetpServerAddress))
       // start gulp task
-      gulp.start('build-chrome-client')
+      gulp.start('build-cordova-client')
     })
     // build bundle.js
-    gulp.task('build-chrome-client', function () {
+    gulp.task('build-cordova-client', function () {
       var destFile = 'bundle.js'
-      var destFolder = './chrome-app'
+      var destFolder = './cordova-app/www/js'
       var entry = './client.js'
       var env = {
         onetpServerAddress: onetpServerAddress,
@@ -99,12 +100,22 @@ describe('net api', function () {
       })
     // launch chrome app
     function onBundleReady () {
-      console.log('clean browserify build, launching chrome app')
-      child = chrome.launchApp()
+      console.log('clean browserify build, launching cordova emulator -- please wait a few seconds')
+      var options = {
+        cwd: path.join(__dirname, './cordova-app'),
+        maxBuffer: 1000*1024
+      }
+      child = cp.exec(path.join(__dirname, './cordova-app', 'start.sh'), options, function (error, stdout, stderr) {
+        if (error) {
+          console.error(error)
+          done(error)
+        }
+        // console.log(stdout)
+      })
     }
   })
 
-  it('should launch 1tp server in chrome app and verify server address', function (done) {
+  it('should launch 1tp server in cordova app and verify server address', function (done) {
     var child
     // create udp server listening to messages from chrome app
     var server = dgram.createSocket('udp4')
@@ -122,19 +133,19 @@ describe('net api', function () {
       if (message.toString() === 'done') {
         done()
       } else {
-        done(new Error(message))
+        done(message)
       }
     })
     server.on('listening', function () {
       var address = server.address()
       console.log('test socket listening at ' + address.address + ':' + address.port)
       // start gulp task
-      gulp.start('build-chrome-server')
+      gulp.start('build-cordova-server')
     })
     // build bundle.js
-    gulp.task('build-chrome-server', function () {
+    gulp.task('build-cordova-server', function () {
       var destFile = 'bundle.js'
-      var destFolder = './chrome-app'
+      var destFolder = './cordova-app/www/js'
       var entry = './server.js'
       var env = {
         testSocketPort: server.address().port,
@@ -154,8 +165,17 @@ describe('net api', function () {
     })
     // launch chrome app
     function onBundleReady () {
-      console.log('clean browserify build, launching chrome app')
-      child = chrome.launchApp()
+      console.log('clean browserify build, launching cordova emulator -- please wait a few seconds')
+      var options = {
+        cwd: path.join(__dirname, './cordova-app'),
+        maxBuffer: 1000*1024
+      }
+      child = cp.exec(path.join(__dirname, './cordova-app', 'start.sh'), options, function (err, stdout, stderr) {
+        if (err) {
+          done(err)
+        }
+        //console.log(stdout)
+      })
     }
     // start udp server
     server.bind(testSocketPort)

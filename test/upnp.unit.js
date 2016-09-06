@@ -1,7 +1,7 @@
 'use strict'
 
-var ipAddresses = require('../lib/nat/ip-addresses')
-var upnp = require('../lib/nat/upnp')
+var publicIpAddress = require('../lib/transports/addresses/public')
+var upnp = require('../lib/transports/upnp')
 var yn = require('yn')
 
 var chai = require('chai')
@@ -19,7 +19,7 @@ if (executeUpnpTests) {
     this.timeout(10000)
 
     before(function (done) {
-      ipAddresses.getPublicIpAddressP()
+      publicIpAddress.getIpAddressP()
         .then(function (ip) {
           myPublicIpAddress = ip
           done()

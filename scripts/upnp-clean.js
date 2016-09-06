@@ -1,7 +1,7 @@
 'use strict'
 
 var argv = require('minimist')(process.argv.slice(2))
-var upnp = require('../upnp')
+var upnp = require('../lib/transports/upnp')
 var Q = require('q')
 
 if (!argv.d) {
