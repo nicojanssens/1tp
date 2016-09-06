@@ -12,35 +12,20 @@ var size = require('gulp-size')
 var source = require('vinyl-source-stream')
 var uglify = require('gulp-uglify')
 
-var chromeModules = {}
-chromeModules = {
+var modules = {}
+modules = {
   'dgram': 'chrome-dgram',
   'net': 'chrome-net',
-  'nicAddresses': './lib/transports/addresses/nic-chrome',
-  'winston': 'winston-browser'
-}
-var cordovaModules = {}
-cordovaModules = {
-  'dgram': 'chrome-dgram',
-  'net': 'chrome-net',
-  'nicAddresses': './lib/transports/addresses/nic-cordova',
   'winston': 'winston-browser'
 }
 
-gulp.task('chromiumify', chromiumifyTask)
-gulp.task('cordovaify', cordovaifyTask)
+gulp.task('browserify', browserifyTask)
 
-function chromiumifyTask() {
+function browserifyTask() {
   var destFile = argv.production? '1tp.min.js': '1tp.debug.js'
-  var destFolder = path.join(__dirname, 'build/chromium')
+  var destFolder = path.join(__dirname, 'build')
   var entry = path.join(__dirname, 'index.js')
-  return bundle(entry, chromeModules, destFile, destFolder, argv.production)
-}
-function cordovaifyTask() {
-  var destFile = argv.production? '1tp.min.js': '1tp.debug.js'
-  var destFolder = path.join(__dirname, 'build/cordova')
-  var entry = path.join(__dirname, 'index.js')
-  return bundle(entry, cordovaModules, destFile, destFolder, argv.production)
+  return bundle(entry, modules, destFile, destFolder, argv.production)
 }
 
 function bundle(entry, replacements, destFile, destFolder, production, env) {

@@ -69,10 +69,8 @@
     "url": "git://github.com/microminion/1tp.git"
   },
   "scripts": {
-    "chromiumify": "gulp chromiumify",
-    "chromiumify-prod": "gulp chromiumify --production",
-    "cordovaify": "gulp cordovaify",
-    "cordovaify-prod": "gulp cordovaify --production",
+    "browserify": "gulp browserify",
+    "browserify-prod": "gulp browserify --production",
     "test-node": "./node_modules/.bin/mocha test/*.unit.js test/streams/*.unit.js",
     "clean-test-chrome-app": "rimraf test/browserify/chrome-app/bundle.js",
     "clean-test-cordova-app": "rimraf test/browserify/cordova-app/www/js/bundle.js && rimraf test/browserify/cordova-app/platforms &&  rimraf test/browserify/cordova-app/plugins",

@@ -246,19 +246,10 @@ Emitted if the socket times out from inactivity -- notifying that the socket has
 
 ## Chrome and cordova apps
 
-### Chrome app
 ```
-gulp chromiumify [--production]
+gulp browserify [--production]
 ```
-Creates `1tp.debug.js` and `1tp.min.js` in `build/chromium` folder.
-
-### Cordova app
-```
-gulp cordovaify [--production]
-```
-Creates `1tp.debug.js` and `1tp.min.js` in `build/cordova` folder.
-
-When integrating 1tp in a cordova app, use the  `cordova-plugin-chrome-apps-sockets-udp`and `cordova-plugin-networkinterface` plugins  ~~and `cordova-plugin-chrome-apps-sockets-tcp` and `cordova-plugin-chrome-apps-sockets-tcpserver`~~ (tcp cordova plugins generate errors):
+Creates `1tp.debug.js` and `1tp.min.js` in `build` folder, which can be used in chrome and cordova apps. When integrating 1tp in a cordova app, use the  `cordova-plugin-chrome-apps-sockets-udp`and `cordova-plugin-networkinterface` plugins  ~~and `cordova-plugin-chrome-apps-sockets-tcp` and `cordova-plugin-chrome-apps-sockets-tcpserver plugins`~~ (tcp cordova plugins generate errors):
 ```
 cordova plugin add cordova-plugin-chrome-apps-sockets-udp
 cordova plugin add cordova-plugin-networkinterface
