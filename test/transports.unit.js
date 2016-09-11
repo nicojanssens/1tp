@@ -3,6 +3,7 @@
 var TcpTransport = require('../lib/transports').tcp
 var TurnTransport = require('../lib/transports').turn
 var UdpTransport = require('../lib/transports').udp
+var WebRtcTransport = require('../lib/transports').webrtc
 
 var TurnProtocols = require('turn-js').transports
 
@@ -19,65 +20,95 @@ var turnUser = process.env.TURN_USER
 var turnPwd = process.env.TURN_PASS
 var registrar = process.env.ONETP_REGISTRAR
 
+var winston = require('winston')
+winston.level = 'debug'
+
 var defaultProtocolVersion = require('../package.json').version
 
 describe('1tp transports', function () {
   this.timeout(20000)
 
-  it('should return echo messages using udp transport and close server afterwards', function (done) {
-    var clientSocket = new UdpTransport()
-    var listeningInfo = {
-      transportType: 'udp',
-      transportInfo: {
-        address: '127.0.0.1',
-        port: 30001
-      }
-    }
-    var serverSocket = new UdpTransport()
-    // execute echo test
-    testEchoMessages({
-      socket: clientSocket
-    }, {
-      socket: serverSocket,
-      listeningInfo: listeningInfo
-    }, done)
-  })
+  // it('should return echo messages using udp transport and close server afterwards', function (done) {
+  //   var clientSocket = new UdpTransport()
+  //   var listeningInfo = {
+  //     transportType: 'udp',
+  //     transportInfo: {
+  //       address: '127.0.0.1',
+  //       port: 30001
+  //     }
+  //   }
+  //   var serverSocket = new UdpTransport()
+  //   // execute echo test
+  //   testEchoMessages({
+  //     socket: clientSocket
+  //   }, {
+  //     socket: serverSocket,
+  //     listeningInfo: listeningInfo
+  //   }, done)
+  // })
+  //
+  // it('should return echo messages using tcp transport and close receiving transport afterwards', function (done) {
+  //   var clientSocket = new TcpTransport()
+  //   var listeningInfo = {
+  //     transportType: 'tcp',
+  //     transportInfo: {
+  //       address: '127.0.0.1',
+  //       port: 30003
+  //     }
+  //   }
+  //   var serverSocket = new TcpTransport()
+  //   // execute echo test
+  //   testEchoMessages({
+  //     socket: clientSocket
+  //   }, {
+  //     socket: serverSocket,
+  //     listeningInfo: listeningInfo
+  //   }, done)
+  // })
+  //
+  // it('should return echo messages using tcp+turn transport with local signaling and close receiving transport afterwards', function (done) {
+  //   var localSignaling = new LocalSignaling()
+  //   var clientSocket = new TurnTransport({
+  //     turnServer: turnAddr,
+  //     turnPort: turnPort,
+  //     turnProtocol: new TurnProtocols.TCP(),
+  //     turnUsername: turnUser,
+  //     turnPassword: turnPwd,
+  //     signaling: localSignaling
+  //   })
+  //   var serverSocket = new TurnTransport({
+  //     turnServer: turnAddr,
+  //     turnPort: turnPort,
+  //     turnProtocol: new TurnProtocols.TCP(),
+  //     turnUsername: turnUser,
+  //     turnPassword: turnPwd,
+  //     signaling: localSignaling
+  //   })
+  //   testEchoMessages({
+  //     socket: clientSocket
+  //   }, {
+  //     socket: serverSocket
+  //   }, done)
+  // })
 
-  it('should return echo messages using tcp transport and close receiving transport afterwards', function (done) {
-    var clientSocket = new TcpTransport()
-    var listeningInfo = {
-      transportType: 'tcp',
-      transportInfo: {
-        address: '127.0.0.1',
-        port: 30003
-      }
-    }
-    var serverSocket = new TcpTransport()
-    // execute echo test
-    testEchoMessages({
-      socket: clientSocket
-    }, {
-      socket: serverSocket,
-      listeningInfo: listeningInfo
-    }, done)
-  })
-
-  it('should return echo messages using tcp+turn transport with local signaling and close receiving transport afterwards', function (done) {
+  it('should return echo messages using webrtc transport with local signaling and close receiving transport afterwards', function (done) {
     var localSignaling = new LocalSignaling()
-    var clientSocket = new TurnTransport({
-      turnServer: turnAddr,
-      turnPort: turnPort,
-      turnProtocol: new TurnProtocols.TCP(),
-      turnUsername: turnUser,
-      turnPassword: turnPwd,
+    var clientSocket = new WebRtcTransport({
+      iceServers: [ { url: 'stun:23.21.150.121' } ],
+      // turnServer: turnAddr,
+      // turnPort: turnPort,
+      // turnProtocol: new TurnProtocols.TCP(),
+      // turnUsername: turnUser,
+      // turnPassword: turnPwd,
       signaling: localSignaling
     })
-    var serverSocket = new TurnTransport({
-      turnServer: turnAddr,
-      turnPort: turnPort,
-      turnProtocol: new TurnProtocols.TCP(),
-      turnUsername: turnUser,
-      turnPassword: turnPwd,
+    var serverSocket = new WebRtcTransport({
+      iceServers: [ { url: 'stun:23.21.150.121' } ],
+      // turnServer: turnAddr,
+      // turnPort: turnPort,
+      // turnProtocol: new TurnProtocols.TCP(),
+      // turnUsername: turnUser,
+      // turnPassword: turnPwd,
       signaling: localSignaling
     })
     testEchoMessages({
@@ -87,161 +118,161 @@ describe('1tp transports', function () {
     }, done)
   })
 
-  it('should return echo messages using tcp+turn transport with WS signaling and close receiving transport afterwards', function (done) {
-    var clientSocket = new TurnTransport({
-      turnServer: turnAddr,
-      turnPort: turnPort,
-      turnProtocol: new TurnProtocols.TCP(),
-      turnUsername: turnUser,
-      turnPassword: turnPwd,
-      signaling: new WebSocketSignaling({url: registrar})
-    })
-    var serverSocket = new TurnTransport({
-      turnServer: turnAddr,
-      turnPort: turnPort,
-      turnProtocol: new TurnProtocols.TCP(),
-      turnUsername: turnUser,
-      turnPassword: turnPwd,
-      signaling: new WebSocketSignaling({url: registrar})
-    })
-    testEchoMessages({
-      socket: clientSocket
-    }, {
-      socket: serverSocket
-    }, done)
-  })
+  // it('should return echo messages using tcp+turn transport with WS signaling and close receiving transport afterwards', function (done) {
+  //   var clientSocket = new TurnTransport({
+  //     turnServer: turnAddr,
+  //     turnPort: turnPort,
+  //     turnProtocol: new TurnProtocols.TCP(),
+  //     turnUsername: turnUser,
+  //     turnPassword: turnPwd,
+  //     signaling: new WebSocketSignaling({url: registrar})
+  //   })
+  //   var serverSocket = new TurnTransport({
+  //     turnServer: turnAddr,
+  //     turnPort: turnPort,
+  //     turnProtocol: new TurnProtocols.TCP(),
+  //     turnUsername: turnUser,
+  //     turnPassword: turnPwd,
+  //     signaling: new WebSocketSignaling({url: registrar})
+  //   })
+  //   testEchoMessages({
+  //     socket: clientSocket
+  //   }, {
+  //     socket: serverSocket
+  //   }, done)
+  // })
+  //
+  // it('should correctly close UDP stream by destroying client socket', function (done) {
+  //   var clientSocket = new UdpTransport()
+  //   var listeningInfo = {
+  //     transportType: 'udp',
+  //     transportInfo: {
+  //       address: '127.0.0.1',
+  //       port: 30005
+  //     }
+  //   }
+  //   var serverSocket = new UdpTransport()
+  //   // execute echo test
+  //   testDestroyStream({
+  //     socket: clientSocket
+  //   }, {
+  //     socket: serverSocket,
+  //     listeningInfo: listeningInfo
+  //   }, 'client',
+  //     done)
+  // })
+  //
+  // it('should correctly close UDP stream by destroying server socket', function (done) {
+  //   var clientSocket = new UdpTransport()
+  //   var listeningInfo = {
+  //     transportType: 'udp',
+  //     transportInfo: {
+  //       address: '127.0.0.1',
+  //       port: 30007
+  //     }
+  //   }
+  //   var serverSocket = new UdpTransport()
+  //   // execute echo test
+  //   testDestroyStream({
+  //     socket: clientSocket
+  //   }, {
+  //     socket: serverSocket,
+  //     listeningInfo: listeningInfo
+  //   }, 'server',
+  //     done)
+  // })
+  //
+  // it('should correctly close TCP stream by destroying client socket', function (done) {
+  //   var clientSocket = new TcpTransport()
+  //   var listeningInfo = {
+  //     transportType: 'tcp',
+  //     transportInfo: {
+  //       address: '127.0.0.1',
+  //       port: 30009
+  //     }
+  //   }
+  //   var serverSocket = new TcpTransport()
+  //   // execute echo test
+  //   testDestroyStream({
+  //     socket: clientSocket
+  //   }, {
+  //     socket: serverSocket,
+  //     listeningInfo: listeningInfo
+  //   }, 'client',
+  //     done)
+  // })
+  //
+  // it('should correctly close TCP stream by destroying server socket', function (done) {
+  //   var clientSocket = new TcpTransport()
+  //   var listeningInfo = {
+  //     transportType: 'tcp',
+  //     transportInfo: {
+  //       address: '127.0.0.1',
+  //       port: 30011
+  //     }
+  //   }
+  //   var serverSocket = new TcpTransport()
+  //   // execute echo test
+  //   testDestroyStream({
+  //     socket: clientSocket
+  //   }, {
+  //     socket: serverSocket,
+  //     listeningInfo: listeningInfo
+  //   }, 'server',
+  //     done)
+  // })
+  //
+  // it('should correctly close TURN stream by destroying client socket', function (done) {
+  //   var clientSocket = new TurnTransport({
+  //     turnServer: turnAddr,
+  //     turnPort: turnPort,
+  //     turnProtocol: new TurnProtocols.TCP(),
+  //     turnUsername: turnUser,
+  //     turnPassword: turnPwd,
+  //     signaling: new WebSocketSignaling({uid: 'nicoj', url: registrar})
+  //   })
+  //   var serverSocket = new TurnTransport({
+  //     turnServer: turnAddr,
+  //     turnPort: turnPort,
+  //     turnProtocol: new TurnProtocols.TCP(),
+  //     turnUsername: turnUser,
+  //     turnPassword: turnPwd,
+  //     signaling: new WebSocketSignaling({uid: 'tdelaet', url: registrar})
+  //   })
+  //   // execute echo test
+  //   testDestroyStream({
+  //     socket: clientSocket
+  //   }, {
+  //     socket: serverSocket
+  //   }, 'client',
+  //     done)
+  // })
 
-  it('should correctly close UDP stream by destroying client socket', function (done) {
-    var clientSocket = new UdpTransport()
-    var listeningInfo = {
-      transportType: 'udp',
-      transportInfo: {
-        address: '127.0.0.1',
-        port: 30005
-      }
-    }
-    var serverSocket = new UdpTransport()
-    // execute echo test
-    testDestroyStream({
-      socket: clientSocket
-    }, {
-      socket: serverSocket,
-      listeningInfo: listeningInfo
-    }, 'client',
-      done)
-  })
-
-  it('should correctly close UDP stream by destroying server socket', function (done) {
-    var clientSocket = new UdpTransport()
-    var listeningInfo = {
-      transportType: 'udp',
-      transportInfo: {
-        address: '127.0.0.1',
-        port: 30007
-      }
-    }
-    var serverSocket = new UdpTransport()
-    // execute echo test
-    testDestroyStream({
-      socket: clientSocket
-    }, {
-      socket: serverSocket,
-      listeningInfo: listeningInfo
-    }, 'server',
-      done)
-  })
-
-  it('should correctly close TCP stream by destroying client socket', function (done) {
-    var clientSocket = new TcpTransport()
-    var listeningInfo = {
-      transportType: 'tcp',
-      transportInfo: {
-        address: '127.0.0.1',
-        port: 30009
-      }
-    }
-    var serverSocket = new TcpTransport()
-    // execute echo test
-    testDestroyStream({
-      socket: clientSocket
-    }, {
-      socket: serverSocket,
-      listeningInfo: listeningInfo
-    }, 'client',
-      done)
-  })
-
-  it('should correctly close TCP stream by destroying server socket', function (done) {
-    var clientSocket = new TcpTransport()
-    var listeningInfo = {
-      transportType: 'tcp',
-      transportInfo: {
-        address: '127.0.0.1',
-        port: 30011
-      }
-    }
-    var serverSocket = new TcpTransport()
-    // execute echo test
-    testDestroyStream({
-      socket: clientSocket
-    }, {
-      socket: serverSocket,
-      listeningInfo: listeningInfo
-    }, 'server',
-      done)
-  })
-
-  it('should correctly close TURN stream by destroying client socket', function (done) {
-    var clientSocket = new TurnTransport({
-      turnServer: turnAddr,
-      turnPort: turnPort,
-      turnProtocol: new TurnProtocols.TCP(),
-      turnUsername: turnUser,
-      turnPassword: turnPwd,
-      signaling: new WebSocketSignaling({uid: 'nicoj', url: registrar})
-    })
-    var serverSocket = new TurnTransport({
-      turnServer: turnAddr,
-      turnPort: turnPort,
-      turnProtocol: new TurnProtocols.TCP(),
-      turnUsername: turnUser,
-      turnPassword: turnPwd,
-      signaling: new WebSocketSignaling({uid: 'tdelaet', url: registrar})
-    })
-    // execute echo test
-    testDestroyStream({
-      socket: clientSocket
-    }, {
-      socket: serverSocket
-    }, 'client',
-      done)
-  })
-
-  it('should correctly close TURN stream by destroying server socket', function (done) {
-    var clientSocket = new TurnTransport({
-      turnServer: turnAddr,
-      turnPort: turnPort,
-      turnProtocol: new TurnProtocols.TCP(),
-      turnUsername: turnUser,
-      turnPassword: turnPwd,
-      signaling: new WebSocketSignaling({uid: 'nicoj', url: registrar})
-    })
-    var serverSocket = new TurnTransport({
-      turnServer: turnAddr,
-      turnPort: turnPort,
-      turnProtocol: new TurnProtocols.TCP(),
-      turnUsername: turnUser,
-      turnPassword: turnPwd,
-      signaling: new WebSocketSignaling({uid: 'tdelaet', url: registrar})
-    })
-    // execute echo test
-    testDestroyStream({
-      socket: clientSocket
-    }, {
-      socket: serverSocket
-    }, 'server',
-      done)
-  })
+  // it('should correctly close TURN stream by destroying server socket', function (done) {
+  //   var clientSocket = new TurnTransport({
+  //     turnServer: turnAddr,
+  //     turnPort: turnPort,
+  //     turnProtocol: new TurnProtocols.TCP(),
+  //     turnUsername: turnUser,
+  //     turnPassword: turnPwd,
+  //     signaling: new WebSocketSignaling({uid: 'nicoj', url: registrar})
+  //   })
+  //   var serverSocket = new TurnTransport({
+  //     turnServer: turnAddr,
+  //     turnPort: turnPort,
+  //     turnProtocol: new TurnProtocols.TCP(),
+  //     turnUsername: turnUser,
+  //     turnPassword: turnPwd,
+  //     signaling: new WebSocketSignaling({uid: 'tdelaet', url: registrar})
+  //   })
+  //   // execute echo test
+  //   testDestroyStream({
+  //     socket: clientSocket
+  //   }, {
+  //     socket: serverSocket
+  //   }, 'server',
+  //     done)
+  // })
 })
 
 function testEchoMessages (clientSpecs, serverSpecs, done) {
