@@ -9,7 +9,7 @@ Goal of 1tp is to offer a single solution for connecting any two available endpo
 
 ## Features
 - stream based API, highly inspired by node's net API
-- current version includes UDP, TCP and TURN connectors -- extending UDP with hole punching + integrating other transports such as WebRTC, websockets, GCM and tor is WiP.
+- current version includes UDP, TCP, TURN and WebRtc connectors -- extending UDP with hole punching + integrating other transports such as websockets, GCM and tor is WiP.
 - connection setup mechanism tries to select the 'cheapest' transport
 - can be browserified (to be used in chrome and cordova apps)
 
@@ -131,7 +131,7 @@ The `transports` argument specifies an optional array of transport protocols thi
   * `turnProtocol` (optional): transport protocol to interact with TURN server -- default is UDP, see example for using TCP instead
   * `signaling` (mandatory): specify which signaling server to use (loopback or [1tp-registrar](https://github.com/MicroMinion/1tp-registrar)). When using [1tp-registrar](https://github.com/MicroMinion/1tp-registrar)), you need to specify the URL of the server
 
-  `onetp.transports.webrtc` also requires to specify what `signaling` server to use. Additionally, this transports accepts all [simple-peer](https://github.com/feross/simple-peer) (data channel) options.  
+`onetp.transports.webrtc` also requires to specify what `signaling` server it should use. Additionally, this transports accepts all [simple-peer](https://github.com/feross/simple-peer) (data channel) options.  
 
 When creating a server instance without specifying which transports to use, 1tp
   * always activates TCP and UDP transports, and
