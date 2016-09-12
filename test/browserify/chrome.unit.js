@@ -10,6 +10,7 @@ var onetpTransports = require('../../lib/transports')
 var TcpTransport = onetpTransports.tcp
 var UdpTransport = onetpTransports.udp
 var TurnTransport = onetpTransports.turn
+var WebRtcTransport = onetpTransports.webrtc
 var TurnProtocols = require('turn-js').transports
 var WebSocketSignaling = require('../../lib/signaling').websocket
 
@@ -26,7 +27,8 @@ winston.level = 'debug'
 var modules  = {
   'dgram': 'chrome-dgram',
   'net': 'chrome-net',
-  'winston': 'winston-browser'
+  'winston': 'winston-browser',
+  'wrtc': false
 }
 
 describe('net api', function () {
@@ -46,6 +48,14 @@ describe('net api', function () {
         turnProtocol: new TurnProtocols.TCP(),
         turnUsername: turnUser,
         turnPassword: turnPwd,
+        signaling: new WebSocketSignaling({
+          url: registrar
+        })
+      })
+    )
+    transports.push(
+      new WebRtcTransport({
+        iceServers: [ { url: 'stun:23.21.150.121' } ],
         signaling: new WebSocketSignaling({
           url: registrar
         })
