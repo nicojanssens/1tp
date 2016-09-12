@@ -16,7 +16,8 @@ var modules = {}
 modules = {
   'dgram': 'chrome-dgram',
   'net': 'chrome-net',
-  'winston': 'winston-browser'
+  'winston': 'winston-browser',
+  'wrtc': false
 }
 
 gulp.task('browserify', browserifyTask)
@@ -42,9 +43,20 @@ function bundle(entry, replacements, destFile, destFolder, production, env) {
   // replace libs
   for (var originalModule in replacements) {
     var replacementModule = replacements[originalModule]
-    bundler = bundler.require(replacementModule, {
-       expose: originalModule
-    })
+    switch (typeof replacementModule) {
+      case 'string':
+        bundler = bundler.require(replacementModule, {
+          expose: originalModule
+        })
+        break
+      case 'boolean':
+        if (replacementModule === false) {
+          bundler = bundler.exclude(originalModule)
+        }
+        break
+      default:
+        throw new Error('cannot process browserify replacement ' + replacementModule)
+    }
   }
   // babelify transformation
   bundler.transform(

@@ -21,6 +21,7 @@ function runTest() {
   var TcpTransport = onetpTransports.tcp
   var UdpTransport = onetpTransports.udp
   var TurnTransport = onetpTransports.turn
+  var WebRtcTransport = onetpTransports.webrtc
   var TurnProtocols = require('turn-js').transports
   var WebSocketSignaling = require('../../lib/signaling').websocket
 
@@ -34,18 +35,26 @@ function runTest() {
   var transports = []
   transports.push(new UdpTransport())
   //transports.push(new TcpTransport())
-    transports.push(
-      new TurnTransport({
-        turnServer: turnAddr,
-        turnPort: turnPort,
-        turnProtocol: new TurnProtocols.UDP(),
-        turnUsername: turnUser,
-        turnPassword: turnPwd,
-        signaling: new WebSocketSignaling({
-          url: registrar
-        })
+  transports.push(
+    new TurnTransport({
+      turnServer: turnAddr,
+      turnPort: turnPort,
+      turnProtocol: new TurnProtocols.UDP(),
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
+      signaling: new WebSocketSignaling({
+        url: registrar
       })
-    )
+    })
+  )
+  transports.push(
+    new WebRtcTransport({
+      iceServers: [ { url: 'stun:23.21.150.121' } ],
+      signaling: new WebSocketSignaling({
+        url: registrar
+      })
+    })
+  )
   onetpClient = net.createConnection(serverInfo, transports, function () {
     console.log('connection established')
     onetpClient.on('data', function (data) {
