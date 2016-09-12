@@ -95,20 +95,10 @@ describe('1tp transports', function () {
     var localSignaling = new LocalSignaling()
     var clientSocket = new WebRtcTransport({
       iceServers: [ { url: 'stun:23.21.150.121' } ],
-      // turnServer: turnAddr,
-      // turnPort: turnPort,
-      // turnProtocol: new TurnProtocols.TCP(),
-      // turnUsername: turnUser,
-      // turnPassword: turnPwd,
       signaling: localSignaling
     })
     var serverSocket = new WebRtcTransport({
       iceServers: [ { url: 'stun:23.21.150.121' } ],
-      // turnServer: turnAddr,
-      // turnPort: turnPort,
-      // turnProtocol: new TurnProtocols.TCP(),
-      // turnUsername: turnUser,
-      // turnPassword: turnPwd,
       signaling: localSignaling
     })
     testEchoMessages({
