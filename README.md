@@ -31,6 +31,7 @@ var net = onetp.net
 var UdpTransport = onetp.transports.udp
 var TcpTransport = onetp.transports.tcp
 var TurnTransport = onetp.transports.turn
+var WebRtcTransport = onetp.transports.webrtc
 
 // turn transports
 var TurnTransports = require('turn-js').transports
@@ -52,6 +53,13 @@ serverTransports.push(new TurnTransport({
   turnProtocol: new TurnTransports.TCP(),
   turnUsername: USERNAME,
   turnPassword: PASSWORD,
+  //signaling: localSignaling,
+  signaling: new WebSocketSignaling({
+    url: ONETP_REGISTRAR
+  })
+}))
+serverTransports.push(new WebRtcTransport({
+  iceServers: [ { url: 'stun:23.21.150.121' } ],
   //signaling: localSignaling,
   signaling: new WebSocketSignaling({
     url: ONETP_REGISTRAR
@@ -80,6 +88,14 @@ onetpServer.on('listening', function () {
       url: ONETP_REGISTRAR
     })
   }))
+  clientTransports.push(new WebRtcTransport({
+    iceServers: [ { url: 'stun:23.21.150.121' } ],
+    //signaling: localSignaling,
+    signaling: new WebSocketSignaling({
+      url: ONETP_REGISTRAR
+    })
+  }))
+
   //
   var onetpClient = net.createConnection(onetpServer.address(), clientTransports, function () {
     console.log('client connection established')
@@ -105,6 +121,7 @@ The `transports` argument specifies an optional array of transport protocols thi
   * `onetp.transports.udp` -- creates UDP dgram socket
   * `onetp.transports.tcp` -- creates TCP net server socket
   * `onetp.transports.turn` -- creates TURN socket
+  * `onetp.transports.webrtc` -- creates WebRtc socket
 
 `onetp.transports.udp` and `onetp.transports.tcp` don't require additional attributes. `onetp.transports.turn`, in contrast, accepts the following specs:
   * `turnServer` (mandatory): IP address of the TURN server to interact with
@@ -113,6 +130,8 @@ The `transports` argument specifies an optional array of transport protocols thi
   * `turnPassword` (mandatory): user password to access TURN server
   * `turnProtocol` (optional): transport protocol to interact with TURN server -- default is UDP, see example for using TCP instead
   * `signaling` (mandatory): specify which signaling server to use (loopback or [1tp-registrar](https://github.com/MicroMinion/1tp-registrar)). When using [1tp-registrar](https://github.com/MicroMinion/1tp-registrar)), you need to specify the URL of the server
+
+  `onetp.transports.webrtc` also requires to specify what `signaling` server to use. Additionally, this transports accepts all [simple-peer](https://github.com/feross/simple-peer) (data channel) options.  
 
 When creating a server instance without specifying which transports to use, 1tp
   * always activates TCP and UDP transports, and
