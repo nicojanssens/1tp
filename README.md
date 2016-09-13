@@ -278,7 +278,8 @@ cordova plugin add cordova-plugin-networkinterface
 
 |     | UDP | TCP | TURN+UDP | TURN+TCP | WebRtc |
 | --- |:---:|:---:|:---:|:---:|:---:|
-| node.js | + | + | + | + | + |
+| node.js x86 | + | + | + | + | + |
+| node.js arm | + | + | + | + | - |
 | chrome browser | - | - | - | - | + |
 | chrome app     | + | + | + | + | + |
 | cordova android | + | - | + | - | + |
