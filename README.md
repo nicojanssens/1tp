@@ -274,5 +274,15 @@ cordova plugin add cordova-plugin-chrome-apps-sockets-udp
 cordova plugin add cordova-plugin-networkinterface
 ```
 
+## Compatibility -- current status
+
+|     | UDP | TCP | TURN+UDP | TURN+TCP | WebRtc |
+| --- |:---:|:---:|:---:|:---:|:---:|
+| node.js | + | + | + | + | + |
+| chrome browser | - | - | - | - | + |
+| chrome app     | + | + | + | + | + |
+| cordova android | + | - | + | - | + |
+| cordova ios | + | - | + | - | - |
+
 ## Examples
 See examples directory.
