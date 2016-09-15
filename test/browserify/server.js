@@ -60,7 +60,7 @@ function runTest() {
   )
   transports.push(
     new WebRtcTransport({
-      iceServers: [ { url: 'stun:23.21.150.121' } ],
+      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
       signaling: new WebSocketSignaling({
         url: registrar
       })

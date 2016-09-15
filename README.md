@@ -59,7 +59,7 @@ serverTransports.push(new TurnTransport({
   })
 }))
 serverTransports.push(new WebRtcTransport({
-  iceServers: [ { url: 'stun:23.21.150.121' } ],
+  config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
   //signaling: localSignaling,
   signaling: new WebSocketSignaling({
     url: ONETP_REGISTRAR
@@ -89,7 +89,7 @@ onetpServer.on('listening', function () {
     })
   }))
   clientTransports.push(new WebRtcTransport({
-    iceServers: [ { url: 'stun:23.21.150.121' } ],
+    config: { iceServers: [ { url: 'stun:23.21.150.121' } ] }
     //signaling: localSignaling,
     signaling: new WebSocketSignaling({
       url: ONETP_REGISTRAR
@@ -134,7 +134,7 @@ The `transports` argument specifies an optional array of transport protocols thi
 `onetp.transports.webrtc` also requires to specify what `signaling` server it should use. Additionally, this transports accepts all [simple-peer](https://github.com/feross/simple-peer) (data channel) options.  
 
 When creating a server instance without specifying which transports to use, 1tp
-  * always activates TCP and UDP transports, and
+  * activates the transports that are compatible with the runtime -- see compatibility table below, and
   * activates TURN if environment variables `TURN_ADDR`, `TURN_PORT`, `TURN_USER`, `TURN_PASS` and `ONETP_REGISTRAR` are all set ~~OR if config.json is present (the structure of this file is defined in config.json.template)~~  
 
 ### `server.listen([listeningInfo][, callback])`

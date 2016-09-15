@@ -94,11 +94,11 @@ describe('1tp transports', function () {
   it('should return echo messages using webrtc transport with local signaling and close receiving transport afterwards', function (done) {
     var localSignaling = new LocalSignaling()
     var clientSocket = new WebRtcTransport({
-      iceServers: [ { url: 'stun:23.21.150.121' } ],
+      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
       signaling: localSignaling
     })
     var serverSocket = new WebRtcTransport({
-      iceServers: [ { url: 'stun:23.21.150.121' } ],
+      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
       signaling: localSignaling
     })
     testEchoMessages({
