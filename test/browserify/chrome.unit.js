@@ -38,30 +38,7 @@ describe('net api', function () {
     var child
     var onetpServerAddress
     // create 1tp server
-    var transports = []
-    transports.push(new UdpTransport())
-    transports.push(new TcpTransport())
-    transports.push(
-      new TurnTransport({
-        turnServer: turnAddr,
-        turnPort: turnPort,
-        turnProtocol: new TurnProtocols.TCP(),
-        turnUsername: turnUser,
-        turnPassword: turnPwd,
-        signaling: new WebSocketSignaling({
-          url: registrar
-        })
-      })
-    )
-    transports.push(
-      new WebRtcTransport({
-        config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
-        signaling: new WebSocketSignaling({
-          url: registrar
-        })
-      })
-    )
-    var server = net.createServer(transports, function (connection) {
+    var server = net.createServer(function (connection) {
       console.log('connection established')
       connection.on('data', function (data) {
         console.log('received message ' + data)

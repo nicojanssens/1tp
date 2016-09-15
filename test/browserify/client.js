@@ -31,30 +31,55 @@ function runTest() {
     var message = (error === undefined)? 'done': error
     onetpClient.write(message)
   }
-
+  // create transports
   var transports = []
-  transports.push(new UdpTransport())
-  //transports.push(new TcpTransport())
-  transports.push(
-    new TurnTransport({
-      turnServer: turnAddr,
-      turnPort: turnPort,
-      turnProtocol: new TurnProtocols.UDP(),
-      turnUsername: turnUser,
-      turnPassword: turnPwd,
-      signaling: new WebSocketSignaling({
-        url: registrar
-      })
+  // udp
+  if (UdpTransport.isCompatibleWithRuntime()) {
+    transports.push(new UdpTransport())
+  }
+  // tcp
+  if (TcpTransport.isCompatibleWithRuntime()) {
+    transports.push(new TcpTransport())
+  }
+  // turn-udp
+  var turnUdpConfig = {
+    turnServer: turnAddr,
+    turnPort: turnPort,
+    turnProtocol: new TurnProtocols.UDP(),
+    turnUsername: turnUser,
+    turnPassword: turnPwd,
+    signaling: new WebSocketSignaling({
+      url: registrar
     })
-  )
-  transports.push(
-    new WebRtcTransport({
-      iceServers: [ { url: 'stun:23.21.150.121' } ],
-      signaling: new WebSocketSignaling({
-        url: registrar
-      })
+  }
+  if (TurnTransport.isCompatibleWithRuntime(turnUdpConfig)) {
+    transports.push(new TurnTransport(turnUdpConfig))
+  }
+  // turn-tcp
+  var turnTcpConfig = {
+    turnServer: turnAddr,
+    turnPort: turnPort,
+    turnProtocol: new TurnProtocols.TCP(),
+    turnUsername: turnUser,
+    turnPassword: turnPwd,
+    signaling: new WebSocketSignaling({
+      url: registrar
     })
-  )
+  }
+  if (TurnTransport.isCompatibleWithRuntime(turnTcpConfig)) {
+    transports.push(new TurnTransport(turnTcpConfig))
+  }
+  // webrtc
+  if (WebRtcTransport.isCompatibleWithRuntime()) {
+    transports.push(
+      new WebRtcTransport({
+        config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
+        signaling: new WebSocketSignaling({
+          url: registrar
+        })
+      })
+    )
+  }
   onetpClient = net.createConnection(serverInfo, transports, function () {
     console.log('connection established')
     onetpClient.on('data', function (data) {
