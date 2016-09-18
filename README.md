@@ -5,11 +5,11 @@
 One transport protocol to rule them all -- offering net socket abstraction on top of various communication protocols
 
 ## Summary
-Goal of 1tp is to offer a single solution for connecting any two available endpoints -- public, private, mobile, located behind NAT boxes, ... To accomplish this, 1tp acts as a wrapper around various existing transports such as UDP, TCP and TURN (more to come in later releases). The internal details of these transports are concealed via an API similar to node's net API, using sockets and streams. Furthermore, 1tp always tries to use the 'cheapest' transport when establishing a connection between two endpoints. If both endpoints are sharing the same network, for instance, then 1tp will setup a UDP or a TCP connection. If two endpoints are located behind symmetric NAT boxes, then 1tp will negotiate a TURN session via a shared relay server.  
+Goal of 1tp is to offer a single solution for connecting any two available endpoints -- public, private, mobile, located behind NAT boxes, ... To accomplish this, 1tp acts as a wrapper around various existing transports such as UDP, TCP, WebRTC and TURN (more to come in later releases). The internal details of these transports are concealed via an API similar to node's net API, using sockets and streams. Furthermore, 1tp always tries to use the 'cheapest' transport when establishing a connection between two endpoints. If both endpoints are sharing the same network, for instance, then 1tp will setup a UDP or a TCP connection. If two endpoints are located behind symmetric NAT boxes, then 1tp will negotiate a TURN session via a shared relay server.  
 
 ## Features
 - stream based API, highly inspired by node's net API
-- current version includes UDP, TCP, TURN and WebRtc connectors -- extending UDP with hole punching + integrating other transports such as websockets, GCM and tor is WiP.
+- current version includes UDP, TCP, WebRTC and TURN connectors -- extending UDP with hole punching + integrating other transports such as websockets, GCM and tor is WiP.
 - connection setup mechanism tries to select the 'cheapest' transport
 - can be browserified (to be used in chrome and cordova apps)
 
@@ -121,7 +121,7 @@ The `transports` argument specifies an optional array of transport protocols thi
   * `onetp.transports.udp` -- creates UDP dgram socket
   * `onetp.transports.tcp` -- creates TCP net server socket
   * `onetp.transports.turn` -- creates TURN socket
-  * `onetp.transports.webrtc` -- creates WebRtc socket
+  * `onetp.transports.webrtc` -- creates WebRTC socket
 
 `onetp.transports.udp` and `onetp.transports.tcp` don't require additional attributes. `onetp.transports.turn`, in contrast, accepts the following specs:
   * `turnServer` (mandatory): IP address of the TURN server to interact with
@@ -276,7 +276,7 @@ cordova plugin add cordova-plugin-networkinterface
 
 ## Compatibility -- current status
 
-|     | UDP | TCP | TURN+UDP | TURN+TCP | WebRtc |
+|     | UDP | TCP | TURN+UDP | TURN+TCP | WebRTC |
 | --- |:---:|:---:|:---:|:---:|:---:|
 | node.js x86 | + | + | + | + | + |
 | node.js arm | + | + | + | + | - |
