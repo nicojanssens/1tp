@@ -156,6 +156,9 @@ The `listeningInfo` parameter specifies an optional array of transport binding a
   }
 }]
 ```
+
+Mind that `listeningInfo` data is indicative. If the listen operation fails due to incorrect `listeningInfo` data (such as an unavailable address), then the 1tp server retries executing this operation without `listeningInfo`.
+
 The optional `callback` argument is automatically set as a listener for the `listening` event.
 
 ### `server.listenP([listeningInfo])`
