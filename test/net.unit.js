@@ -98,6 +98,44 @@ describe('net api', function () {
     server.listen(registrationInfo)
   })
 
+  it('should bind new server using UDP -- no callback and entering incorrect connection info', function (done) {
+    var transports = []
+    transports.push(new UdpTransport())
+    var server = new Server(transports)
+    var registrationInfo = [{
+      transportType: 'udp',
+      transportInfo: {
+        address: '1.2.3.4',
+        port: 20000
+      }
+    }]
+    server.on('listening', function () {
+      expect(server.address()).to.not.be.undefined
+      expect(server.address()).to.not.deep.equal(registrationInfo)
+      done()
+    })
+    server.listen(registrationInfo)
+  })
+
+  it('should bind new server using TCP -- no callback and entering incorrect connection info', function (done) {
+    var transports = []
+    transports.push(new TcpTransport())
+    var server = new Server(transports)
+    var registrationInfo = [{
+      transportType: 'tcp',
+      transportInfo: {
+        address: '1.2.3.4',
+        port: 20000
+      }
+    }]
+    server.on('listening', function () {
+      expect(server.address()).to.not.be.undefined
+      expect(server.address()).to.not.deep.equal(registrationInfo)
+      done()
+    })
+    server.listen(registrationInfo)
+  })
+
   it('should bind new server using UDP and TCP -- entering callback and specific connection info', function (done) {
     var transports = []
     transports.push(new UdpTransport())
