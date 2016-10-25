@@ -26,7 +26,7 @@ var registrar = process.env.ONETP_REGISTRAR
 var defaultProtocolVersion = require('../package.json').version
 
 describe('1tp transports', function () {
-  this.timeout(20000)
+  this.timeout(30000)
 
   it('should return echo messages using udp transport and close server afterwards', function (done) {
     var clientSocket = new UdpTransport()
