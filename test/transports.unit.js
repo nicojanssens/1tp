@@ -91,23 +91,6 @@ describe('1tp transports', function () {
     }, done)
   })
 
-  it('should return echo messages using webrtc transport with local signaling and close receiving transport afterwards', function (done) {
-    var localSignaling = new LocalSignaling()
-    var clientSocket = new WebRtcTransport({
-      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
-      signaling: localSignaling
-    })
-    var serverSocket = new WebRtcTransport({
-      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
-      signaling: localSignaling
-    })
-    testEchoMessages({
-      socket: clientSocket
-    }, {
-      socket: serverSocket
-    }, done)
-  })
-
   it('should return echo messages using tcp+turn transport with WS signaling and close receiving transport afterwards', function (done) {
     var clientSocket = new TurnTransport({
       turnServer: turnAddr,
@@ -212,7 +195,7 @@ describe('1tp transports', function () {
       done)
   })
 
-  it('should correctly close TURN stream by destroying client socket', function (done) {
+  it('should correctly close TURN TCP stream by destroying client socket', function (done) {
     var clientSocket = new TurnTransport({
       turnServer: turnAddr,
       turnPort: turnPort,
@@ -225,6 +208,32 @@ describe('1tp transports', function () {
       turnServer: turnAddr,
       turnPort: turnPort,
       turnProtocol: new TurnProtocols.TCP(),
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
+      signaling: new WebSocketSignaling({uid: 'tdelaet', url: registrar})
+    })
+    // execute echo test
+    testDestroyStream({
+      socket: clientSocket
+    }, {
+      socket: serverSocket
+    }, 'client',
+      done)
+  })
+
+  it('should correctly close TURN UDP stream by destroying client socket', function (done) {
+    var clientSocket = new TurnTransport({
+      turnServer: turnAddr,
+      turnPort: turnPort,
+      turnProtocol: new TurnProtocols.UDP(),
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
+      signaling: new WebSocketSignaling({uid: 'nicoj', url: registrar})
+    })
+    var serverSocket = new TurnTransport({
+      turnServer: turnAddr,
+      turnPort: turnPort,
+      turnProtocol: new TurnProtocols.UDP(),
       turnUsername: turnUser,
       turnPassword: turnPwd,
       signaling: new WebSocketSignaling({uid: 'tdelaet', url: registrar})
@@ -262,6 +271,23 @@ describe('1tp transports', function () {
       socket: serverSocket
     }, 'server',
       done)
+  })
+
+  it('should return echo messages using webrtc transport with local signaling and close receiving transport afterwards', function (done) {
+    var localSignaling = new LocalSignaling()
+    var clientSocket = new WebRtcTransport({
+      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
+      signaling: localSignaling
+    })
+    var serverSocket = new WebRtcTransport({
+      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
+      signaling: localSignaling
+    })
+    testEchoMessages({
+      socket: clientSocket
+    }, {
+      socket: serverSocket
+    }, done)
   })
 })
 
