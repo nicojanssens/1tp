@@ -315,6 +315,43 @@ describe('1tp transports', function () {
     }, 'server',
       done)
   })
+
+  it('should correctly close WebRtc stream by destroying client socket', function (done) {
+    var clientSocket = new WebRtcTransport({
+      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
+      signaling: new WebSocketSignaling({uid: 'nicoj', url: registrar})
+    })
+    var serverSocket = new WebRtcTransport({
+      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
+      signaling: new WebSocketSignaling({uid: 'tdelaet', url: registrar})
+    })
+    // execute echo test
+    testDestroyStream({
+      socket: clientSocket
+    }, {
+      socket: serverSocket
+    }, 'client',
+      done)
+  })
+
+  it('should correctly close WebRtc stream by destroying server socket', function (done) {
+    var clientSocket = new WebRtcTransport({
+      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
+      signaling: new WebSocketSignaling({uid: 'nicoj', url: registrar})
+    })
+    var serverSocket = new WebRtcTransport({
+      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
+      signaling: new WebSocketSignaling({uid: 'tdelaet', url: registrar})
+    })
+    // execute echo test
+    testDestroyStream({
+      socket: clientSocket
+    }, {
+      socket: serverSocket
+    }, 'server',
+      done)
+  })
+
 })
 
 function testEchoMessages (clientSpecs, serverSpecs, done) {
