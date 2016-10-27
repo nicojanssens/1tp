@@ -14,7 +14,7 @@ console.log('turn user: ' + turnUser)
 console.log('turn password: ' + turnPwd)
 console.log('1tp registrar: ' + registrar)
 
-function runTest() {
+function runTest () {
   var net = require('../../lib/net')
 
   var onetpTransports = require('../../lib/transports')
@@ -27,8 +27,8 @@ function runTest() {
 
   var onetpClient
 
-  function done(error) {
-    var message = (error === undefined)? 'done': error
+  function done (error) {
+    var message = (error === undefined) ? 'done' : error
     onetpClient.write(message)
   }
   // create transports
@@ -90,7 +90,7 @@ function runTest() {
   })
 }
 
-function onDeviceReady() {
+function onDeviceReady () {
   console.log('device ready')
   runTest()
 }

@@ -25,7 +25,7 @@ var testSocketPort = 23456
 var winston = require('winston')
 winston.level = 'debug'
 
-var modules  = {
+var modules = {
   'dgram': 'chrome-dgram',
   'net': 'chrome-net',
   'winston': 'winston-browser',
@@ -39,7 +39,7 @@ describe('net api', function () {
     var child
     // create udp server listening to messages from chrome app
     var server = dgram.createSocket('udp4')
-    server.on('error',  function (error) {
+    server.on('error', function (error) {
       console.error(error)
       server.close()
       if (child) {
@@ -88,13 +88,13 @@ describe('net api', function () {
       console.log('clean browserify build, launching cordova emulator -- please wait a few seconds')
       var options = {
         cwd: path.join(__dirname, './cordova-app'),
-        maxBuffer: 1000*1024
+        maxBuffer: 1000 * 1024
       }
       child = cp.exec(path.join(__dirname, './cordova-app', 'start.sh'), options, function (err, stdout, stderr) {
         if (err) {
           done(err)
         }
-        //console.log(stdout)
+      // console.log(stdout)
       })
     }
     // start udp server

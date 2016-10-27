@@ -22,8 +22,8 @@ console.log('test socket port: ' + testSocketPort)
 var socket = dgram.createSocket('udp4')
 socket.on('error', onError)
 
-function done(error) {
-  var message = (error === undefined)? 'done': error
+function done (error) {
+  var message = (error === undefined) ? 'done' : error
   socket.send(message, 0, message.length, testSocketPort, '127.0.0.1')
 }
 
@@ -32,7 +32,7 @@ function onError (error) {
   done(error)
 }
 
-function runTest() {
+function runTest () {
   var net = require('../../lib/net')
 
   var onetpTransports = require('../../lib/transports')
@@ -105,7 +105,7 @@ function runTest() {
   })
 }
 
-function onDeviceReady() {
+function onDeviceReady () {
   console.log('device ready')
   runTest()
 }
