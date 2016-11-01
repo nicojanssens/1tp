@@ -1,6 +1,6 @@
 'use strict'
 
-var net = require('../lib/net')
+var net = require('../index').net
 var Server = net.Server
 var Socket = net.Socket
 
