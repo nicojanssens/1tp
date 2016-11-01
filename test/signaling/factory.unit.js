@@ -1,7 +1,7 @@
 'use strict'
 
 var myUtils = require('../../lib/utils')
-var SignalingFactory = require('../../lib/signaling/in-band/factory')
+var signalingFactory = require('../../lib/signaling/in-band/factory')
 
 var chai = require('chai')
 var expect = chai.expect
@@ -11,15 +11,13 @@ var projectVersion = require('../../package.json').version
 describe('Signaling factory', function () {
   this.timeout(2000)
 
-  var signalingFactory = new SignalingFactory()
-
   it('should correctly create and parse a SYN message', function () {
     var sessionId = myUtils.generateSessionId()
     var transactionId = myUtils.generateTransactionId()
     var data = signalingFactory.createSynPacket(sessionId, transactionId)
     expect(data).to.not.be.undefined
     var result = signalingFactory.parse(data)
-    expect(result.type).to.equal(SignalingFactory.MESSAGE.SYN)
+    expect(result.type).to.equal(signalingFactory.MESSAGE.SYN)
     expect(result.version).to.equal(projectVersion)
     expect(result.sessionId).to.equal(sessionId)
     expect(result.transactionId).to.equal(transactionId)
@@ -31,7 +29,7 @@ describe('Signaling factory', function () {
     var data = signalingFactory.createSynAckPacket(sessionId, transactionId)
     expect(data).to.not.be.undefined
     var result = signalingFactory.parse(data)
-    expect(result.type).to.equal(SignalingFactory.MESSAGE.SYN_ACK)
+    expect(result.type).to.equal(signalingFactory.MESSAGE.SYN_ACK)
     expect(result.version).to.equal(projectVersion)
     expect(result.sessionId).to.equal(sessionId)
     expect(result.transactionId).to.equal(transactionId)
@@ -43,7 +41,7 @@ describe('Signaling factory', function () {
     var data = signalingFactory.createAckPacket(sessionId, transactionId)
     expect(data).to.not.be.undefined
     var result = signalingFactory.parse(data)
-    expect(result.type).to.equal(SignalingFactory.MESSAGE.ACK)
+    expect(result.type).to.equal(signalingFactory.MESSAGE.ACK)
     expect(result.version).to.equal(projectVersion)
     expect(result.sessionId).to.equal(sessionId)
     expect(result.transactionId).to.equal(transactionId)
@@ -55,7 +53,7 @@ describe('Signaling factory', function () {
     var data = signalingFactory.createDataPacket(sessionId, chunk)
     expect(data).to.not.be.undefined
     var result = signalingFactory.parse(data)
-    expect(result.type).to.equal(SignalingFactory.MESSAGE.DATA)
+    expect(result.type).to.equal(signalingFactory.MESSAGE.DATA)
     expect(result.version).to.equal(projectVersion)
     expect(result.sessionId).to.equal(sessionId)
     expect(result.bytes).to.deep.equal(chunk)
@@ -67,7 +65,7 @@ describe('Signaling factory', function () {
     var data = signalingFactory.createFinPacket(sessionId, transactionId)
     expect(data).to.not.be.undefined
     var result = signalingFactory.parse(data)
-    expect(result.type).to.equal(SignalingFactory.MESSAGE.FIN)
+    expect(result.type).to.equal(signalingFactory.MESSAGE.FIN)
     expect(result.version).to.equal(projectVersion)
     expect(result.sessionId).to.equal(sessionId)
     expect(result.transactionId).to.equal(transactionId)
@@ -79,7 +77,7 @@ describe('Signaling factory', function () {
     var data = signalingFactory.createRstPacket(sessionId, transactionId)
     expect(data).to.not.be.undefined
     var result = signalingFactory.parse(data)
-    expect(result.type).to.equal(SignalingFactory.MESSAGE.RST)
+    expect(result.type).to.equal(signalingFactory.MESSAGE.RST)
     expect(result.version).to.equal(projectVersion)
     expect(result.sessionId).to.equal(sessionId)
     expect(result.transactionId).to.equal(transactionId)
