@@ -13,7 +13,7 @@ var UdpTransport = onetpTransports.udp
 var TurnTransport = onetpTransports.turn
 var WebRtcTransport = onetpTransports.webrtc
 var TurnProtocols = require('turn-js').transports
-var WebSocketSignaling = require('../../lib/signaling').websocket
+var WebSocketSignaling = require('../../lib/signaling/out-of-band').websocket
 
 var turnAddr = process.env.TURN_ADDR
 var turnPort = process.env.TURN_PORT

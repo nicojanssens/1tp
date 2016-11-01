@@ -10,7 +10,7 @@ var TurnTransport = onetpTransports.turn
 var UdpTransport = onetpTransports.udp
 var TurnProtocols = require('turn-js').transports
 
-var WebSocketSignaling = require('../lib/signaling').websocket
+var WebSocketSignaling = require('../lib/signaling/out-of-band').websocket
 
 var chai = require('chai')
 var expect = chai.expect
