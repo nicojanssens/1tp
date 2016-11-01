@@ -1,14 +1,14 @@
 'use strict'
 
-var TcpTransport = require('../lib/transports').tcp
-var TurnTransport = require('../lib/transports').turn
-var UdpTransport = require('../lib/transports').udp
-var WebRtcTransport = require('../lib/transports').webrtc
+var TcpTransport = require('../index').transports.tcp
+var TurnTransport = require('../index').transports.turn
+var UdpTransport = require('../index').transports.udp
+var WebRtcTransport = require('../index').transports.webrtc
 
 var TurnProtocols = require('turn-js').transports
 
-var LocalSignaling = require('../lib/signaling').local
-var WebSocketSignaling = require('../lib/signaling').websocket
+var LocalSignaling = require('../index').signaling.local
+var WebSocketSignaling = require('../index').signaling.websocket
 
 var chai = require('chai')
 var expect = chai.expect
