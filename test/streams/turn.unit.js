@@ -12,8 +12,11 @@ var turnPort = process.env.TURN_PORT
 var turnUser = process.env.TURN_USER
 var turnPwd = process.env.TURN_PASS
 
+// var winston = require('winston')
+// winston.level = 'debug'
+
 describe('Testing turn stream', function () {
-  this.timeout(20000)
+  this.timeout(2000)
 
   it('should return echo messages and end stream', function (done) {
     var clientAlice, clientBob
