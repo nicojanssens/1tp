@@ -82,5 +82,4 @@ describe('Signaling factory', function () {
     expect(result.sessionId).to.equal(sessionId)
     expect(result.transactionId).to.equal(transactionId)
   })
-
 })

@@ -20,7 +20,7 @@ describe('Retry logic', function () {
     }
     retry.executeP(operation, eventName)
       .then(function () {
-        var error = new Error ("not expecting promise to resolve")
+        var error = new Error('not expecting promise to resolve')
         done(error)
       })
       .catch(function (error) {
@@ -60,7 +60,7 @@ describe('Retry logic', function () {
     }
     retry.executeP(operation, eventName)
       .then(function () {
-        var error = new Error ("not expecting promise to resolve")
+        var error = new Error('not expecting promise to resolve')
         done(error)
       })
       .catch(function (error) {
@@ -72,5 +72,4 @@ describe('Retry logic', function () {
         }
       })
   })
-
 })

@@ -351,7 +351,6 @@ describe('1tp transports', function () {
     }, 'server',
       done)
   })
-
 })
 
 function testEchoMessages (clientSpecs, serverSpecs, done) {
