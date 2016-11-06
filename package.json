@@ -1,6 +1,6 @@
 {
   "name": "1tp",
-  "version": "0.12.2",
+  "version": "0.12.3",
   "description": "One transport protocol to rule them all -- offering a net-like stream API on top of various communication protocols",
   "main": "index.js",
   "keywords": [
