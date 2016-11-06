@@ -20,8 +20,8 @@ var turnUser = process.env.TURN_USER
 var turnPwd = process.env.TURN_PASS
 var registrar = process.env.ONETP_REGISTRAR
 
-var winston = require('winston')
-winston.level = 'error'
+// var winston = require('winston')
+// winston.level = 'debug'
 
 var defaultProtocolVersion = require('../package.json').version
 

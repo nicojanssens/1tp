@@ -2,7 +2,7 @@
 
 var turn = require('turn-js')
 var TurnTransports = turn.transports
-var TurnStream = require('../../lib/transports/streams/turn')
+var TurnSession = require('../../lib/transports/streams/turn')
 
 var chai = require('chai')
 var expect = chai.expect
@@ -52,8 +52,8 @@ describe('Testing turn stream', function () {
       })
       .then(function () {
         // create streams
-        streamAlice = new TurnStream(connectionInfoBob, clientAlice)
-        streamBob = new TurnStream(connectionInfoAlice, clientBob)
+        streamAlice = new TurnSession(connectionInfoBob, clientAlice)
+        streamBob = new TurnSession(connectionInfoAlice, clientBob)
         streamBob.pipe(streamBob)
         // config sender
         streamAlice.on('data', function (bytes) {
