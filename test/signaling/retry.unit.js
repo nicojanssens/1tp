@@ -1,6 +1,5 @@
 'use strict'
 
-var Q = require('q')
 var Retry = require('../../lib/signaling/in-band/retry')
 
 var chai = require('chai')
