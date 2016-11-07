@@ -52,8 +52,8 @@ describe('Testing turn stream', function () {
       })
       .then(function () {
         // create streams
-        streamAlice = new TurnSession(connectionInfoBob, clientAlice)
-        streamBob = new TurnSession(connectionInfoAlice, clientBob)
+        streamAlice = new TurnSession(connectionInfoBob, clientAlice, 0)
+        streamBob = new TurnSession(connectionInfoAlice, clientBob, 0)
         streamBob.pipe(streamBob)
         // config sender
         streamAlice.on('data', function (bytes) {
