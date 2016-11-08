@@ -5,9 +5,6 @@ var Retry = require('../../lib/signaling/in-band/retry')
 var chai = require('chai')
 var expect = chai.expect
 
-var winston = require('winston')
-winston.level = 'debug'
-
 describe('Retry logic', function () {
   this.timeout(5000)
 

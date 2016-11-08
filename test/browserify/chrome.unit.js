@@ -21,13 +21,10 @@ var turnPwd = process.env.TURN_PASS
 var registrar = process.env.ONETP_REGISTRAR
 var testSocketPort = 23456
 
-var winston = require('winston')
-winston.level = 'debug'
-
 var modules = {
   'dgram': 'chrome-dgram',
   'net': 'chrome-net',
-  'winston': 'winston-browser',
+  'winston-debug': 'winston-browser',
   'wrtc': false
 }
 

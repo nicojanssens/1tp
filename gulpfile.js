@@ -16,7 +16,7 @@ var modules = {}
 modules = {
   'dgram': 'chrome-dgram',
   'net': 'chrome-net',
-  'winston': 'winston-browser',
+  'winston-debug': 'winston-browser',
   'wrtc': false
 }
 

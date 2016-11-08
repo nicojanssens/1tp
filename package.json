@@ -41,6 +41,7 @@
     "socket.io-client": "^1.5.1",
     "turn-js": "^0.4.2",
     "winston": "^2.3.0",
+    "winston-debug": "^1.0.0",
     "winston-browser": "^1.0.0",
     "winston-meta-wrapper": "^1.2.0",
     "wrtc": "^0.0.61"
