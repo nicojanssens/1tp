@@ -6,14 +6,6 @@ var gulp = require('gulp')
 var gulpfile = require('../../gulpfile')
 var net = require('../../lib/net')
 
-var onetpTransports = require('../../lib/transports')
-var TcpTransport = onetpTransports.tcp
-var UdpTransport = onetpTransports.udp
-var TurnTransport = onetpTransports.turn
-var WebRtcTransport = onetpTransports.webrtc
-var TurnProtocols = require('turn-js').transports
-var WebSocketSignaling = require('../../lib/signaling/out-of-band').websocket
-
 var turnAddr = process.env.TURN_ADDR
 var turnPort = process.env.TURN_PORT
 var turnUser = process.env.TURN_USER

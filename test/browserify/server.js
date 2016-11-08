@@ -1,8 +1,6 @@
 'use strict'
 
 var dgram = require('dgram') // browserify will replace this with chrome-dgram
-var chai = require('chai')
-var expect = chai.expect
 
 var turnAddr = process.env.turnAddr
 var turnPort = process.env.turnPort

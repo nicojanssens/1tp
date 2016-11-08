@@ -7,20 +7,11 @@ var gulpfile = require('../../gulpfile')
 var net = require('../../lib/net')
 var path = require('path')
 
-var onetpTransports = require('../../lib/transports')
-var TcpTransport = onetpTransports.tcp
-var UdpTransport = onetpTransports.udp
-var TurnTransport = onetpTransports.turn
-var WebRtcTransport = onetpTransports.webrtc
-var TurnProtocols = require('turn-js').transports
-var WebSocketSignaling = require('../../lib/signaling/out-of-band').websocket
-
 var turnAddr = process.env.TURN_ADDR
 var turnPort = process.env.TURN_PORT
 var turnUser = process.env.TURN_USER
 var turnPwd = process.env.TURN_PASS
 var registrar = process.env.ONETP_REGISTRAR
-var testSocketPort = 23456
 
 var modules = {
   'dgram': 'chrome-dgram',
