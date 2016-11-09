@@ -9,7 +9,8 @@
     "nat",
     "udp",
     "tcp",
-    "turn"
+    "turn",
+    "webrtc"
   ],
   "author": {
     "name": "Nico Janssens",
