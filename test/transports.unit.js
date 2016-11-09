@@ -129,6 +129,22 @@ describe('1tp transports', function () {
     }, done)
   })
 
+  it('should return echo messages using webrtc transport with WS signaling', function (done) {
+    var clientSocket = new WebRtcTransport({
+      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
+      signaling: new WebSocketSignaling({uid: 'nicoj', url: registrar})
+    })
+    var serverSocket = new WebRtcTransport({
+      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
+      signaling: new WebSocketSignaling({uid: 'tdelaet', url: registrar})
+    })
+    testEchoMessages({
+      socket: clientSocket
+    }, {
+      socket: serverSocket
+    }, done)
+  })
+
   it('should correctly close UDP stream by destroying client socket', function (done) {
     var clientSocket = new UdpTransport()
     var listeningInfo = {
@@ -373,44 +389,33 @@ function testEchoMessages (clientSpecs, serverSpecs, done) {
     echoStream.on('finish', function () {
       console.log('echo write stream ended')
       echoWriteStreamEnded = true
-      testEndCondition()
     })
     // read stream end
     echoStream.on('end', function () {
       console.log('echo read stream ended')
       echoReadStreamEnded = true
-      testEndCondition()
     })
-  // // try to close server socket
-  // serverSocket.close(function () {
-  //   console.log('CLOSED')
-  //   console.log(clientReadStreamEnded) //false
-  //   console.log(clientWriteStreamEnded) //true
-  //   console.log(echoReadStreamEnded) //false
-  //   console.log(echoWriteStreamEnded) //false
-  //   // expect(clientReadStreamEnded).to.be.true
-  //   // expect(clientWriteStreamEnded).to.be.true
-  //   // expect(echoReadStreamEnded).to.be.true
-  //   // expect(echoWriteStreamEnded).to.be.true
-  //   //done()
-  // }, function (error) {
-  //   done(error)
-  // })
+  // try to close server socket
+  serverSocket.close(
+    function () {
+      console.log('closed')
+      setTimeout(function () { // to cope with TCP closing behavior
+        expect(clientReadStreamEnded).to.be.true
+        expect(clientWriteStreamEnded).to.be.true
+        expect(echoReadStreamEnded).to.be.true
+        expect(echoWriteStreamEnded).to.be.true
+        done()
+      }, 500)
+    },
+    function (error) {
+      done(error)
+    })
   })
 
   function sendTestMessage (stream) {
     var testMessage = 'test message ' + currentTestMessage
     console.log('sending message ' + testMessage)
     stream.write(testMessage)
-  }
-
-  function testEndCondition () {
-    if (clientReadStreamEnded &&
-      clientWriteStreamEnded &&
-      echoReadStreamEnded &&
-      echoWriteStreamEnded) {
-      done()
-    }
   }
 
   // bind echo socket
@@ -444,13 +449,11 @@ function testEchoMessages (clientSpecs, serverSpecs, done) {
       clientStream.on('end', function () {
         console.log('client read stream ended')
         clientReadStreamEnded = true
-        testEndCondition()
       })
       // write stream end
       clientStream.on('finish', function () {
         console.log('client write stream ended')
         clientWriteStreamEnded = true
-        testEndCondition()
       })
       // send test messages
       sendTestMessage(clientStream)
