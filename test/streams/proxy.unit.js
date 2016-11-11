@@ -85,7 +85,7 @@ describe('Testing proxy stream', function () {
       done()
     })
     // write stream end
-      proxy.on('finish', function () {
+    proxy.on('finish', function () {
       console.log('proxy write stream ended')
       proxyWriteStreamEnded = true
     })

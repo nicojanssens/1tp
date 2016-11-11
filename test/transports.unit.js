@@ -395,21 +395,21 @@ function testEchoMessages (clientSpecs, serverSpecs, done) {
       console.log('echo read stream ended')
       echoReadStreamEnded = true
     })
-  // try to close server socket
-  serverSocket.close(
-    function () {
-      console.log('closed')
-      setTimeout(function () { // to cope with TCP closing behavior
-        expect(clientReadStreamEnded).to.be.true
-        expect(clientWriteStreamEnded).to.be.true
-        expect(echoReadStreamEnded).to.be.true
-        expect(echoWriteStreamEnded).to.be.true
-        done()
-      }, 500)
-    },
-    function (error) {
-      done(error)
-    })
+    // try to close server socket
+    serverSocket.close(
+      function () {
+        console.log('closed')
+        setTimeout(function () { // to cope with TCP closing behavior
+          expect(clientReadStreamEnded).to.be.true
+          expect(clientWriteStreamEnded).to.be.true
+          expect(echoReadStreamEnded).to.be.true
+          expect(echoWriteStreamEnded).to.be.true
+          done()
+        }, 500)
+      },
+      function (error) {
+        done(error)
+      })
   })
 
   function sendTestMessage (stream) {
