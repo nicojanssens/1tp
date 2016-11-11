@@ -33,9 +33,6 @@ var TcpTransport = onetp.transports.tcp
 var TurnTransport = onetp.transports.turn
 var WebRtcTransport = onetp.transports.webrtc
 
-// turn transports
-var TurnTransports = require('turn-js').transports
-
 // local signaling service to exchange turn handshake messages
 var LocalSignaling = onetp.signaling.local
 var localSignaling = new LocalSignaling()
@@ -50,7 +47,6 @@ serverTransports.push(new TcpTransport())
 serverTransports.push(new TurnTransport({
   turnServer: IP_ADDRESS,
   turnPort: PORT,
-  turnProtocol: new TurnTransports.TCP(),
   turnUsername: USERNAME,
   turnPassword: PASSWORD,
   //signaling: localSignaling,
@@ -80,7 +76,6 @@ onetpServer.on('listening', function () {
   clientTransports.push(new TurnTransport({
     turnServer: IP_ADDRESS,
     turnPort: PORT,
-    turnProtocol: new TurnTransports.TCP(),
     turnUsername: USERNAME,
     turnPassword: PASSWORD,
     //signaling: localSignaling,
