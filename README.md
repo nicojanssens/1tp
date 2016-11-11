@@ -206,10 +206,10 @@ The optional `connectListener` argument is automatically set as a listener for t
 Returns true if one of the transport protocols has established a connection with a 1tp server.
 
 ### `socket.destroy()`
-Not implemented yet.
+Closes the socket, no more communication possible after completing this operation. Emits a `close` event when connection is closed.
 
 ### `socket.end()`
-Not implemented yet.
+Half-closes the socket, server may still end some data.
 
 ### `socket.setTimeout(timeout[, callback])`
 Sets the socket to timeout after `timeout` milliseconds of inactivity. The socket then fires a `timeout` event.  
@@ -251,14 +251,17 @@ Emitted when an error occurs.
 ### `server.on('listening', function() {})`
 Emitted once all registered transport protocols are accepting connections after calling `server.listen`.
 
-### `socket.on('close', function() {})`
-Emitted once the socket is fully closed. WiP.
-
 ### `socket.on('data', function(data) {})`
 Emitted when data is received. The `data` argument is a Buffer.
 
 ### `socket.on('end', function() {})`
-Emitted when the connected socket has ended its write stream. WiP.
+Emitted when the connected socket has ended its write stream.
+
+### `socket.on('finish', function() {})`
+Emitted when there is no more data to be consumed from the socket's read stream.
+
+### `socket.on('close', function() {})`
+Emitted once the socket is fully closed -- after executing `socket.destroy`
 
 ### `socket.on('error', function(error) {})`
 Emitted when an error occurs.
