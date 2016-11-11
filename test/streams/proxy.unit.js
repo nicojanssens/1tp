@@ -50,6 +50,7 @@ describe('Testing proxy stream', function () {
   it('should correctly process setTimeout requests', function (done) {
     var nbTestMessages = 10
     var currentTestMessage = 0
+    var proxyReadStreamEnded, proxyWriteStreamEnded = false
     // create proxy
     var proxy = new ProxyStream()
     // create passthrough
@@ -60,7 +61,7 @@ describe('Testing proxy stream', function () {
     proxy.on('timeout', function () {
       console.log('timeout')
       if (currentTestMessage === nbTestMessages) {
-        done()
+        proxy.end()
       } else {
         var errorMsg = 'received timeout event before receiving all messages'
         done(errorMsg)
@@ -73,8 +74,20 @@ describe('Testing proxy stream', function () {
       expect(chunk.toString()).to.equal('test message ' + currentTestMessage++)
       if (currentTestMessage === nbTestMessages) {
         clearInterval(timeout)
-        proxy.end()
       }
+    })
+    // read stream end
+    proxy.on('end', function () {
+      console.log('proxy read stream ended')
+      // check if echo write stream has ended
+      expect(proxyWriteStreamEnded).to.be.true
+      proxyReadStreamEnded = true
+      done()
+    })
+    // write stream end
+      proxy.on('finish', function () {
+      console.log('proxy write stream ended')
+      proxyWriteStreamEnded = true
     })
     // write test messages
     var i = 0
