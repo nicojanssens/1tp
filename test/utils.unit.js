@@ -56,9 +56,10 @@ describe('utils module', function () {
 
   it('should resolve timeout test promise properly', function (done) {
     var testPromise = Q.fcall(function () {
+      console.log('promise resolved')
       return 'promise resolved'
     })
-    var timeoutPromise = myUtils.timeoutResolvePromise(testPromise, 500)
+    var timeoutPromise = myUtils.resolvePromiseOnTimeout(testPromise, 500)
     timeoutPromise.then(function (result) {
       expect(result).to.not.be.undefined
       expect(result).to.equal('promise resolved')
@@ -70,12 +71,13 @@ describe('utils module', function () {
 
   it('should resolve timeout test promise properly, delaying test promise', function (done) {
     var testPromise = Q.fcall(function () {
+      console.log('promise resolved')
       return 'promise resolved'
     })
     var delayedTestPromise = Q.delay(100).then(function () {
       return testPromise
     })
-    var timeoutPromise = myUtils.timeoutResolvePromise(delayedTestPromise, 500)
+    var timeoutPromise = myUtils.resolvePromiseOnTimeout(delayedTestPromise, 500)
     timeoutPromise.then(function (result) {
       expect(result).to.not.be.undefined
       expect(result).to.equal('promise resolved')
@@ -88,15 +90,17 @@ describe('utils module', function () {
   it('should resolve timeout test promise, resolving undefined resulting from a timeout', function (done) {
     var timeoutCallbackExecuted = false
     var testPromise = Q.fcall(function () {
+      console.log('promise resolved')
       return 'promise resolved'
     })
-    var delayedTestPromise = Q.delay(1000).then(function () {
+    var delayedTestPromise = Q.delay(1500).then(function () {
+      console.log('1500 ms later ...')
       return testPromise
     })
-    var onTimeout = function () {
+    var onTimeoutP = Q.fcall(function () {
       timeoutCallbackExecuted = true
-    }
-    var timeoutPromise = myUtils.timeoutResolvePromise(delayedTestPromise, 500, onTimeout)
+    })
+    var timeoutPromise = myUtils.resolvePromiseOnTimeout(delayedTestPromise, 500, onTimeoutP)
     timeoutPromise.then(function (result) {
       expect(result).to.be.undefined
       expect(timeoutCallbackExecuted).to.be.true
