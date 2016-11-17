@@ -1,6 +1,6 @@
 'use strict'
 
-var NetStringStream = require('../../lib/transports/streams/netstring')
+var NetStringStream = require('../../lib/transports/session/netstring')
 var through = require('through2')
 
 var chai = require('chai')
