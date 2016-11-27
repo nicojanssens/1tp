@@ -1,14 +1,10 @@
 'use strict'
 
-var TcpTransport = require('../index').transports.tcp
-var TurnTransport = require('../index').transports.turn
-var UdpTransport = require('../index').transports.udp
-var WebRtcTransport = require('../index').transports.webrtc
-
+var TurnTransport = require('../../index').transports.turn
 var TurnProtocols = require('turn-js').transports
 
-var LocalSignaling = require('../index').signaling.local
-var WebSocketSignaling = require('../index').signaling.websocket
+var LocalSignaling = require('../../index').signaling.local
+var WebSocketSignaling = require('../../index').signaling.websocket
 
 var chai = require('chai')
 var expect = chai.expect
@@ -20,48 +16,10 @@ var turnUser = process.env.TURN_USER
 var turnPwd = process.env.TURN_PASS
 var registrar = process.env.ONETP_REGISTRAR
 
-var defaultProtocolVersion = require('../package.json').version
+var defaultProtocolVersion = require('../../package.json').version
 
 describe('1tp transports', function () {
   this.timeout(30000)
-
-  it('should return echo messages using udp transport and close server afterwards', function (done) {
-    var clientSocket = new UdpTransport()
-    var listeningInfo = {
-      transportType: 'udp',
-      transportInfo: {
-        address: '127.0.0.1',
-        port: 30001
-      }
-    }
-    var serverSocket = new UdpTransport()
-    // execute echo test
-    testEchoMessages({
-      socket: clientSocket
-    }, {
-      socket: serverSocket,
-      listeningInfo: listeningInfo
-    }, done)
-  })
-
-  it('should return echo messages using tcp transport and close receiving transport afterwards', function (done) {
-    var clientSocket = new TcpTransport()
-    var listeningInfo = {
-      transportType: 'tcp',
-      transportInfo: {
-        address: '127.0.0.1',
-        port: 30003
-      }
-    }
-    var serverSocket = new TcpTransport()
-    // execute echo test
-    testEchoMessages({
-      socket: clientSocket
-    }, {
-      socket: serverSocket,
-      listeningInfo: listeningInfo
-    }, done)
-  })
 
   it('should return echo messages using tcp+turn transport with local signaling and close receiving transport afterwards', function (done) {
     var localSignaling = new LocalSignaling()
@@ -110,119 +68,6 @@ describe('1tp transports', function () {
     }, {
       socket: serverSocket
     }, done)
-  })
-
-  it('should return echo messages using webrtc transport with local signaling', function (done) {
-    var localSignaling = new LocalSignaling()
-    var clientSocket = new WebRtcTransport({
-      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
-      signaling: localSignaling
-    })
-    var serverSocket = new WebRtcTransport({
-      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
-      signaling: localSignaling
-    })
-    testEchoMessages({
-      socket: clientSocket
-    }, {
-      socket: serverSocket
-    }, done)
-  })
-
-  it('should return echo messages using webrtc transport with WS signaling', function (done) {
-    var clientSocket = new WebRtcTransport({
-      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
-      signaling: new WebSocketSignaling({uid: 'nicoj', url: registrar})
-    })
-    var serverSocket = new WebRtcTransport({
-      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
-      signaling: new WebSocketSignaling({uid: 'tdelaet', url: registrar})
-    })
-    testEchoMessages({
-      socket: clientSocket
-    }, {
-      socket: serverSocket
-    }, done)
-  })
-
-  it('should correctly close UDP stream by destroying client socket', function (done) {
-    var clientSocket = new UdpTransport()
-    var listeningInfo = {
-      transportType: 'udp',
-      transportInfo: {
-        address: '127.0.0.1',
-        port: 30005
-      }
-    }
-    var serverSocket = new UdpTransport()
-    // execute echo test
-    testDestroyStream({
-      socket: clientSocket
-    }, {
-      socket: serverSocket,
-      listeningInfo: listeningInfo
-    }, 'client',
-      done)
-  })
-
-  it('should correctly close UDP stream by destroying server socket', function (done) {
-    var clientSocket = new UdpTransport()
-    var listeningInfo = {
-      transportType: 'udp',
-      transportInfo: {
-        address: '127.0.0.1',
-        port: 30007
-      }
-    }
-    var serverSocket = new UdpTransport()
-    // execute echo test
-    testDestroyStream({
-      socket: clientSocket
-    }, {
-      socket: serverSocket,
-      listeningInfo: listeningInfo
-    }, 'server',
-      done)
-  })
-
-  it('should correctly close TCP stream by destroying client socket', function (done) {
-    var clientSocket = new TcpTransport()
-    var listeningInfo = {
-      transportType: 'tcp',
-      transportInfo: {
-        address: '127.0.0.1',
-        port: 30009
-      }
-    }
-    var serverSocket = new TcpTransport()
-    // execute echo test
-    testDestroyStream({
-      socket: clientSocket
-    }, {
-      socket: serverSocket,
-      listeningInfo: listeningInfo
-    }, 'client',
-      done)
-  })
-
-  it('should correctly close TCP stream by destroying server socket', function (done) {
-    var clientSocket = new TcpTransport()
-    var listeningInfo = {
-      transportType: 'tcp',
-      transportInfo: {
-        address: '127.0.0.1',
-        port: 30011
-      }
-    }
-    var serverSocket = new TcpTransport()
-    // execute echo test
-    testDestroyStream({
-      socket: clientSocket
-    }, {
-      socket: serverSocket,
-      listeningInfo: listeningInfo
-    }, 'server',
-      done)
   })
 
   it('should correctly close TURN TCP stream by destroying client socket', function (done) {
@@ -318,42 +163,6 @@ describe('1tp transports', function () {
       turnProtocol: new TurnProtocols.TCP(),
       turnUsername: turnUser,
       turnPassword: turnPwd,
-      signaling: new WebSocketSignaling({uid: 'tdelaet', url: registrar})
-    })
-    // execute echo test
-    testDestroyStream({
-      socket: clientSocket
-    }, {
-      socket: serverSocket
-    }, 'server',
-      done)
-  })
-
-  it('should correctly close WebRtc stream by destroying client socket', function (done) {
-    var clientSocket = new WebRtcTransport({
-      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
-      signaling: new WebSocketSignaling({uid: 'nicoj', url: registrar})
-    })
-    var serverSocket = new WebRtcTransport({
-      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
-      signaling: new WebSocketSignaling({uid: 'tdelaet', url: registrar})
-    })
-    // execute echo test
-    testDestroyStream({
-      socket: clientSocket
-    }, {
-      socket: serverSocket
-    }, 'client',
-      done)
-  })
-
-  it('should correctly close WebRtc stream by destroying server socket', function (done) {
-    var clientSocket = new WebRtcTransport({
-      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
-      signaling: new WebSocketSignaling({uid: 'nicoj', url: registrar})
-    })
-    var serverSocket = new WebRtcTransport({
-      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
       signaling: new WebSocketSignaling({uid: 'tdelaet', url: registrar})
     })
     // execute echo test
@@ -479,6 +288,7 @@ function testDestroyStream (clientSpecs, serverSpecs, streamToDestroy, done) {
     echoStream.on('close', function () {
       echoStreamClosed = true
       if (echoStreamClosed && clientStreamClosed) {
+        console.log('echoStreamClosed')
         done()
       }
     })
@@ -519,6 +329,7 @@ function testDestroyStream (clientSpecs, serverSpecs, streamToDestroy, done) {
       sourceStream.on('close', function () {
         clientStreamClosed = true
         if (echoStreamClosed && clientStreamClosed) {
+          console.log('clientStreamClosed')
           done()
         }
       })
