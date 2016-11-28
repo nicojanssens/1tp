@@ -26,7 +26,7 @@ var registrar = process.env.ONETP_REGISTRAR
 describe('net api', function () {
   this.timeout(20000)
 
-  it('should init and activate a new server using UDP, TCP and turn transports', function (done) {
+  it('should init and activate a new server using UDP, TCP and TURN transports', function (done) {
     var transports = []
     transports.push(new UdpTransport())
     transports.push(new TcpTransport())
