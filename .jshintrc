@@ -30,7 +30,7 @@
     "maxdepth"      : false,    // {int} Max depth of nested blocks (within functions)
     "maxstatements" : false,    // {int} Max number statements per function
     "maxcomplexity" : false,    // {int} Max cyclomatic complexity per function
-    "maxlen"        : 100,    // {int} Max number of characters per line
+    "maxlen"        : 150,    // {int} Max number of characters per line
 
     // Relaxing
     "asi"           : true,     // true: Tolerate Automatic Semicolon Insertion (no semicolons)
