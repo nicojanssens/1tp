@@ -117,9 +117,9 @@ function testDestroyStream (clientSpecs, serverSpecs, streamToDestroy, done) {
     console.log('echo stream available')
     serverStream = echoStream
     echoStream.on('close', function () {
+      console.log('echoStreamClosed')
       echoStreamClosed = true
       if (echoStreamClosed && clientStreamClosed) {
-        console.log('echoStreamClosed')
         done()
       }
     })
@@ -158,9 +158,9 @@ function testDestroyStream (clientSpecs, serverSpecs, streamToDestroy, done) {
         done(error)
       })
       sourceStream.on('close', function () {
+        console.log('clientStreamClosed')
         clientStreamClosed = true
         if (echoStreamClosed && clientStreamClosed) {
-          console.log('clientStreamClosed')
           done()
         }
       })
