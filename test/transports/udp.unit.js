@@ -68,7 +68,7 @@ describe('udp transport', function () {
       done)
   })
 
-  it('should correctly handle a timeout', function (done) {
+  it('should correctly deal with a handshake timeout', function (done) {
     var clientSocket = new UdpTransport()
     var connectionInfo = {
       transportType: 'udp',
