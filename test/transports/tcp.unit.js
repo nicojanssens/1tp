@@ -3,8 +3,11 @@
 var TcpTransport = require('../../index').transports.tcp
 var tests = require('./tests.js')
 
+var chai = require('chai')
+var expect = chai.expect
+
 describe('tcp transport', function () {
-  this.timeout(30000)
+  this.timeout(2000)
 
   it('should return echo messages and close receiving transport afterwards', function (done) {
     var clientSocket = new TcpTransport()
@@ -63,5 +66,28 @@ describe('tcp transport', function () {
       listeningInfo: listeningInfo
     }, 'server',
       done)
+  })
+
+  it('should correctly deal with a handshake timeout', function (done) {
+    var clientSocket = new TcpTransport()
+    var connectionInfo = {
+      transportType: 'tcp',
+      transportInfo: {
+        address: '127.0.0.1',
+        port: 10003
+      }
+    }
+    clientSocket.connectP(connectionInfo)
+      .then(function (stream) {
+        var errorMsg = 'not expecting to receive connected stream ' + stream
+        done(errorMsg)
+      })
+      .catch(function (error) {
+        expect(error.code).to.be.a('string')
+        expect(error.code).to.equal('ECONNREFUSED')
+        // test if there are no more sessions left
+        expect(Object.keys(clientSocket._connectingSockets).length).to.equal(0)
+        done()
+      })
   })
 })
