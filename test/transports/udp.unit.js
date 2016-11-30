@@ -84,7 +84,7 @@ describe('udp transport', function () {
       })
       .catch(function (error) {
         expect(error.message).to.be.a('string')
-        expect(error.message).to.include('handshake aborted')
+        expect(error.message).to.equal('handshake aborted')
         // test if there are no more sessions left
         expect(Object.keys(clientSocket._sessions).length).to.equal(0)
         done()
