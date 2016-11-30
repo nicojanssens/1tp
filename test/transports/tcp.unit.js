@@ -12,7 +12,7 @@ describe('tcp transport', function () {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30003
+        port: 10000
       }
     }
     var serverSocket = new TcpTransport()
@@ -31,7 +31,7 @@ describe('tcp transport', function () {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30009
+        port: 10001
       }
     }
     var serverSocket = new TcpTransport()
@@ -51,7 +51,7 @@ describe('tcp transport', function () {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30011
+        port: 10002
       }
     }
     var serverSocket = new TcpTransport()

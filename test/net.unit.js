@@ -93,13 +93,13 @@ describe('net api', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20000
+        port: 30000
       }
     }, {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20001
+        port: 30001
       }
     }]
     server.on('listening', function () {
@@ -122,7 +122,7 @@ describe('net api', function () {
       transportType: 'udp',
       transportInfo: {
         address: '1.2.3.4',
-        port: 20000
+        port: 30002
       }
     }]
     server.on('listening', function () {
@@ -141,7 +141,7 @@ describe('net api', function () {
       transportType: 'tcp',
       transportInfo: {
         address: '1.2.3.4',
-        port: 20000
+        port: 30003
       }
     }]
     server.on('listening', function () {
@@ -161,13 +161,13 @@ describe('net api', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20002
+        port: 30004
       }
     }, {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20003
+        port: 30005
       }
     }]
     server.listen(registrationInfo, function () {
@@ -185,13 +185,13 @@ describe('net api', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20004
+        port: 30006
       }
     }, {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20005
+        port: 30007
       }
     }]
     server.listenP(registrationInfo)
@@ -215,13 +215,13 @@ describe('net api', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20006
+        port: 30008
       }
     }, {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20007
+        port: 30009
       }
     }]
     var server = net.createServer()
@@ -245,7 +245,7 @@ describe('net api', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20008
+        port: 30010
       }
     }]
 
@@ -364,20 +364,20 @@ describe('net api', function () {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20009
+        port: 30011
       }
     }]
     var connectionInfo = [{
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20009
+        port: 30011
       }
     }, {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20010
+        port: 30012
       }
     }]
 
@@ -428,20 +428,20 @@ describe('net api', function () {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20011
+        port: 30013
       }
     }]
     var connectionInfo = [{
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20012
+        port: 30014
       }
     }, {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20011
+        port: 30013
       }
     }]
 
@@ -489,20 +489,20 @@ describe('net api', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20013
+        port: 30015
       }
     }]
     var connectionInfo = [{
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20013
+        port: 30015
       }
     }, {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20014
+        port: 30016
       }
     }]
 
@@ -553,20 +553,20 @@ describe('net api', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20015
+        port: 30016
       }
     }]
     var connectionInfo = [{
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20016
+        port: 30017
       }
     }, {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20015
+        port: 30016
       }
     }]
 
@@ -612,14 +612,14 @@ describe('net api', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20017
+        port: 30018
       }
     }]
     var connectionInfo = [{
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20017
+        port: 30018
       }
     }]
 
@@ -663,20 +663,20 @@ describe('net api', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20018
+        port: 30019
       }
     }]
     var connectionInfo = [{
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20019
+        port: 30020
       }
     }, {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20019
+        port: 30020
       }
     }]
 
@@ -726,20 +726,20 @@ describe('net api', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20020
+        port: 30021
       }
     }]
     var connectionInfo = [{
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20021
+        port: 30022
       }
     }, {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20020
+        port: 30021
       }
     }]
 
@@ -789,20 +789,20 @@ describe('net api', function () {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20022
+        port: 30023
       }
     }]
     var connectionInfo = [{
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20023
+        port: 30024
       }
     }, {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20022
+        port: 30023
       }
     }]
 

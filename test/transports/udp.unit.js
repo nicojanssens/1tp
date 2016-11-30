@@ -12,7 +12,7 @@ describe('udp transport', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30001
+        port: 20000
       }
     }
     var serverSocket = new UdpTransport()
@@ -31,7 +31,7 @@ describe('udp transport', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30005
+        port: 20001
       }
     }
     var serverSocket = new UdpTransport()
@@ -51,7 +51,7 @@ describe('udp transport', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30007
+        port: 20002
       }
     }
     var serverSocket = new UdpTransport()
