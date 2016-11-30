@@ -3,8 +3,11 @@
 var tests = require('./tests.js')
 var UdpTransport = require('../../index').transports.udp
 
+var chai = require('chai')
+var expect = chai.expect
+
 describe('udp transport', function () {
-  this.timeout(30000)
+  this.timeout(2000)
 
   it('should return echo messages and close server afterwards', function (done) {
     var clientSocket = new UdpTransport()
@@ -63,5 +66,28 @@ describe('udp transport', function () {
       listeningInfo: listeningInfo
     }, 'server',
       done)
+  })
+
+  it('should correctly handle a timeout', function (done) {
+    var clientSocket = new UdpTransport()
+    var connectionInfo = {
+      transportType: 'udp',
+      transportInfo: {
+        address: '127.0.0.1',
+        port: 20003
+      }
+    }
+    clientSocket.connectP(connectionInfo)
+      .then(function (stream) {
+        var errorMsg = 'not expecting to receive connected stream ' + stream
+        done(errorMsg)
+      })
+      .catch(function (error) {
+        expect(error.message).to.be.a('string')
+        expect(error.message).to.include('handshake aborted')
+        // test if there are no more sessions left
+        expect(Object.keys(clientSocket._sessions).length).to.equal(0)
+        done()
+      })
   })
 })
