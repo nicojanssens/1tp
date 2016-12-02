@@ -7,6 +7,9 @@ var TurnProtocols = require('turn-js').transports
 var LocalSignaling = require('../../index').signaling.local
 var WebSocketSignaling = require('../../index').signaling.websocket
 
+var chai = require('chai')
+var expect = chai.expect
+
 var turnAddr = process.env.TURN_ADDR
 var turnPort = process.env.TURN_PORT
 var turnUser = process.env.TURN_USER
@@ -30,7 +33,7 @@ if (!registrar) {
 }
 
 describe('turn transport', function () {
-  this.timeout(30000)
+  this.timeout(10000)
 
   it('should return echo messages using tcp transport with local signaling and close receiving transport afterwards', function (done) {
     var localSignaling = new LocalSignaling()
@@ -184,4 +187,37 @@ describe('turn transport', function () {
     }, 'server',
       done)
   })
+
+  it('should correctly deal with a handshake timeout', function (done) {
+    var clientSocket = new TurnTransport({
+      turnServer: turnAddr,
+      turnPort: turnPort,
+      turnProtocol: new TurnProtocols.TCP(),
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
+      signaling: new WebSocketSignaling({uid: 'nicoj', url: registrar}),
+      connectTimeout: 1000
+    })
+    var connectionInfo = {
+      transportType: 'turn-tcp',
+      transportInfo: {
+        type: 'websocket-signaling',
+        uid: 'bar',
+        url: registrar
+      }
+    }
+    clientSocket.connectP(connectionInfo)
+      .then(function (stream) {
+        var errorMsg = 'not expecting to receive connected stream ' + stream
+        done(errorMsg)
+      })
+      .catch(function (error) {
+        expect(error.message).to.be.a('string')
+        expect(error.message).to.equal('handshake aborted')
+        // test if there are no more sessions left
+        expect(Object.keys(clientSocket._sessions).length).to.equal(0)
+        done()
+      })
+  })
+
 })
