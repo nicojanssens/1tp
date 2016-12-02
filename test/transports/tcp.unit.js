@@ -113,4 +113,31 @@ describe('tcp transport', function () {
         done()
       })
   })
+
+  it('should correctly abort handshake', function (done) {
+    var clientSocket = new TcpTransport({connectTimeout: 1500})
+    var connectionInfo = {
+      transportType: 'tcp',
+      transportInfo: {
+        address: '127.0.0.1',
+        port: 10005
+      }
+    }
+    clientSocket.connectP(connectionInfo)
+      .then(function (stream) {
+        var errorMsg = 'not expecting to receive connected stream ' + stream
+        done(errorMsg)
+      })
+      .catch(function (error) {
+        done(error)
+      })
+    clientSocket.abortP(connectionInfo)
+      .then(function () {
+        expect(Object.keys(clientSocket._connectingSockets).length).to.equal(0)
+        done()
+      })
+      .catch(function (error) {
+        done(error)
+      })
+  })
 })
