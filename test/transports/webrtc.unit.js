@@ -125,4 +125,73 @@ describe('webrtc transport', function () {
         done()
       })
   })
+
+  it('should correctly abort handshake -- case 1', function (done) {
+    var clientSocket = new WebRtcTransport({
+      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
+      signaling: new WebSocketSignaling({uid: 'foo', url: registrar}),
+      connectTimeout: 2000
+    })
+    var connectionInfo = {
+      transportType: 'webrtc',
+      transportInfo: {
+        type: 'websocket-signaling',
+        uid: 'bar',
+        url: 'http://1tp-registrar.microminion.io/'
+      }
+    }
+    clientSocket.connectP(connectionInfo)
+      .then(function (stream) {
+        var errorMsg = 'not expecting to receive connected stream ' + stream
+        done(errorMsg)
+      })
+      .catch(function (error) {
+        done(error)
+      })
+    setTimeout(function () {
+      clientSocket.abortP(connectionInfo)
+        .then(function () {
+          expect(Object.keys(clientSocket._sessions).length).to.equal(0)
+          expect(Object.keys(clientSocket._connectingPeers).length).to.equal(0)
+          done()
+        })
+        .catch(function (error) {
+          done(error)
+        })
+    }, 1000)
+  })
+
+  it('should correctly abort handshake -- case 2', function (done) {
+    var clientSocket = new WebRtcTransport({
+      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
+      signaling: new WebSocketSignaling({uid: 'foo', url: registrar}),
+      connectTimeout: 2000
+    })
+    var connectionInfo = {
+      transportType: 'webrtc',
+      transportInfo: {
+        type: 'websocket-signaling',
+        uid: 'bar',
+        url: 'http://1tp-registrar.microminion.io/'
+      }
+    }
+    clientSocket.connectP(connectionInfo)
+      .then(function (stream) {
+        var errorMsg = 'not expecting to receive connected stream ' + stream
+        done(errorMsg)
+      })
+      .catch(function (error) {
+        done(error)
+      })
+    clientSocket.abortP(connectionInfo)
+      .then(function () {
+        expect(Object.keys(clientSocket._sessions).length).to.equal(0)
+        expect(Object.keys(clientSocket._connectingPeers).length).to.equal(0)
+        done()
+      })
+      .catch(function (error) {
+        done(error)
+      })
+  })
+
 })
