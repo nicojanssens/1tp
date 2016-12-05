@@ -5,6 +5,7 @@ var WebRtcTransport = require('../../index').transports.webrtc
 
 var LocalSignaling = require('../../index').signaling.local
 var WebSocketSignaling = require('../../index').signaling.websocket
+var ModifiedWebSocketSignaling = require('./modified-websocket-signaling')
 
 var chai = require('chai')
 var expect = chai.expect
@@ -162,6 +163,41 @@ describe('webrtc transport', function () {
   })
 
   it('should correctly abort handshake -- case 2', function (done) {
+    var clientSocket = new WebRtcTransport({
+      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
+      signaling: new ModifiedWebSocketSignaling({uid: 'foo', url: registrar}),
+      connectTimeout: 2000
+    })
+    var connectionInfo = {
+      transportType: 'webrtc',
+      transportInfo: {
+        type: 'websocket-signaling',
+        uid: 'bar',
+        url: 'http://1tp-registrar.microminion.io/'
+      }
+    }
+    clientSocket.connectP(connectionInfo)
+      .then(function (stream) {
+        var errorMsg = 'not expecting to receive connected stream ' + stream
+        done(errorMsg)
+      })
+      .catch(function (error) {
+        done(error)
+      })
+    setTimeout(function () {
+      clientSocket.abortP(connectionInfo)
+        .then(function () {
+          expect(Object.keys(clientSocket._sessions).length).to.equal(0)
+          expect(Object.keys(clientSocket._connectingPeers).length).to.equal(0)
+          setTimeout(done, 3000)
+        })
+        .catch(function (error) {
+          done(error)
+        })
+    }, 1000)
+  })
+
+  it('should correctly abort handshake -- case 3', function (done) {
     var clientSocket = new WebRtcTransport({
       config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
       signaling: new WebSocketSignaling({uid: 'foo', url: registrar}),
