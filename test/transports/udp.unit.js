@@ -69,7 +69,7 @@ describe('udp transport', function () {
   })
 
   it('should correctly deal with a handshake timeout', function (done) {
-    var clientSocket = new UdpTransport({connectTimeout: 1})
+    var clientSocket = new UdpTransport({connectTimeout: 10})
     var connectionInfo = {
       transportType: 'udp',
       transportInfo: {
@@ -91,13 +91,43 @@ describe('udp transport', function () {
       })
   })
 
-  it('should correctly abort handshake', function (done) {
+  it('should correctly abort handshake -- case 1', function (done) {
     var clientSocket = new UdpTransport({connectTimeout: 1500})
     var connectionInfo = {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
         port: 20004
+      }
+    }
+    clientSocket.connectP(connectionInfo)
+      .then(function (stream) {
+        var errorMsg = 'not expecting to receive connected stream ' + stream
+        done(errorMsg)
+      })
+      .catch(function (error) {
+        expect(error.message).to.be.a('string')
+        expect(error.message).to.equal('handshake aborted')
+      })
+    setTimeout(function () {
+      clientSocket.abortP(connectionInfo)
+        .then(function () {
+          expect(Object.keys(clientSocket._sessions).length).to.equal(0)
+          done()
+        })
+        .catch(function (error) {
+          done(error)
+        })
+    }, 500)
+  })
+
+  it('should correctly abort handshake -- case 2', function (done) {
+    var clientSocket = new UdpTransport({connectTimeout: 1500})
+    var connectionInfo = {
+      transportType: 'udp',
+      transportInfo: {
+        address: '127.0.0.1',
+        port: 20005
       }
     }
     clientSocket.connectP(connectionInfo)
