@@ -136,7 +136,8 @@ describe('udp transport', function () {
         done(errorMsg)
       })
       .catch(function (error) {
-        done(error)
+        expect(error.message).to.be.a('string')
+        expect(error.message).to.equal('handshake aborted')
       })
     clientSocket.abortP(connectionInfo)
       .then(function () {
