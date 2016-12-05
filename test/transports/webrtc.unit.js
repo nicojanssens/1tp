@@ -101,7 +101,7 @@ describe('webrtc transport', function () {
     var clientSocket = new WebRtcTransport({
       config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
       signaling: new WebSocketSignaling({uid: 'foo', url: registrar}),
-      connectTimeout: 3000
+      connectTimeout: 2000
     })
     var connectionInfo = {
       transportType: 'webrtc',
@@ -130,7 +130,7 @@ describe('webrtc transport', function () {
     var clientSocket = new WebRtcTransport({
       config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
       signaling: new WebSocketSignaling({uid: 'foo', url: registrar}),
-      connectTimeout: 3000
+      connectTimeout: 2000
     })
     var connectionInfo = {
       transportType: 'webrtc',
@@ -165,7 +165,7 @@ describe('webrtc transport', function () {
     var clientSocket = new WebRtcTransport({
       config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
       signaling: new WebSocketSignaling({uid: 'foo', url: registrar}),
-      connectTimeout: 3000
+      connectTimeout: 2000
     })
     var connectionInfo = {
       transportType: 'webrtc',
