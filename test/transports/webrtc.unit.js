@@ -101,7 +101,7 @@ describe('webrtc transport', function () {
     var clientSocket = new WebRtcTransport({
       config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
       signaling: new WebSocketSignaling({uid: 'foo', url: registrar}),
-      connectTimeout: 1000
+      connectTimeout: 3000
     })
     var connectionInfo = {
       transportType: 'webrtc',
@@ -130,7 +130,7 @@ describe('webrtc transport', function () {
     var clientSocket = new WebRtcTransport({
       config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
       signaling: new WebSocketSignaling({uid: 'foo', url: registrar}),
-      connectTimeout: 2000
+      connectTimeout: 3000
     })
     var connectionInfo = {
       transportType: 'webrtc',
@@ -153,7 +153,7 @@ describe('webrtc transport', function () {
         .then(function () {
           expect(Object.keys(clientSocket._sessions).length).to.equal(0)
           expect(Object.keys(clientSocket._connectingPeers).length).to.equal(0)
-          done()
+          setTimeout(done, 3000)
         })
         .catch(function (error) {
           done(error)
@@ -165,7 +165,7 @@ describe('webrtc transport', function () {
     var clientSocket = new WebRtcTransport({
       config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
       signaling: new WebSocketSignaling({uid: 'foo', url: registrar}),
-      connectTimeout: 2000
+      connectTimeout: 3000
     })
     var connectionInfo = {
       transportType: 'webrtc',
@@ -187,7 +187,7 @@ describe('webrtc transport', function () {
       .then(function () {
         expect(Object.keys(clientSocket._sessions).length).to.equal(0)
         expect(Object.keys(clientSocket._connectingPeers).length).to.equal(0)
-        done()
+        setTimeout(done, 3000)
       })
       .catch(function (error) {
         done(error)
