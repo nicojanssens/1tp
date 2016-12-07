@@ -77,7 +77,7 @@
   "scripts": {
     "browserify": "gulp browserify",
     "browserify-prod": "gulp browserify --production",
-    "test-node": "./node_modules/.bin/mocha test/*.unit.js test/streams/*.unit.js",
+    "test-node": "./node_modules/.bin/mocha test/*.unit.js test/session/*.unit.js test/signaling/*.unit.js test/transports/*.unit.js",
     "clean-test-chrome-app": "rimraf test/browserify/chrome-app/bundle.js",
     "clean-test-cordova-app": "rimraf test/browserify/cordova-app/www/js/bundle.js && rimraf test/browserify/cordova-app/platforms &&  rimraf test/browserify/cordova-app/plugins",
     "clean": "rimraf build && rimraf node_modules && npm run clean-test-cordova-app && npm run clean-test-chrome-app",
