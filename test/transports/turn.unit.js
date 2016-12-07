@@ -18,19 +18,19 @@ var turnPwd = process.env.TURN_PASS
 var registrar = process.env.ONETP_REGISTRAR
 
 if (!turnAddr) {
-  throw new Error ('TURN_ADDR undefined -- giving up')
+  throw new Error('TURN_ADDR undefined -- giving up')
 }
 if (!turnPort) {
-  throw new Error ('TURN_PORT undefined -- giving up')
+  throw new Error('TURN_PORT undefined -- giving up')
 }
 if (!turnUser) {
-  throw new Error ('TURN_USER undefined -- giving up')
+  throw new Error('TURN_USER undefined -- giving up')
 }
 if (!turnPwd) {
-  throw new Error ('TURN_PASS undefined -- giving up')
+  throw new Error('TURN_PASS undefined -- giving up')
 }
 if (!registrar) {
-  throw new Error ('ONETP_REGISTRAR undefined -- giving up')
+  throw new Error('ONETP_REGISTRAR undefined -- giving up')
 }
 
 describe('turn transport', function () {
@@ -349,5 +349,4 @@ describe('turn transport', function () {
         done(error)
       })
   })
-
 })

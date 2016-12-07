@@ -17,7 +17,7 @@ var expect = chai.expect
 var registrar = process.env.ONETP_REGISTRAR
 
 if (!registrar) {
-  throw new Error ('ONETP_REGISTRAR undefined -- giving up')
+  throw new Error('ONETP_REGISTRAR undefined -- giving up')
 }
 
 describe('webrtc transport', function () {
@@ -238,5 +238,4 @@ describe('webrtc transport', function () {
         done(error)
       })
   })
-
 })
