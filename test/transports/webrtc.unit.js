@@ -5,7 +5,7 @@ var WebRtcTransport = require('../../index').transports.webrtc
 
 var LocalSignaling = require('../../index').signaling.local
 var WebSocketSignaling = require('../../index').signaling.websocket
-var ModifiedWebSocketSignaling = require('./modified-websocket-signaling')
+var FilteringWebSocketSignaling = require('./filtering-ws-signaling')
 
 var chai = require('chai')
 var expect = chai.expect
@@ -147,7 +147,8 @@ describe('webrtc transport', function () {
         done(errorMsg)
       })
       .catch(function (error) {
-        done(error)
+        expect(error.message).to.be.a('string')
+        expect(error.message).to.equal('handshake aborted')
       })
     setTimeout(function () {
       clientSocket.abortP(connectionInfo)
@@ -165,7 +166,13 @@ describe('webrtc transport', function () {
   it('should correctly abort handshake -- case 2', function (done) {
     var clientSocket = new WebRtcTransport({
       config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
-      signaling: new ModifiedWebSocketSignaling({uid: 'foo', url: registrar}),
+      signaling: new FilteringWebSocketSignaling({
+        uid: 'foo',
+        url: registrar,
+        filter: function () {
+          return true
+        }
+      }),
       connectTimeout: 2000
     })
     var connectionInfo = {
@@ -182,7 +189,8 @@ describe('webrtc transport', function () {
         done(errorMsg)
       })
       .catch(function (error) {
-        done(error)
+        expect(error.message).to.be.a('string')
+        expect(error.message).to.equal('handshake aborted')
       })
     setTimeout(function () {
       clientSocket.abortP(connectionInfo)
@@ -217,7 +225,8 @@ describe('webrtc transport', function () {
         done(errorMsg)
       })
       .catch(function (error) {
-        done(error)
+        expect(error.message).to.be.a('string')
+        expect(error.message).to.equal('handshake aborted')
       })
     clientSocket.abortP(connectionInfo)
       .then(function () {

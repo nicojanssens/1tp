@@ -6,7 +6,7 @@ var TurnProtocols = require('turn-js').transports
 
 var LocalSignaling = require('../../index').signaling.local
 var WebSocketSignaling = require('../../index').signaling.websocket
-var ModifiedWebSocketSignaling = require('./modified-websocket-signaling')
+var FilteringWebSocketSignaling = require('./filtering-ws-signaling')
 
 var chai = require('chai')
 var expect = chai.expect
@@ -269,7 +269,13 @@ describe('turn transport', function () {
       turnProtocol: new TurnProtocols.TCP(),
       turnUsername: turnUser,
       turnPassword: turnPwd,
-      signaling: new ModifiedWebSocketSignaling({uid: 'foo', url: registrar}),
+      signaling: new FilteringWebSocketSignaling({
+        uid: 'foo',
+        url: registrar,
+        filter: function () {
+          return true
+        }
+      }),
       connectTimeout: 2000
     })
     var connectionInfo = {
@@ -286,7 +292,8 @@ describe('turn transport', function () {
         done(errorMsg)
       })
       .catch(function (error) {
-        done(error)
+        expect(error.message).to.be.a('string')
+        expect(error.message).to.equal('handshake aborted')
       })
     setTimeout(function () {
       clientSocket.abortP(connectionInfo)
@@ -307,7 +314,13 @@ describe('turn transport', function () {
       turnProtocol: new TurnProtocols.TCP(),
       turnUsername: turnUser,
       turnPassword: turnPwd,
-      signaling: new ModifiedWebSocketSignaling({uid: 'foo', url: registrar}),
+      signaling: new FilteringWebSocketSignaling({
+        uid: 'foo',
+        url: registrar,
+        filter: function () {
+          return true
+        }
+      }),
       connectTimeout: 2000
     })
     var connectionInfo = {
@@ -324,7 +337,8 @@ describe('turn transport', function () {
         done(errorMsg)
       })
       .catch(function (error) {
-        //done(error)
+        expect(error.message).to.be.a('string')
+        expect(error.message).to.equal('handshake aborted')
       })
     clientSocket.abortP(connectionInfo)
       .then(function () {
