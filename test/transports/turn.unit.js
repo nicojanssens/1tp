@@ -262,78 +262,78 @@ describe('turn transport', function () {
       })
   })
 
-  // it('should correctly abort handshake -- case 2', function (done) {
-  //   var clientSocket = new TurnTransport({
-  //     turnServer: turnAddr,
-  //     turnPort: turnPort,
-  //     turnProtocol: new TurnProtocols.TCP(),
-  //     turnUsername: turnUser,
-  //     turnPassword: turnPwd,
-  //     signaling: new ModifiedWebSocketSignaling({uid: 'foo', url: registrar}),
-  //     connectTimeout: 2000
-  //   })
-  //   var connectionInfo = {
-  //     transportType: 'turn-tcp',
-  //     transportInfo: {
-  //       type: 'websocket-signaling',
-  //       uid: 'bar',
-  //       url: registrar
-  //     }
-  //   }
-  //   clientSocket.connectP(connectionInfo)
-  //     .then(function (stream) {
-  //       var errorMsg = 'not expecting to receive connected stream ' + stream
-  //       done(errorMsg)
-  //     })
-  //     .catch(function (error) {
-  //       done(error)
-  //     })
-  //   setTimeout(function () {
-  //     clientSocket.abortP(connectionInfo)
-  //       .then(function () {
-  //         expect(Object.keys(clientSocket._sessions).length).to.equal(0)
-  //         done()
-  //       })
-  //       .catch(function (error) {
-  //         done(error)
-  //       })
-  //   }, 1000)
-  // })
-  //
-  // it('should correctly abort handshake -- case 3', function (done) {
-  //   var clientSocket = new TurnTransport({
-  //     turnServer: turnAddr,
-  //     turnPort: turnPort,
-  //     turnProtocol: new TurnProtocols.TCP(),
-  //     turnUsername: turnUser,
-  //     turnPassword: turnPwd,
-  //     signaling: new ModifiedWebSocketSignaling({uid: 'foo', url: registrar}),
-  //     connectTimeout: 2000
-  //   })
-  //   var connectionInfo = {
-  //     transportType: 'turn-tcp',
-  //     transportInfo: {
-  //       type: 'websocket-signaling',
-  //       uid: 'bar',
-  //       url: registrar
-  //     }
-  //   }
-  //   clientSocket.connectP(connectionInfo)
-  //     .then(function (stream) {
-  //       var errorMsg = 'not expecting to receive connected stream ' + stream
-  //       done(errorMsg)
-  //     })
-  //     .catch(function (error) {
-  //       done(error)
-  //     })
-  //   clientSocket.abortP(connectionInfo)
-  //     .then(function () {
-  //       expect(Object.keys(clientSocket._sessions).length).to.equal(0)
-  //       setTimeout(done, 3000)
-  //     })
-  //     .catch(function (error) {
-  //       done(error)
-  //     })
-  // })
+  it('should correctly abort handshake -- case 2', function (done) {
+    var clientSocket = new TurnTransport({
+      turnServer: turnAddr,
+      turnPort: turnPort,
+      turnProtocol: new TurnProtocols.TCP(),
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
+      signaling: new ModifiedWebSocketSignaling({uid: 'foo', url: registrar}),
+      connectTimeout: 2000
+    })
+    var connectionInfo = {
+      transportType: 'turn-tcp',
+      transportInfo: {
+        type: 'websocket-signaling',
+        uid: 'bar',
+        url: registrar
+      }
+    }
+    clientSocket.connectP(connectionInfo)
+      .then(function (stream) {
+        var errorMsg = 'not expecting to receive connected stream ' + stream
+        done(errorMsg)
+      })
+      .catch(function (error) {
+        done(error)
+      })
+    setTimeout(function () {
+      clientSocket.abortP(connectionInfo)
+        .then(function () {
+          expect(Object.keys(clientSocket._sessions).length).to.equal(0)
+          done()
+        })
+        .catch(function (error) {
+          done(error)
+        })
+    }, 1000)
+  })
+
+  it('should correctly abort handshake -- case 3', function (done) {
+    var clientSocket = new TurnTransport({
+      turnServer: turnAddr,
+      turnPort: turnPort,
+      turnProtocol: new TurnProtocols.TCP(),
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
+      signaling: new ModifiedWebSocketSignaling({uid: 'foo', url: registrar}),
+      connectTimeout: 2000
+    })
+    var connectionInfo = {
+      transportType: 'turn-tcp',
+      transportInfo: {
+        type: 'websocket-signaling',
+        uid: 'bar',
+        url: registrar
+      }
+    }
+    clientSocket.connectP(connectionInfo)
+      .then(function (stream) {
+        var errorMsg = 'not expecting to receive connected stream ' + stream
+        done(errorMsg)
+      })
+      .catch(function (error) {
+        //done(error)
+      })
+    clientSocket.abortP(connectionInfo)
+      .then(function () {
+        expect(Object.keys(clientSocket._sessions).length).to.equal(0)
+        setTimeout(done, 3000)
+      })
+      .catch(function (error) {
+        done(error)
+      })
+  })
 
 })
