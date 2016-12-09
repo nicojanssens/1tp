@@ -8,6 +8,7 @@ var onetpTransports = require('../lib/transports')
 var TcpTransport = onetpTransports.tcp
 var TurnTransport = onetpTransports.turn
 var UdpTransport = onetpTransports.udp
+var WebRtcTransport = onetpTransports.webrtc
 var TurnProtocols = require('turn-js').transports
 
 var WebSocketSignaling = require('../lib/signaling/out-of-band').websocket
@@ -811,4 +812,205 @@ describe('net api', function () {
       createClient(connectionInfo)
     })
   })
+
+  it('should correctly close server socket -- case 1', function (done) {
+    var client, server
+    var testMessage = 'test'
+
+    var createServer = function () {
+      var transports = []
+      transports.push(new UdpTransport())
+      transports.push(new TcpTransport())
+      transports.push(
+        new TurnTransport({
+          turnServer: turnAddr,
+          turnPort: turnPort,
+          turnProtocol: new TurnProtocols.TCP(),
+          turnUsername: turnUser,
+          turnPassword: turnPwd,
+          signaling: new WebSocketSignaling({
+            url: registrar
+          })
+        })
+      )
+      transports.push(
+        new WebRtcTransport({
+          config: {
+            iceServers: [ { url: 'stun:23.21.150.121' } ]
+          },
+          signaling: new WebSocketSignaling({
+            url: registrar
+          })
+        })
+      )
+      var server = net.createServer(transports, function (connection) {
+        expect(connection).to.not.be.undefined
+        expect(connection.isConnected()).to.be.true
+        expect(connection.remoteAddress).to.not.be.undefined
+        var udpTransport = server._transports[0]
+        var tcpTransport = server._transports[1]
+        var turnTransport = server._transports[2]
+        var webRtcTransport = server._transports[3]
+        // test if UdpSession is established
+        expect(Object.keys(udpTransport._sessions).length).to.equal(1)
+        expect(Object.keys(tcpTransport._connectingSockets).length).to.equal(0)
+        expect(Object.keys(turnTransport._sessions).length).to.equal(0)
+        expect(Object.keys(webRtcTransport._sessions).length).to.equal(0)
+        server.closeP()
+          .then(function () {
+            // test if UdpSession is closed
+            expect(Object.keys(udpTransport._sessions).length).to.equal(0)
+            expect(Object.keys(tcpTransport._connectingSockets).length).to.equal(0)
+            expect(Object.keys(turnTransport._sessions).length).to.equal(0)
+            expect(Object.keys(webRtcTransport._sessions).length).to.equal(0)
+            done()
+          })
+          .catch(function (error) {
+            done(error)
+          })
+        connection.on('data', function (data) {
+          expect(data.toString()).to.equal(testMessage)
+          connection.destroy()
+        })
+      })
+      return server
+    }
+
+    var launchServer = function (onReady) {
+      server.listen(function () {
+        onReady()
+      })
+    }
+
+    var createClient = function (serverInfo) {
+      var transports = []
+      transports.push(new UdpTransport())
+      transports.push(new TcpTransport())
+      transports.push(
+        new TurnTransport({
+          turnServer: turnAddr,
+          turnPort: turnPort,
+          turnProtocol: new TurnProtocols.TCP(),
+          turnUsername: turnUser,
+          turnPassword: turnPwd,
+          signaling: new WebSocketSignaling({
+            url: registrar
+          })
+        })
+      )
+      transports.push(
+        new WebRtcTransport({
+          config: {
+            iceServers: [ { url: 'stun:23.21.150.121' } ]
+          },
+          signaling: new WebSocketSignaling({
+            url: registrar
+          })
+        })
+      )
+      client = net.createConnection(serverInfo, transports, function () {
+        expect(client.isConnected()).to.be.true
+        expect(client.remoteAddress).to.not.be.undefined
+        client.write(testMessage)
+      })
+      expect(client.isConnected()).to.be.false
+    }
+
+    server = createServer()
+    launchServer(function () {
+      createClient(server.address())
+    })
+  })
+
+  // it('should correctly close server socket -- case 2', function (done) {
+  //   var client, server
+  //   var testMessage = 'test'
+  //
+  //   var createServer = function () {
+  //     var transports = []
+  //     transports.push(new UdpTransport())
+  //     transports.push(new TcpTransport())
+  //     transports.push(
+  //       new TurnTransport({
+  //         turnServer: turnAddr,
+  //         turnPort: turnPort,
+  //         turnProtocol: new TurnProtocols.TCP(),
+  //         turnUsername: turnUser,
+  //         turnPassword: turnPwd,
+  //         signaling: new WebSocketSignaling({
+  //           url: registrar
+  //         })
+  //       })
+  //     )
+  //     transports.push(
+  //       new WebRtcTransport({
+  //         config: {
+  //           iceServers: [ { url: 'stun:23.21.150.121' } ]
+  //         },
+  //         signaling: new WebSocketSignaling({
+  //           url: registrar
+  //         })
+  //       })
+  //     )
+  //     var server = net.createServer(transports, function (connection) {
+  //       expect(connection).to.not.be.undefined
+  //       expect(connection.isConnected()).to.be.true
+  //       expect(connection.remoteAddress).to.not.be.undefined
+  //       connection.on('data', function (data) {
+  //         expect(data.toString()).to.equal(testMessage)
+  //       })
+  //     })
+  //     server.closeP()
+  //       .then(function () {
+  //         done()
+  //       })
+  //       .catch(function (error) {
+  //         done(error)
+  //       })
+  //     return server
+  //   }
+  //
+  //   var launchServer = function (serverInfo, onReady) {
+  //     server.listen(serverInfo, function () {
+  //       onReady()
+  //     })
+  //   }
+  //
+  //   var createClient = function (serverInfo) {
+  //     var transports = []
+  //     transports.push(new TcpTransport())
+  //     client = net.createConnection(serverInfo, transports, function () {
+  //       expect(client.isConnected()).to.be.true
+  //       expect(client.remoteAddress).to.not.be.undefined
+  //       client.write(testMessage)
+  //     })
+  //     expect(client.isConnected()).to.be.false
+  //   }
+  //
+  //   var serverInfo = [{
+  //     transportType: 'tcp',
+  //     transportInfo: {
+  //       address: '127.0.0.1',
+  //       port: 30023
+  //     }
+  //   }]
+  //   var connectionInfo = [{
+  //     transportType: 'tcp',
+  //     transportInfo: {
+  //       address: '127.0.0.1',
+  //       port: 30024
+  //     }
+  //   }, {
+  //     transportType: 'tcp',
+  //     transportInfo: {
+  //       address: '127.0.0.1',
+  //       port: 30023
+  //     }
+  //   }]
+  //
+  //   server = createServer()
+  //   launchServer(serverInfo, function () {
+  //     createClient(connectionInfo)
+  //   })
+  // })
 })
