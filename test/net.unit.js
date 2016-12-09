@@ -922,95 +922,95 @@ describe('net api', function () {
     })
   })
 
-  // it('should correctly close server socket -- case 2', function (done) {
-  //   var client, server
-  //   var testMessage = 'test'
-  //
-  //   var createServer = function () {
-  //     var transports = []
-  //     transports.push(new UdpTransport())
-  //     transports.push(new TcpTransport())
-  //     transports.push(
-  //       new TurnTransport({
-  //         turnServer: turnAddr,
-  //         turnPort: turnPort,
-  //         turnProtocol: new TurnProtocols.TCP(),
-  //         turnUsername: turnUser,
-  //         turnPassword: turnPwd,
-  //         signaling: new WebSocketSignaling({
-  //           url: registrar
-  //         })
-  //       })
-  //     )
-  //     transports.push(
-  //       new WebRtcTransport({
-  //         config: {
-  //           iceServers: [ { url: 'stun:23.21.150.121' } ]
-  //         },
-  //         signaling: new WebSocketSignaling({
-  //           url: registrar
-  //         })
-  //       })
-  //     )
-  //     var server = net.createServer(transports, function (connection) {
-  //       expect(connection).to.not.be.undefined
-  //       expect(connection.isConnected()).to.be.true
-  //       expect(connection.remoteAddress).to.not.be.undefined
-  //       connection.on('data', function (data) {
-  //         expect(data.toString()).to.equal(testMessage)
-  //       })
-  //     })
-  //     server.closeP()
-  //       .then(function () {
-  //         done()
-  //       })
-  //       .catch(function (error) {
-  //         done(error)
-  //       })
-  //     return server
-  //   }
-  //
-  //   var launchServer = function (serverInfo, onReady) {
-  //     server.listen(serverInfo, function () {
-  //       onReady()
-  //     })
-  //   }
-  //
-  //   var createClient = function (serverInfo) {
-  //     var transports = []
-  //     transports.push(new TcpTransport())
-  //     client = net.createConnection(serverInfo, transports, function () {
-  //       expect(client.isConnected()).to.be.true
-  //       expect(client.remoteAddress).to.not.be.undefined
-  //       client.write(testMessage)
-  //     })
-  //     expect(client.isConnected()).to.be.false
-  //   }
-  //
-  //   var serverInfo = [{
-  //     transportType: 'tcp',
-  //     transportInfo: {
-  //       address: '127.0.0.1',
-  //       port: 30023
-  //     }
-  //   }]
-  //   var connectionInfo = [{
-  //     transportType: 'tcp',
-  //     transportInfo: {
-  //       address: '127.0.0.1',
-  //       port: 30024
-  //     }
-  //   }, {
-  //     transportType: 'tcp',
-  //     transportInfo: {
-  //       address: '127.0.0.1',
-  //       port: 30023
-  //     }
-  //   }]
-  //
-  //   server = createServer()
-  //   launchServer(serverInfo, function () {
-  //     createClient(connectionInfo)
-  //   })
-  // })
+// it('should correctly close server socket -- case 2', function (done) {
+//   var client, server
+//   var testMessage = 'test'
+//
+//   var createServer = function () {
+//     var transports = []
+//     transports.push(new UdpTransport())
+//     transports.push(new TcpTransport())
+//     transports.push(
+//       new TurnTransport({
+//         turnServer: turnAddr,
+//         turnPort: turnPort,
+//         turnProtocol: new TurnProtocols.TCP(),
+//         turnUsername: turnUser,
+//         turnPassword: turnPwd,
+//         signaling: new WebSocketSignaling({
+//           url: registrar
+//         })
+//       })
+//     )
+//     transports.push(
+//       new WebRtcTransport({
+//         config: {
+//           iceServers: [ { url: 'stun:23.21.150.121' } ]
+//         },
+//         signaling: new WebSocketSignaling({
+//           url: registrar
+//         })
+//       })
+//     )
+//     var server = net.createServer(transports, function (connection) {
+//       expect(connection).to.not.be.undefined
+//       expect(connection.isConnected()).to.be.true
+//       expect(connection.remoteAddress).to.not.be.undefined
+//       connection.on('data', function (data) {
+//         expect(data.toString()).to.equal(testMessage)
+//       })
+//     })
+//     server.closeP()
+//       .then(function () {
+//         done()
+//       })
+//       .catch(function (error) {
+//         done(error)
+//       })
+//     return server
+//   }
+//
+//   var launchServer = function (serverInfo, onReady) {
+//     server.listen(serverInfo, function () {
+//       onReady()
+//     })
+//   }
+//
+//   var createClient = function (serverInfo) {
+//     var transports = []
+//     transports.push(new TcpTransport())
+//     client = net.createConnection(serverInfo, transports, function () {
+//       expect(client.isConnected()).to.be.true
+//       expect(client.remoteAddress).to.not.be.undefined
+//       client.write(testMessage)
+//     })
+//     expect(client.isConnected()).to.be.false
+//   }
+//
+//   var serverInfo = [{
+//     transportType: 'tcp',
+//     transportInfo: {
+//       address: '127.0.0.1',
+//       port: 30023
+//     }
+//   }]
+//   var connectionInfo = [{
+//     transportType: 'tcp',
+//     transportInfo: {
+//       address: '127.0.0.1',
+//       port: 30024
+//     }
+//   }, {
+//     transportType: 'tcp',
+//     transportInfo: {
+//       address: '127.0.0.1',
+//       port: 30023
+//     }
+//   }]
+//
+//   server = createServer()
+//   launchServer(serverInfo, function () {
+//     createClient(connectionInfo)
+//   })
+// })
 })
