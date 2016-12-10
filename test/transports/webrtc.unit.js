@@ -5,7 +5,7 @@ var WebRtcTransport = require('../../index').transports.webrtc
 
 var LocalSignaling = require('../../index').signaling.local
 var WebSocketSignaling = require('../../index').signaling.websocket
-var FilteringWebSocketSignaling = require('./filtering-ws-signaling')
+var FilteringWebSocketSignaling = require('./filters/ws-signaling')
 
 var chai = require('chai')
 var expect = chai.expect
