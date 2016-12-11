@@ -8,18 +8,21 @@ function FilteringWebSocketSignaling (args) {
     return new FilteringWebSocketSignaling(args)
   }
   // init
-  this._filter = (args.filter === undefined) ? function () { return false } : args.filter
+  this.filter = function () {
+    // drop no messages
+    return false
+  }
   WebSocketSignaling.call(this, args)
 }
 
-// Inherit EventEmitter
+// Inherit from WebSocketSignaling
 util.inherits(FilteringWebSocketSignaling, WebSocketSignaling)
 
 // do not fire an error when a message was not properly delivered
 FilteringWebSocketSignaling.prototype.send = function (message, destinationInfo, onSuccess, onFailure) {
   // if message passes the filter test
-  if (this._args.filter(message)) {
-    console.log('IGNORING message ' + JSON.stringify(message))
+  if (this.filter(message)) {
+    console.log('FilteringWebSocketSignaling -- IGNORING message ' + JSON.stringify(message))
     // then return -- dropping request on the floor
     return
   }

@@ -164,15 +164,17 @@ describe('webrtc transport', function () {
   })
 
   it('should correctly abort handshake -- case 2', function (done) {
+    var filteringWebSocketSignaling = new FilteringWebSocketSignaling({
+      uid: 'foo',
+      url: registrar
+    })
+    filteringWebSocketSignaling.filter = function () {
+      // drop all messages
+      return true
+    }
     var clientSocket = new WebRtcTransport({
       config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
-      signaling: new FilteringWebSocketSignaling({
-        uid: 'foo',
-        url: registrar,
-        filter: function () {
-          return true
-        }
-      }),
+      signaling: filteringWebSocketSignaling,
       connectTimeout: 2000
     })
     var connectionInfo = {
