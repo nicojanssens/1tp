@@ -1,7 +1,7 @@
 'use strict'
 
 var util = require('util')
-var WebSocketSignaling = require('../../lib/signaling/out-of-band/websocket')
+var WebSocketSignaling = require('../../../lib/signaling/out-of-band/websocket')
 
 function FilteringWebSocketSignaling (args) {
   if (!(this instanceof FilteringWebSocketSignaling)) {
