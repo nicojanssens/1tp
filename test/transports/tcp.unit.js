@@ -78,7 +78,8 @@ describe('tcp transport', function () {
       }, {
         socket: serverSocket,
         listeningInfo: listeningInfo
-      }, 'server',
+      },
+      'server',
       done,
       done
     )
