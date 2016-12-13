@@ -26,6 +26,7 @@ FilteringWebSocketSignaling.prototype.send = function (message, destinationInfo,
     // then return -- dropping request on the floor
     return
   }
+  console.log('FilteringWebSocketSignaling -- SENDING message ' + JSON.stringify(message))
   FilteringWebSocketSignaling.super_.prototype.send.call(this, message, destinationInfo, onSuccess, onFailure)
 }
 
