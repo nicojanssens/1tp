@@ -21,11 +21,22 @@ describe('tcp transport', function () {
     var serverSocket = new TcpTransport()
     // execute echo test
     tests.testEchoMessages({
-      socket: clientSocket
-    }, {
-      socket: serverSocket,
-      listeningInfo: listeningInfo
-    }, done)
+        socket: clientSocket
+      }, {
+        socket: serverSocket,
+        listeningInfo: listeningInfo
+      },
+      function (clientReadStreamEnded, clientWriteStreamEnded, echoReadStreamEnded, echoWriteStreamEnded) {
+        expect(clientReadStreamEnded).to.be.true
+        expect(clientWriteStreamEnded).to.be.true
+        expect(echoReadStreamEnded).to.be.true
+        expect(echoWriteStreamEnded).to.be.true
+        done()
+      },
+      function (error) {
+        done(error)
+      }
+    )
   })
 
   it('should correctly close after destroying client socket', function (done) {
@@ -40,12 +51,15 @@ describe('tcp transport', function () {
     var serverSocket = new TcpTransport()
     // execute echo test
     tests.testDestroyStream({
-      socket: clientSocket
-    }, {
-      socket: serverSocket,
-      listeningInfo: listeningInfo
-    }, 'client',
-      done)
+        socket: clientSocket
+      }, {
+        socket: serverSocket,
+        listeningInfo: listeningInfo
+      },
+      'client',
+      done,
+      done
+    )
   })
 
   it('should correctly close after destroying server socket', function (done) {
@@ -60,12 +74,14 @@ describe('tcp transport', function () {
     var serverSocket = new TcpTransport()
     // execute echo test
     tests.testDestroyStream({
-      socket: clientSocket
-    }, {
-      socket: serverSocket,
-      listeningInfo: listeningInfo
-    }, 'server',
-      done)
+        socket: clientSocket
+      }, {
+        socket: serverSocket,
+        listeningInfo: listeningInfo
+      }, 'server',
+      done,
+      done
+    )
   })
 
   it('should abort session when server is unreachable', function (done) {

@@ -34,10 +34,21 @@ describe('webrtc transport', function () {
       signaling: localSignaling
     })
     tests.testEchoMessages({
-      socket: clientSocket
-    }, {
-      socket: serverSocket
-    }, done)
+        socket: clientSocket
+      }, {
+        socket: serverSocket
+      },
+      function (clientReadStreamEnded, clientWriteStreamEnded, echoReadStreamEnded, echoWriteStreamEnded) {
+        expect(clientReadStreamEnded).to.be.true
+        expect(clientWriteStreamEnded).to.be.true
+        expect(echoReadStreamEnded).to.be.true
+        expect(echoWriteStreamEnded).to.be.true
+        done()
+      },
+      function (error) {
+        done(error)
+      }
+    )
   })
 
   it('should return echo messages using WS signaling', function (done) {
@@ -50,10 +61,21 @@ describe('webrtc transport', function () {
       signaling: new WebSocketSignaling({uid: 'tdelaet', url: registrar})
     })
     tests.testEchoMessages({
-      socket: clientSocket
-    }, {
-      socket: serverSocket
-    }, done)
+        socket: clientSocket
+      }, {
+        socket: serverSocket
+      },
+      function (clientReadStreamEnded, clientWriteStreamEnded, echoReadStreamEnded, echoWriteStreamEnded) {
+        expect(clientReadStreamEnded).to.be.true
+        expect(clientWriteStreamEnded).to.be.true
+        expect(echoReadStreamEnded).to.be.true
+        expect(echoWriteStreamEnded).to.be.true
+        done()
+      },
+      function (error) {
+        done(error)
+      }
+    )
   })
 
   it('should correctly close after destroying client socket', function (done) {
@@ -67,13 +89,13 @@ describe('webrtc transport', function () {
     })
     // execute echo test
     tests.testDestroyStream({
-      socket: clientSocket
-    }, {
-      socket: serverSocket
-    }, 'client',
-      function (error) {
-        done(error)
-      }
+        socket: clientSocket
+      }, {
+        socket: serverSocket
+      },
+      'client',
+      done,
+      done
     )
   })
 
@@ -88,13 +110,13 @@ describe('webrtc transport', function () {
     })
     // execute echo test
     tests.testDestroyStream({
-      socket: clientSocket
-    }, {
-      socket: serverSocket
-    }, 'server',
-      function (error) {
-        done(error)
-      }
+        socket: clientSocket
+      }, {
+        socket: serverSocket
+      },
+      'server',
+      done,
+      done
     )
   })
 

@@ -55,10 +55,21 @@ describe('turn transport', function () {
       signaling: localSignaling
     })
     tests.testEchoMessages({
-      socket: clientSocket
-    }, {
-      socket: serverSocket
-    }, done)
+        socket: clientSocket
+      }, {
+        socket: serverSocket
+      },
+      function (clientReadStreamEnded, clientWriteStreamEnded, echoReadStreamEnded, echoWriteStreamEnded) {
+        expect(clientReadStreamEnded).to.be.true
+        expect(clientWriteStreamEnded).to.be.true
+        expect(echoReadStreamEnded).to.be.true
+        expect(echoWriteStreamEnded).to.be.true
+        done()
+      },
+      function (error) {
+        done(error)
+      }
+    )
   })
 
   it('should return echo messages using tcp transport with WS signaling and close receiving transport afterwards', function (done) {
@@ -79,10 +90,21 @@ describe('turn transport', function () {
       signaling: new WebSocketSignaling({url: registrar})
     })
     tests.testEchoMessages({
-      socket: clientSocket
-    }, {
-      socket: serverSocket
-    }, done)
+        socket: clientSocket
+      }, {
+        socket: serverSocket
+      },
+      function (clientReadStreamEnded, clientWriteStreamEnded, echoReadStreamEnded, echoWriteStreamEnded) {
+        expect(clientReadStreamEnded).to.be.true
+        expect(clientWriteStreamEnded).to.be.true
+        expect(echoReadStreamEnded).to.be.true
+        expect(echoWriteStreamEnded).to.be.true
+        done()
+      },
+      function (error) {
+        done(error)
+      }
+    )
   })
 
   it('should correctly close turn+tcp stream after destroying client socket', function (done) {
@@ -104,11 +126,14 @@ describe('turn transport', function () {
     })
     // execute echo test
     tests.testDestroyStream({
-      socket: clientSocket
-    }, {
-      socket: serverSocket
-    }, 'client',
-      done)
+        socket: clientSocket
+      }, {
+        socket: serverSocket
+      },
+      'client',
+      done,
+      done
+    )
   })
 
   it('should correctly close turn+udp stream after destroying client socket', function (done) {
@@ -130,11 +155,14 @@ describe('turn transport', function () {
     })
     // execute echo test
     tests.testDestroyStream({
-      socket: clientSocket
-    }, {
-      socket: serverSocket
-    }, 'client',
-      done)
+        socket: clientSocket
+      }, {
+        socket: serverSocket
+      },
+      'client',
+      done,
+      done
+    )
   })
 
   it('should correctly close turn+udp stream after destroying server socket', function (done) {
@@ -156,11 +184,14 @@ describe('turn transport', function () {
     })
     // execute echo test
     tests.testDestroyStream({
-      socket: clientSocket
-    }, {
-      socket: serverSocket
-    }, 'server',
-      done)
+        socket: clientSocket
+      }, {
+        socket: serverSocket
+      },
+      'server',
+      done,
+      done
+    )
   })
 
   it('should correctly close turn+tcp stream after destroying server socket', function (done) {
@@ -182,11 +213,14 @@ describe('turn transport', function () {
     })
     // execute echo test
     tests.testDestroyStream({
-      socket: clientSocket
-    }, {
-      socket: serverSocket
-    }, 'server',
-      done)
+        socket: clientSocket
+      }, {
+        socket: serverSocket
+      },
+      'server',
+      done,
+      done
+    )
   })
 
   it('should correctly deal with a handshake timeout', function (done) {

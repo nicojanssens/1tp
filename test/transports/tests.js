@@ -6,7 +6,7 @@ var merge = require('merge')
 
 var defaultProtocolVersion = require('../../package.json').version
 
-function testEchoMessages (clientSpecs, serverSpecs, done) {
+function testEchoMessages (clientSpecs, serverSpecs, onSuccess, onFailure) {
   var nbTestMessages = 10
   var currentTestMessage = 0
 
@@ -40,17 +40,14 @@ function testEchoMessages (clientSpecs, serverSpecs, done) {
       function () {
         console.log('closed')
         setTimeout(function () { // to cope with TCP closing behavior
-          expect(clientReadStreamEnded).to.be.true
-          expect(clientWriteStreamEnded).to.be.true
-          expect(echoReadStreamEnded).to.be.true
-          expect(echoWriteStreamEnded).to.be.true
-          done()
+          onSuccess(clientReadStreamEnded, clientWriteStreamEnded, echoReadStreamEnded, echoWriteStreamEnded)
         }, 500)
       },
       function (error) {
-        done(error)
+        onFailure(error)
       })
   })
+  serverSocket.on('error', onFailure)
 
   function sendTestMessage (stream) {
     var testMessage = 'test message ' + currentTestMessage
@@ -82,9 +79,7 @@ function testEchoMessages (clientSpecs, serverSpecs, done) {
           clientStream.end()
         }
       })
-      clientStream.on('error', function (error) {
-        done(error)
-      })
+      clientStream.on('error', onFailure)
       // read stream end
       clientStream.on('end', function () {
         console.log('client read stream ended')
@@ -99,11 +94,11 @@ function testEchoMessages (clientSpecs, serverSpecs, done) {
       sendTestMessage(clientStream)
     })
     .catch(function (error) {
-      done(error)
+      onFailure(error)
     })
 }
 
-function testDestroyStream (clientSpecs, serverSpecs, streamToDestroy, done) {
+function testDestroyStream (clientSpecs, serverSpecs, streamToDestroy, onSuccess, onFailure) {
   var clientSocket = clientSpecs.socket
   var serverSocket = serverSpecs.socket
   var listeningInfo = serverSpecs.listeningInfo
@@ -113,14 +108,14 @@ function testDestroyStream (clientSpecs, serverSpecs, streamToDestroy, done) {
   var echoStreamClosed = false
 
   // when a new stream is generated
-  serverSocket.on('connection', function (echoStream, connectionInfo) {
+  serverSocket.on('connection', function (echoStream) {
     console.log('echo stream available')
     serverStream = echoStream
     echoStream.on('close', function () {
       console.log('echoStreamClosed')
       echoStreamClosed = true
       if (echoStreamClosed && clientStreamClosed) {
-        done()
+        onSuccess()
       }
     })
     if (!serverStream || !clientStream) {
@@ -133,6 +128,7 @@ function testDestroyStream (clientSpecs, serverSpecs, streamToDestroy, done) {
       serverStream.destroy()
     }
   })
+  serverSocket.on('error', onFailure)
 
   // bind echo socket
   serverSocket.listenP(listeningInfo)
@@ -148,20 +144,17 @@ function testDestroyStream (clientSpecs, serverSpecs, streamToDestroy, done) {
     .then(function (sourceStream) {
       console.log('client stream available')
       clientStream = sourceStream
-      sourceStream.on('data', function (chunk) {
+      sourceStream.on('data', function () {
         var errorMsg = 'not expecting data arrival'
         console.error(errorMsg)
-        done(errorMsg)
+        onFailure(errorMsg)
       })
-      sourceStream.on('error', function (error) {
-        console.error(error)
-        done(error)
-      })
+      sourceStream.on('error', onFailure)
       sourceStream.on('close', function () {
         console.log('clientStreamClosed')
         clientStreamClosed = true
         if (echoStreamClosed && clientStreamClosed) {
-          done()
+          onSuccess()
         }
       })
       if (!serverStream || !clientStream) {
@@ -175,7 +168,7 @@ function testDestroyStream (clientSpecs, serverSpecs, streamToDestroy, done) {
       }
     })
     .catch(function (error) {
-      done(error)
+      onFailure(error)
     })
 }
 
