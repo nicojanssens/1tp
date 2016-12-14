@@ -131,7 +131,9 @@ describe('turn transport', function () {
         socket: serverSocket
       },
       'client',
-      done,
+      function (clientStream, serverStream) {
+        done()
+      },
       done
     )
   })
@@ -160,7 +162,9 @@ describe('turn transport', function () {
         socket: serverSocket
       },
       'client',
-      done,
+      function (clientStream, serverStream) {
+        done()
+      },
       done
     )
   })
@@ -189,7 +193,9 @@ describe('turn transport', function () {
         socket: serverSocket
       },
       'server',
-      done,
+      function (clientStream, serverStream) {
+        done()
+      },
       done
     )
   })
@@ -218,7 +224,9 @@ describe('turn transport', function () {
         socket: serverSocket
       },
       'server',
-      done,
+      function (clientStream, serverStream) {
+        done()
+      },
       done
     )
   })

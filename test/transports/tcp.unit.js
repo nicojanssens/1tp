@@ -57,7 +57,9 @@ describe('tcp transport', function () {
         listeningInfo: listeningInfo
       },
       'client',
-      done,
+      function (clientStream, serverStream) {
+        done()
+      },
       done
     )
   })
@@ -80,7 +82,9 @@ describe('tcp transport', function () {
         listeningInfo: listeningInfo
       },
       'server',
-      done,
+      function (clientStream, serverStream) {
+        done()
+      },
       done
     )
   })

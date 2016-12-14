@@ -87,7 +87,6 @@ function testEchoMessages (clientSpecs, serverSpecs, onSuccess, onFailure) {
       // write stream end
       clientStream.on('finish', function () {
         console.log('client write stream ended')
-        console.log(clientStream.writable)
       })
       // send test messages
       sendTestMessage(clientStream)
@@ -102,14 +101,15 @@ function testDestroyStream (clientSpecs, serverSpecs, streamToDestroy, onSuccess
   var serverSocket = serverSpecs.socket
   var listeningInfo = serverSpecs.listeningInfo
 
-  var serverStream, clientStream
+  var serverTestStream
+  var clientTestStream
   var clientStreamClosed = false
   var echoStreamClosed = false
 
   // when a new stream is generated
   serverSocket.on('connection', function (echoStream) {
     console.log('echo stream available')
-    serverStream = echoStream
+    serverTestStream = echoStream
     echoStream.on('close', function () {
       console.log('echoStreamClosed')
       echoStreamClosed = true
@@ -117,14 +117,14 @@ function testDestroyStream (clientSpecs, serverSpecs, streamToDestroy, onSuccess
         onSuccess()
       }
     })
-    if (!serverStream || !clientStream) {
-      // serverStream or clientStream are missing -- don't do anything
+    if (!serverTestStream || !clientTestStream) {
+      // serverTestStream or clientTestStream are missing -- don't do anything
       return
     }
     if (streamToDestroy === 'client') {
-      clientStream.destroy()
+      clientTestStream.destroy()
     } else {
-      serverStream.destroy()
+      serverTestStream.destroy()
     }
   })
   serverSocket.on('error', onFailure)
@@ -142,7 +142,7 @@ function testDestroyStream (clientSpecs, serverSpecs, streamToDestroy, onSuccess
     })
     .then(function (sourceStream) {
       console.log('client stream available')
-      clientStream = sourceStream
+      clientTestStream = sourceStream
       sourceStream.on('data', function () {
         var errorMsg = 'not expecting data arrival'
         console.error(errorMsg)
@@ -153,17 +153,17 @@ function testDestroyStream (clientSpecs, serverSpecs, streamToDestroy, onSuccess
         console.log('clientStreamClosed')
         clientStreamClosed = true
         if (echoStreamClosed && clientStreamClosed) {
-          onSuccess()
+          onSuccess(clientTestStream, serverTestStream)
         }
       })
-      if (!serverStream || !clientStream) {
-        // serverStream or clientStream are missing -- don't do anything
+      if (!serverTestStream || !clientTestStream) {
+        // serverTestStream or clientTestStream are missing -- don't do anything
         return
       }
       if (streamToDestroy === 'client') {
-        clientStream.destroy()
+        clientTestStream.destroy()
       } else {
-        serverStream.destroy()
+        serverTestStream.destroy()
       }
     })
     .catch(function (error) {

@@ -94,7 +94,9 @@ describe('webrtc transport', function () {
         socket: serverSocket
       },
       'client',
-      done,
+      function (clientStream, serverStream) {
+        done()
+      },
       done
     )
   })
@@ -115,7 +117,9 @@ describe('webrtc transport', function () {
         socket: serverSocket
       },
       'server',
-      done,
+      function (clientStream, serverStream) {
+        done()
+      },
       done
     )
   })
