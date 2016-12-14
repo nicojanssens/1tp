@@ -87,6 +87,7 @@ function testEchoMessages (clientSpecs, serverSpecs, onSuccess, onFailure) {
       // write stream end
       clientStream.on('finish', function () {
         console.log('client write stream ended')
+        console.log(clientStream.writable)
       })
       // send test messages
       sendTestMessage(clientStream)
