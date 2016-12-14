@@ -30,9 +30,9 @@ describe('udp transport', function () {
       },
       function (clientStream, serverStream) {
         expect(clientStream.readable).to.be.false
-        //expect(clientStream.writable).to.be.false
+        expect(clientStream.writable).to.be.false
         expect(serverStream.readable).to.be.false
-        //expect(serverStream.writable).to.be.false
+        expect(serverStream.writable).to.be.false
         done()
       },
       function (error) {
@@ -357,14 +357,14 @@ describe('udp transport', function () {
         // FIN sent to client -- pipe ends the (echo) writer when the (echo) reader ends
         expect(clientStream.readable).to.be.false
         // ACK sent to server
-        //expect(serverStream.writable).to.be.false
+        expect(serverStream.writable).to.be.false
         // no existing server sessions
         expect(Object.keys(serverSocket._sessions).length).to.equal(0)
         // wait until clientStream is no longer writable -- i.e. FIN operation aborts
         clientStream.on('finish', function () {
           // no existing client sessions
           process.nextTick(function () {
-            //expect(clientStream.writable).to.be.false
+            expect(clientStream.writable).to.be.false
             expect(Object.keys(clientSocket._sessions).length).to.equal(0)
             done()
           })
@@ -398,9 +398,9 @@ describe('udp transport', function () {
       'client',
       function (clientStream, serverStream) {
         expect(clientStream.readable).to.be.false
-        //expect(clientStream.writable).to.be.false
+        expect(clientStream.writable).to.be.false
         expect(serverStream.readable).to.be.false
-        //expect(serverStream.writable).to.be.false
+        expect(serverStream.writable).to.be.false
         // no server sessions left
         expect(Object.keys(serverSocket._sessions).length).to.equal(0)
         // no client sessions left
