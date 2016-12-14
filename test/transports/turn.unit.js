@@ -59,11 +59,11 @@ describe('turn transport', function () {
       }, {
         socket: serverSocket
       },
-      function (clientReadStreamEnded, clientWriteStreamEnded, echoReadStreamEnded, echoWriteStreamEnded) {
-        expect(clientReadStreamEnded).to.be.true
-        expect(clientWriteStreamEnded).to.be.true
-        expect(echoReadStreamEnded).to.be.true
-        expect(echoWriteStreamEnded).to.be.true
+      function (clientStream, serverStream) {
+        expect(clientStream.readable).to.be.false
+        expect(clientStream.writable).to.be.false
+        expect(serverStream.readable).to.be.false
+        expect(serverStream.writable).to.be.false
         done()
       },
       function (error) {
@@ -94,11 +94,11 @@ describe('turn transport', function () {
       }, {
         socket: serverSocket
       },
-      function (clientReadStreamEnded, clientWriteStreamEnded, echoReadStreamEnded, echoWriteStreamEnded) {
-        expect(clientReadStreamEnded).to.be.true
-        expect(clientWriteStreamEnded).to.be.true
-        expect(echoReadStreamEnded).to.be.true
-        expect(echoWriteStreamEnded).to.be.true
+      function (clientStream, serverStream) {
+        expect(clientStream.readable).to.be.false
+        expect(clientStream.writable).to.be.false
+        expect(serverStream.readable).to.be.false
+        expect(serverStream.writable).to.be.false
         done()
       },
       function (error) {

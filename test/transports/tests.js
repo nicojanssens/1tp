@@ -14,33 +14,32 @@ function testEchoMessages (clientSpecs, serverSpecs, onSuccess, onFailure) {
   var serverSocket = serverSpecs.socket
   var listeningInfo = serverSpecs.listeningInfo
 
-  var clientReadStreamEnded = false
-  var clientWriteStreamEnded = false
-  var echoReadStreamEnded = false
-  var echoWriteStreamEnded = false
+  var serverTestStream
+  var clientTestStream
 
   // when a new stream is generated
   serverSocket.on('connection', function (echoStream, connectionInfo) {
     console.log('echo stream available')
+    serverTestStream = echoStream
     expect(connectionInfo).to.not.be.undefined
     // then pipe the read stream to the write stream (echo behavior)
     echoStream.pipe(echoStream)
     // write stream end
     echoStream.on('finish', function () {
       console.log('echo write stream ended')
-      echoWriteStreamEnded = true
     })
     // read stream end
     echoStream.on('end', function () {
       console.log('echo read stream ended')
-      echoReadStreamEnded = true
     })
     // try to close server socket
     serverSocket.close(
       function () {
-        console.log('closed')
         setTimeout(function () { // to cope with TCP closing behavior
-          onSuccess(clientReadStreamEnded, clientWriteStreamEnded, echoReadStreamEnded, echoWriteStreamEnded)
+          onSuccess(
+            clientTestStream,
+            serverTestStream
+          )
         }, 500)
       },
       function (error) {
@@ -68,6 +67,7 @@ function testEchoMessages (clientSpecs, serverSpecs, onSuccess, onFailure) {
     })
     .then(function (clientStream) {
       console.log('client stream available')
+      clientTestStream = clientStream
       // verify incoming test messages
       clientStream.on('data', function (chunk) {
         var message = chunk.toString()
@@ -83,12 +83,10 @@ function testEchoMessages (clientSpecs, serverSpecs, onSuccess, onFailure) {
       // read stream end
       clientStream.on('end', function () {
         console.log('client read stream ended')
-        clientReadStreamEnded = true
       })
       // write stream end
       clientStream.on('finish', function () {
         console.log('client write stream ended')
-        clientWriteStreamEnded = true
       })
       // send test messages
       sendTestMessage(clientStream)
