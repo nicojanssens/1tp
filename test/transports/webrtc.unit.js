@@ -34,10 +34,10 @@ describe('webrtc transport', function () {
       signaling: localSignaling
     })
     tests.testEchoMessages({
-        socket: clientSocket
-      }, {
-        socket: serverSocket
-      },
+      socket: clientSocket
+    }, {
+      socket: serverSocket
+    },
       function (clientStream, serverStream) {
         expect(clientStream.readable).to.be.false
         expect(clientStream.writable).to.be.false
@@ -61,10 +61,10 @@ describe('webrtc transport', function () {
       signaling: new WebSocketSignaling({uid: 'tdelaet', url: registrar})
     })
     tests.testEchoMessages({
-        socket: clientSocket
-      }, {
-        socket: serverSocket
-      },
+      socket: clientSocket
+    }, {
+      socket: serverSocket
+    },
       function (clientStream, serverStream) {
         expect(clientStream.readable).to.be.false
         expect(clientStream.writable).to.be.false
@@ -89,10 +89,10 @@ describe('webrtc transport', function () {
     })
     // execute echo test
     tests.testDestroyStream({
-        socket: clientSocket
-      }, {
-        socket: serverSocket
-      },
+      socket: clientSocket
+    }, {
+      socket: serverSocket
+    },
       'client',
       function (clientStream, serverStream) {
         done()
@@ -112,10 +112,10 @@ describe('webrtc transport', function () {
     })
     // execute echo test
     tests.testDestroyStream({
-        socket: clientSocket
-      }, {
-        socket: serverSocket
-      },
+      socket: clientSocket
+    }, {
+      socket: serverSocket
+    },
       'server',
       function (clientStream, serverStream) {
         done()

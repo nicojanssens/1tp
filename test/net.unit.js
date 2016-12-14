@@ -1248,5 +1248,4 @@ describe('net api', function () {
       createClient(server.address())
     })
   })
-
 })

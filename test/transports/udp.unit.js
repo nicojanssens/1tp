@@ -23,11 +23,11 @@ describe('udp transport', function () {
     var serverSocket = new UdpTransport()
     // execute echo test
     tests.testEchoMessages({
-        socket: clientSocket
-      }, {
-        socket: serverSocket,
-        listeningInfo: listeningInfo
-      },
+      socket: clientSocket
+    }, {
+      socket: serverSocket,
+      listeningInfo: listeningInfo
+    },
       function (clientStream, serverStream) {
         expect(clientStream.readable).to.be.false
         expect(clientStream.writable).to.be.false
@@ -53,11 +53,11 @@ describe('udp transport', function () {
     var serverSocket = new UdpTransport()
     // execute echo test
     tests.testDestroyStream({
-        socket: clientSocket
-      }, {
-        socket: serverSocket,
-        listeningInfo: listeningInfo
-      },
+      socket: clientSocket
+    }, {
+      socket: serverSocket,
+      listeningInfo: listeningInfo
+    },
       'client',
       function (clientStream, serverStream) {
         done()
@@ -77,11 +77,11 @@ describe('udp transport', function () {
     var serverSocket = new UdpTransport()
     // execute echo test
     tests.testDestroyStream({
-        socket: clientSocket
-      }, {
-        socket: serverSocket,
-        listeningInfo: listeningInfo
-      },
+      socket: clientSocket
+    }, {
+      socket: serverSocket,
+      listeningInfo: listeningInfo
+    },
       'server',
       function (clientStream, serverStream) {
         done()
@@ -270,11 +270,11 @@ describe('udp transport', function () {
     serverSocket.dropMessage(signalingFactory.MESSAGE.FIN)
     // execute echo test
     tests.testEchoMessages({
-        socket: clientSocket
-      }, {
-        socket: serverSocket,
-        listeningInfo: listeningInfo
-      },
+      socket: clientSocket
+    }, {
+      socket: serverSocket,
+      listeningInfo: listeningInfo
+    },
       function () {
         done("don't expect finish to complete")
       },
@@ -306,11 +306,11 @@ describe('udp transport', function () {
     serverSocket.dropMessage(signalingFactory.MESSAGE.RST)
     // execute echo test
     tests.testDestroyStream({
-        socket: clientSocket
-      }, {
-        socket: serverSocket,
-        listeningInfo: listeningInfo
-      },
+      socket: clientSocket
+    }, {
+      socket: serverSocket,
+      listeningInfo: listeningInfo
+    },
       'client',
       function (clientStream, serverStream) {
         done("didn't expect destroy operation to complete")
@@ -344,11 +344,11 @@ describe('udp transport', function () {
     var serverSocket = new FilteringUdpTransport()
     // execute echo test
     tests.testEchoMessages({
-        socket: clientSocket
-      }, {
-        socket: serverSocket,
-        listeningInfo: listeningInfo
-      },
+      socket: clientSocket
+    }, {
+      socket: serverSocket,
+      listeningInfo: listeningInfo
+    },
       function (clientStream, serverStream) {
         // FIN arrived @ server
         expect(serverStream.readable).to.be.false
@@ -390,11 +390,11 @@ describe('udp transport', function () {
     var serverSocket = new FilteringUdpTransport()
     // execute echo test
     tests.testDestroyStream({
-        socket: clientSocket
-      }, {
-        socket: serverSocket,
-        listeningInfo: listeningInfo
-      },
+      socket: clientSocket
+    }, {
+      socket: serverSocket,
+      listeningInfo: listeningInfo
+    },
       'client',
       function (clientStream, serverStream) {
         expect(clientStream.readable).to.be.false
@@ -412,5 +412,4 @@ describe('udp transport', function () {
       }
     )
   })
-
 })

@@ -21,11 +21,11 @@ describe('tcp transport', function () {
     var serverSocket = new TcpTransport()
     // execute echo test
     tests.testEchoMessages({
-        socket: clientSocket
-      }, {
-        socket: serverSocket,
-        listeningInfo: listeningInfo
-      },
+      socket: clientSocket
+    }, {
+      socket: serverSocket,
+      listeningInfo: listeningInfo
+    },
       function (clientStream, serverStream) {
         expect(clientStream.readable).to.be.false
         expect(clientStream.writable).to.be.false
@@ -51,11 +51,11 @@ describe('tcp transport', function () {
     var serverSocket = new TcpTransport()
     // execute echo test
     tests.testDestroyStream({
-        socket: clientSocket
-      }, {
-        socket: serverSocket,
-        listeningInfo: listeningInfo
-      },
+      socket: clientSocket
+    }, {
+      socket: serverSocket,
+      listeningInfo: listeningInfo
+    },
       'client',
       function (clientStream, serverStream) {
         done()
@@ -76,11 +76,11 @@ describe('tcp transport', function () {
     var serverSocket = new TcpTransport()
     // execute echo test
     tests.testDestroyStream({
-        socket: clientSocket
-      }, {
-        socket: serverSocket,
-        listeningInfo: listeningInfo
-      },
+      socket: clientSocket
+    }, {
+      socket: serverSocket,
+      listeningInfo: listeningInfo
+    },
       'server',
       function (clientStream, serverStream) {
         done()
