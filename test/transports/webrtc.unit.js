@@ -301,4 +301,98 @@ describe('webrtc transport', function () {
       }, clientSocket._args.connectTimeout + 500)
     }, done)
   })
+
+  it('should correctly cope with dropped SDP offer messages', function (done) {
+    var filteringClientWebSocketSignaling = new FilteringWebSocketSignaling({
+      uid: 'alpha',
+      url: registrar
+    })
+    var filteringServerWebSocketSignaling = new FilteringWebSocketSignaling({
+      uid: 'beta',
+      url: registrar
+    })
+    filteringClientWebSocketSignaling.filter = function (message) {
+      if (message.data.type === 'offer') {
+        return true
+      } else {
+        return false
+      }
+    }
+    var clientSocket = new WebRtcTransport({
+      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
+      signaling: filteringClientWebSocketSignaling
+    })
+    var serverSocket = new WebRtcTransport({
+      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
+      signaling: filteringServerWebSocketSignaling
+    })
+    tests.testEchoMessages({
+      socket: clientSocket
+    }, {
+      socket: serverSocket
+    },
+      function (clientStream, serverStream) {
+        done("don't expect connection establishment")
+      },
+      function (error) {
+        expect(error.message).to.be.a('string')
+        expect(error.message).to.equal('handshake aborted')
+        // test if there are no more sessions left
+        expect(Object.keys(clientSocket._sessions).length).to.equal(0)
+        expect(Object.keys(clientSocket._connectingPeers).length).to.equal(0)
+        expect(Object.keys(serverSocket._sessions).length).to.equal(0)
+        expect(Object.keys(serverSocket._connectingPeers).length).to.equal(0)
+        done()
+      }
+    )
+  })
+
+  it('should correctly cope with dropped SDP answer messages', function (done) {
+    var filteringClientWebSocketSignaling = new FilteringWebSocketSignaling({
+      uid: 'alpha',
+      url: registrar
+    })
+    var filteringServerWebSocketSignaling = new FilteringWebSocketSignaling({
+      uid: 'beta',
+      url: registrar
+    })
+    filteringServerWebSocketSignaling.filter = function (message) {
+      if (message.data.type === 'answer') {
+        return true
+      } else {
+        return false
+      }
+    }
+    var clientSocket = new WebRtcTransport({
+      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
+      signaling: filteringClientWebSocketSignaling
+    })
+    var serverSocket = new WebRtcTransport({
+      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
+      signaling: filteringServerWebSocketSignaling
+    })
+    tests.testEchoMessages({
+      socket: clientSocket
+    }, {
+      socket: serverSocket
+    },
+      function (clientStream, serverStream) {
+        done("don't expect connection establishment")
+      },
+      function (error) {
+        expect(error.message).to.be.a('string')
+        expect(error.message).to.equal('handshake aborted')
+        // test if there are no more client sessions left
+        expect(Object.keys(clientSocket._sessions).length).to.equal(0)
+        expect(Object.keys(clientSocket._connectingPeers).length).to.equal(0)
+        // test if there are no more server sessions left
+        setTimeout(function () {
+          expect(Object.keys(serverSocket._sessions).length).to.equal(0)
+          expect(Object.keys(serverSocket._connectingPeers).length).to.equal(0)
+          done()
+        }, 1000)
+      }
+    )
+  })
+
 })
