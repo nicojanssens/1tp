@@ -194,7 +194,8 @@ function testAbortStream (clientSpecs, serverSpecs, timeout, onSuccess, onFailur
         expect(connectionInfo).to.deep.equal(merge(protocolVersion, listeningInfo))
       }
       // try establishing a connection
-      clientSocket.connect(connectionInfo,
+      clientSocket.connect(
+        connectionInfo,
         function () {
           onFailure('connection established')
         },
