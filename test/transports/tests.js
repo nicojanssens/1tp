@@ -171,5 +171,49 @@ function testDestroyStream (clientSpecs, serverSpecs, streamToDestroy, onSuccess
     })
 }
 
-module.exports.testEchoMessages = testEchoMessages
+function testAbortStream (clientSpecs, serverSpecs, timeout, onSuccess, onFailure) {
+  var clientSocket = clientSpecs.socket
+  var serverSocket = serverSpecs.socket
+  var listeningInfo = serverSpecs.listeningInfo
+
+  // when a new stream is generated
+  serverSocket.on('connection', function () {
+    onFailure('server produced connection event')
+  })
+  serverSocket.on('error', function (error) {
+    onFailure(error)
+  })
+
+  // bind echo socket
+  serverSocket.listenP(listeningInfo)
+    .then(function (connectionInfo) {
+      if (listeningInfo) {
+        var protocolVersion = {
+          version: defaultProtocolVersion
+        }
+        expect(connectionInfo).to.deep.equal(merge(protocolVersion, listeningInfo))
+      }
+      // try establishing a connection
+      clientSocket.connect(connectionInfo,
+        function () {
+          onFailure('connection established')
+        },
+        onFailure
+      )
+      // abort this connection setup
+      setTimeout(function () {
+        clientSocket.abort(
+          connectionInfo,
+          onSuccess,
+          onFailure
+        )
+      }, timeout)
+    })
+    .catch(function (error) {
+      onFailure(error)
+    })
+}
+
+module.exports.testAbortStream = testAbortStream
 module.exports.testDestroyStream = testDestroyStream
+module.exports.testEchoMessages = testEchoMessages

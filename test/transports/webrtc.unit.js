@@ -266,4 +266,39 @@ describe('webrtc transport', function () {
         done(error)
       })
   })
+
+  it('should correctly abort handshake -- case 4', function (done) {
+    var filteringClientWebSocketSignaling = new FilteringWebSocketSignaling({
+      uid: 'alpha',
+      url: registrar
+    })
+    var filteringServerWebSocketSignaling = new FilteringWebSocketSignaling({
+      uid: 'beta',
+      url: registrar
+    })
+    var clientSocket = new WebRtcTransport({
+      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
+      signaling: filteringClientWebSocketSignaling,
+    })
+    var serverSocket = new WebRtcTransport({
+      config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
+      signaling: filteringServerWebSocketSignaling,
+    })
+    // execute abort test
+    tests.testAbortStream({
+      socket: clientSocket
+    }, {
+      socket: serverSocket
+    }, 500,
+    // on success
+    function () {
+      expect(Object.keys(clientSocket._sessions).length).to.equal(0)
+      expect(Object.keys(clientSocket._connectingPeers).length).to.equal(0)
+      setTimeout(function () {
+        expect(Object.keys(serverSocket._sessions).length).to.equal(0)
+        expect(Object.keys(serverSocket._connectingPeers).length).to.equal(0)
+        done()
+      }, clientSocket._args.connectTimeout + 500)
+    }, done)
+  })
 })
