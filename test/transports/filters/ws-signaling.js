@@ -24,6 +24,7 @@ FilteringWebSocketSignaling.prototype.send = function (message, destinationInfo,
   if (this.filter(message)) {
     console.log('FilteringWebSocketSignaling -- IGNORING message ' + JSON.stringify(message))
     // then return -- dropping request on the floor
+    onSuccess()
     return
   }
   //console.log('FilteringWebSocketSignaling -- SENDING message ' + JSON.stringify(message))
