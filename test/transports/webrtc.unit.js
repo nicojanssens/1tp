@@ -289,7 +289,7 @@ describe('webrtc transport', function () {
       socket: clientSocket
     }, {
       socket: serverSocket
-    }, 500,
+    }, 200,
     // on success
     function () {
       expect(Object.keys(clientSocket._sessions).length).to.equal(0)
