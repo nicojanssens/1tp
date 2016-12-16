@@ -395,4 +395,159 @@ describe('turn transport', function () {
         done(error)
       })
   })
+
+  it('should correctly abort handshake -- case 4', function (done) {
+    var filteringClientWebSocketSignaling = new FilteringWebSocketSignaling({
+      uid: 'wallace',
+      url: registrar
+    })
+    var filteringServerWebSocketSignaling = new FilteringWebSocketSignaling({
+      uid: 'gromit',
+      url: registrar
+    })
+    filteringServerWebSocketSignaling.filter = function (message) {
+      if (message.operationType === 'ready') {
+        return true
+      } else {
+        return false
+      }
+    }
+    var clientSocket = new TurnTransport({
+      turnServer: turnAddr,
+      turnPort: turnPort,
+      turnProtocol: new TurnProtocols.TCP(),
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
+      signaling: filteringClientWebSocketSignaling
+    })
+    var serverSocket = new TurnTransport({
+      turnServer: turnAddr,
+      turnPort: turnPort,
+      turnProtocol: new TurnProtocols.TCP(),
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
+      signaling: filteringServerWebSocketSignaling
+    })
+    // execute abort test
+    tests.testAbortStream({
+      socket: clientSocket
+    }, {
+      socket: serverSocket
+    }, 100,
+    // on success
+    function () {
+      expect(Object.keys(clientSocket._sessions).length).to.equal(0)
+      setTimeout(function () {
+        expect(Object.keys(serverSocket._sessions).length).to.equal(0)
+        done()
+      }, clientSocket._args.connectTimeout + 500)
+    }, done)
+  })
+
+  it('should correctly cope with dropped CONNECT messages', function (done) {
+    var filteringClientWebSocketSignaling = new FilteringWebSocketSignaling({
+      uid: 'alpha',
+      url: registrar
+    })
+    var filteringServerWebSocketSignaling = new FilteringWebSocketSignaling({
+      uid: 'beta',
+      url: registrar
+    })
+    filteringClientWebSocketSignaling.filter = function (message) {
+      if (message.operationType === 'connect') {
+        return true
+      } else {
+        return false
+      }
+    }
+    var clientSocket = new TurnTransport({
+      turnServer: turnAddr,
+      turnPort: turnPort,
+      turnProtocol: new TurnProtocols.TCP(),
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
+      signaling: filteringClientWebSocketSignaling
+    })
+    var serverSocket = new TurnTransport({
+      turnServer: turnAddr,
+      turnPort: turnPort,
+      turnProtocol: new TurnProtocols.TCP(),
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
+      signaling: filteringServerWebSocketSignaling
+    })
+    tests.testEchoMessages({
+      socket: clientSocket
+    }, {
+      socket: serverSocket
+    },
+      function (clientStream, serverStream) {
+        done("don't expect connection establishment")
+      },
+      function (error) {
+        expect(error.message).to.be.a('string')
+        expect(error.message).to.equal('handshake aborted')
+        // // test if there are no more sessions left
+        expect(Object.keys(clientSocket._sessions).length).to.equal(0)
+        expect(Object.keys(serverSocket._sessions).length).to.equal(0)
+        done()
+      }
+    )
+  })
+
+  it('should correctly cope with dropped READY messages', function (done) {
+    var filteringClientWebSocketSignaling = new FilteringWebSocketSignaling({
+      uid: 'alpha',
+      url: registrar
+    })
+    var filteringServerWebSocketSignaling = new FilteringWebSocketSignaling({
+      uid: 'beta',
+      url: registrar
+    })
+    filteringServerWebSocketSignaling.filter = function (message) {
+      if (message.operationType === 'ready') {
+        return true
+      } else {
+        return false
+      }
+    }
+    var clientSocket = new TurnTransport({
+      turnServer: turnAddr,
+      turnPort: turnPort,
+      turnProtocol: new TurnProtocols.UDP(),
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
+      signaling: filteringClientWebSocketSignaling
+    })
+    var serverSocket = new TurnTransport({
+      turnServer: turnAddr,
+      turnPort: turnPort,
+      turnProtocol: new TurnProtocols.UDP(),
+      turnUsername: turnUser,
+      turnPassword: turnPwd,
+      signaling: filteringServerWebSocketSignaling
+    })
+    tests.testEchoMessages({
+      socket: clientSocket
+    }, {
+      socket: serverSocket
+    },
+      function (clientStream, serverStream) {
+        done("don't expect connection establishment")
+      },
+      function (error) {
+        expect(error.message).to.be.a('string')
+        expect(error.message).to.equal('handshake aborted')
+        // test if there are no more client sessions left
+        expect(Object.keys(clientSocket._sessions).length).to.equal(0)
+        // test if there are no more server sessions left
+        setTimeout(function () {
+          expect(Object.keys(serverSocket._sessions).length).to.equal(0)
+          done()
+        }, 1000)
+      }
+    )
+  })
+
+
 })
