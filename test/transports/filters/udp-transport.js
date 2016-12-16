@@ -27,7 +27,7 @@ FilteringUdpTransport.prototype._onIncomingBytes = function (bytes, rinfo) {
     // then return -- dropping request on the floor
     return
   }
-  //console.log('FilteringUdpTransport -- PROCESSING message ' + message.type.toString(16) + ' ' + JSON.stringify(message) + ' from ' + JSON.stringify(rinfo))
+  // console.log('FilteringUdpTransport -- PROCESSING message ' + message.type.toString(16) + ' ' + JSON.stringify(message) + ' from ' + JSON.stringify(rinfo))
   FilteringUdpTransport.super_.prototype._onIncomingBytes.call(this, bytes, rinfo)
 }
 

@@ -278,11 +278,11 @@ describe('webrtc transport', function () {
     })
     var clientSocket = new WebRtcTransport({
       config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
-      signaling: filteringClientWebSocketSignaling,
+      signaling: filteringClientWebSocketSignaling
     })
     var serverSocket = new WebRtcTransport({
       config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
-      signaling: filteringServerWebSocketSignaling,
+      signaling: filteringServerWebSocketSignaling
     })
     // execute abort test
     tests.testAbortStream({
@@ -290,16 +290,16 @@ describe('webrtc transport', function () {
     }, {
       socket: serverSocket
     }, 200,
-    // on success
-    function () {
-      expect(Object.keys(clientSocket._sessions).length).to.equal(0)
-      expect(Object.keys(clientSocket._connectingPeers).length).to.equal(0)
-      setTimeout(function () {
-        expect(Object.keys(serverSocket._sessions).length).to.equal(0)
-        expect(Object.keys(serverSocket._connectingPeers).length).to.equal(0)
-        done()
-      }, clientSocket._args.connectTimeout + 500)
-    }, done)
+      // on success
+      function () {
+        expect(Object.keys(clientSocket._sessions).length).to.equal(0)
+        expect(Object.keys(clientSocket._connectingPeers).length).to.equal(0)
+        setTimeout(function () {
+          expect(Object.keys(serverSocket._sessions).length).to.equal(0)
+          expect(Object.keys(serverSocket._connectingPeers).length).to.equal(0)
+          done()
+        }, clientSocket._args.connectTimeout + 500)
+      }, done)
   })
 
   it('should correctly cope with dropped SDP offer messages', function (done) {
@@ -394,5 +394,4 @@ describe('webrtc transport', function () {
       }
     )
   })
-
 })

@@ -434,14 +434,14 @@ describe('turn transport', function () {
     }, {
       socket: serverSocket
     }, 100,
-    // on success
-    function () {
-      expect(Object.keys(clientSocket._sessions).length).to.equal(0)
-      setTimeout(function () {
-        expect(Object.keys(serverSocket._sessions).length).to.equal(0)
-        done()
-      }, clientSocket._args.connectTimeout + 500)
-    }, done)
+      // on success
+      function () {
+        expect(Object.keys(clientSocket._sessions).length).to.equal(0)
+        setTimeout(function () {
+          expect(Object.keys(serverSocket._sessions).length).to.equal(0)
+          done()
+        }, clientSocket._args.connectTimeout + 500)
+      }, done)
   })
 
   it('should correctly cope with dropped CONNECT messages', function (done) {
@@ -548,6 +548,4 @@ describe('turn transport', function () {
       }
     )
   })
-
-
 })
