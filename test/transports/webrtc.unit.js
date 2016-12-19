@@ -1,5 +1,6 @@
 'use strict'
 
+var OneTpError = require ('../../lib/error')
 var tests = require('./tests.js')
 var WebRtcTransport = require('../../index').transports.webrtc
 
@@ -146,6 +147,7 @@ describe('webrtc transport', function () {
       .catch(function (error) {
         expect(error.message).to.be.a('string')
         expect(error.message).to.equal('handshake aborted')
+        expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
         // test if there are no more sessions left
         expect(Object.keys(clientSocket._sessions).length).to.equal(0)
         expect(Object.keys(clientSocket._connectingPeers).length).to.equal(0)
@@ -175,6 +177,7 @@ describe('webrtc transport', function () {
       .catch(function (error) {
         expect(error.message).to.be.a('string')
         expect(error.message).to.equal('handshake aborted')
+        expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
       })
     setTimeout(function () {
       clientSocket.abortP(connectionInfo)
@@ -219,6 +222,7 @@ describe('webrtc transport', function () {
       .catch(function (error) {
         expect(error.message).to.be.a('string')
         expect(error.message).to.equal('handshake aborted')
+        expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
       })
     setTimeout(function () {
       clientSocket.abortP(connectionInfo)
@@ -255,6 +259,7 @@ describe('webrtc transport', function () {
       .catch(function (error) {
         expect(error.message).to.be.a('string')
         expect(error.message).to.equal('handshake aborted')
+        expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
       })
     clientSocket.abortP(connectionInfo)
       .then(function () {
@@ -337,6 +342,7 @@ describe('webrtc transport', function () {
       function (error) {
         expect(error.message).to.be.a('string')
         expect(error.message).to.equal('handshake aborted')
+        expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
         // test if there are no more sessions left
         expect(Object.keys(clientSocket._sessions).length).to.equal(0)
         expect(Object.keys(clientSocket._connectingPeers).length).to.equal(0)
@@ -382,6 +388,7 @@ describe('webrtc transport', function () {
       function (error) {
         expect(error.message).to.be.a('string')
         expect(error.message).to.equal('handshake aborted')
+        expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
         // test if there are no more client sessions left
         expect(Object.keys(clientSocket._sessions).length).to.equal(0)
         expect(Object.keys(clientSocket._connectingPeers).length).to.equal(0)

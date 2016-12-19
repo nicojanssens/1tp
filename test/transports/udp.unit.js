@@ -1,6 +1,7 @@
 'use strict'
 
 var FilteringUdpTransport = require('./filters/udp-transport')
+var OneTpError = require('../../lib/error')
 var signalingFactory = require('../../lib/signaling/in-band/factory')
 var tests = require('./tests.js')
 var UdpTransport = require('../../index').transports.udp
@@ -107,6 +108,7 @@ describe('udp transport', function () {
       .catch(function (error) {
         expect(error.message).to.be.a('string')
         expect(error.message).to.equal('handshake aborted')
+        expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
         // test if there are no more sessions left
         expect(Object.keys(clientSocket._sessions).length).to.equal(0)
         done()
@@ -130,6 +132,7 @@ describe('udp transport', function () {
       .catch(function (error) {
         expect(error.message).to.be.a('string')
         expect(error.message).to.equal('handshake aborted')
+        expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
       })
     setTimeout(function () {
       clientSocket.abortP(connectionInfo)
@@ -160,6 +163,7 @@ describe('udp transport', function () {
       .catch(function (error) {
         expect(error.message).to.be.a('string')
         expect(error.message).to.equal('handshake aborted')
+        expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
       })
     clientSocket.abortP(connectionInfo)
       .then(function () {
@@ -205,6 +209,7 @@ describe('udp transport', function () {
         // we're expecting an abort error
         expect(error.message).to.be.a('string')
         expect(error.message).to.equal('handshake aborted')
+        expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
         // no existing client sessions
         expect(Object.keys(clientSocket._sessions).length).to.equal(0)
         // and no existing server sessions
@@ -247,6 +252,7 @@ describe('udp transport', function () {
         // we're expecting an abort error
         expect(error.message).to.be.a('string')
         expect(error.message).to.equal('handshake aborted')
+        expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
         // no existing client sessions
         expect(Object.keys(clientSocket._sessions).length).to.equal(0)
         // and no existing server sessions -- wait for server session to timeout

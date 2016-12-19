@@ -1,5 +1,6 @@
 'use strict'
 
+var OneTpError = require('../../lib/error')
 var tests = require('./tests.js')
 var TurnTransport = require('../../index').transports.turn
 var TurnProtocols = require('turn-js').transports
@@ -257,6 +258,7 @@ describe('turn transport', function () {
       .catch(function (error) {
         expect(error.message).to.be.a('string')
         expect(error.message).to.equal('handshake aborted')
+        expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
         // test if there are no more sessions left
         expect(Object.keys(clientSocket._sessions).length).to.equal(0)
         done()
@@ -289,6 +291,7 @@ describe('turn transport', function () {
       .catch(function (error) {
         expect(error.message).to.be.a('string')
         expect(error.message).to.equal('handshake aborted')
+        expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
         expect(Object.keys(clientSocket._sessions).length).to.equal(0)
         return clientSocket.abortP(connectionInfo)
       })
@@ -338,6 +341,7 @@ describe('turn transport', function () {
       .catch(function (error) {
         expect(error.message).to.be.a('string')
         expect(error.message).to.equal('handshake aborted')
+        expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
       })
     setTimeout(function () {
       clientSocket.abortP(connectionInfo)
@@ -385,6 +389,7 @@ describe('turn transport', function () {
       .catch(function (error) {
         expect(error.message).to.be.a('string')
         expect(error.message).to.equal('handshake aborted')
+        expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
       })
     clientSocket.abortP(connectionInfo)
       .then(function () {
@@ -487,6 +492,7 @@ describe('turn transport', function () {
       function (error) {
         expect(error.message).to.be.a('string')
         expect(error.message).to.equal('handshake aborted')
+        expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
         // // test if there are no more sessions left
         expect(Object.keys(clientSocket._sessions).length).to.equal(0)
         expect(Object.keys(serverSocket._sessions).length).to.equal(0)
@@ -538,6 +544,7 @@ describe('turn transport', function () {
       function (error) {
         expect(error.message).to.be.a('string')
         expect(error.message).to.equal('handshake aborted')
+        expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
         // test if there are no more client sessions left
         expect(Object.keys(clientSocket._sessions).length).to.equal(0)
         // test if there are no more server sessions left
