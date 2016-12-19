@@ -1,6 +1,6 @@
 'use strict'
 
-var OneTpError = require ('../../lib/error')
+var OneTpError = require('../../lib/error')
 var tests = require('./tests.js')
 var WebRtcTransport = require('../../index').transports.webrtc
 
