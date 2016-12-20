@@ -51,7 +51,7 @@ describe('net api + parallel scheduler', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30010
+        port: 40010
       }
     }]
 
