@@ -27,6 +27,7 @@
     "node": ">=6.9.0"
   },
   "dependencies": {
+    "args-js": "^0.10.12",
     "chrome-dgram": "^3.0.1",
     "chrome-net": "^3.3.0",
     "freeice": "^2.2.0",
