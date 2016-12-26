@@ -150,7 +150,6 @@ describe('webrtc transport', function () {
         expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
         // test if there are no more sessions left
         expect(Object.keys(clientSocket._sessions).length).to.equal(0)
-        expect(Object.keys(clientSocket._connectingPeers).length).to.equal(0)
         done()
       })
   })
@@ -183,7 +182,6 @@ describe('webrtc transport', function () {
       clientSocket.abortP(connectionInfo)
         .then(function () {
           expect(Object.keys(clientSocket._sessions).length).to.equal(0)
-          expect(Object.keys(clientSocket._connectingPeers).length).to.equal(0)
           setTimeout(done, 3000)
         })
         .catch(function (error) {
@@ -228,7 +226,6 @@ describe('webrtc transport', function () {
       clientSocket.abortP(connectionInfo)
         .then(function () {
           expect(Object.keys(clientSocket._sessions).length).to.equal(0)
-          expect(Object.keys(clientSocket._connectingPeers).length).to.equal(0)
           setTimeout(done, 3000)
         })
         .catch(function (error) {
@@ -264,7 +261,6 @@ describe('webrtc transport', function () {
     clientSocket.abortP(connectionInfo)
       .then(function () {
         expect(Object.keys(clientSocket._sessions).length).to.equal(0)
-        expect(Object.keys(clientSocket._connectingPeers).length).to.equal(0)
         setTimeout(done, 3000)
       })
       .catch(function (error) {
@@ -298,10 +294,8 @@ describe('webrtc transport', function () {
       // on success
       function () {
         expect(Object.keys(clientSocket._sessions).length).to.equal(0)
-        expect(Object.keys(clientSocket._connectingPeers).length).to.equal(0)
         setTimeout(function () {
           expect(Object.keys(serverSocket._sessions).length).to.equal(0)
-          expect(Object.keys(serverSocket._connectingPeers).length).to.equal(0)
           done()
         }, clientSocket._args.connectTimeout + 500)
       }, done)
@@ -345,9 +339,7 @@ describe('webrtc transport', function () {
         expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
         // test if there are no more sessions left
         expect(Object.keys(clientSocket._sessions).length).to.equal(0)
-        expect(Object.keys(clientSocket._connectingPeers).length).to.equal(0)
         expect(Object.keys(serverSocket._sessions).length).to.equal(0)
-        expect(Object.keys(serverSocket._connectingPeers).length).to.equal(0)
         done()
       }
     )
@@ -391,11 +383,9 @@ describe('webrtc transport', function () {
         expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
         // test if there are no more client sessions left
         expect(Object.keys(clientSocket._sessions).length).to.equal(0)
-        expect(Object.keys(clientSocket._connectingPeers).length).to.equal(0)
         // test if there are no more server sessions left
         setTimeout(function () {
           expect(Object.keys(serverSocket._sessions).length).to.equal(0)
-          expect(Object.keys(serverSocket._connectingPeers).length).to.equal(0)
           done()
         }, 1000)
       }
