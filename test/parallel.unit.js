@@ -255,20 +255,20 @@ describe('net api + parallel scheduler', function () {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30011
+        port: 40011
       }
     }]
     var connectionInfo = [{
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30011
+        port: 40011
       }
     }, {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30012
+        port: 40012
       }
     }]
 
@@ -352,20 +352,20 @@ describe('net api + parallel scheduler', function () {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30013
+        port: 40013
       }
     }]
     var connectionInfo = [{
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30014
+        port: 40014
       }
     }, {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30013
+        port: 40013
       }
     }]
 
@@ -446,20 +446,20 @@ describe('net api + parallel scheduler', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30015
+        port: 40015
       }
     }]
     var connectionInfo = [{
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30015
+        port: 40015
       }
     }, {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30016
+        port: 40016
       }
     }]
 
@@ -543,20 +543,20 @@ describe('net api + parallel scheduler', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30016
+        port: 40016
       }
     }]
     var connectionInfo = [{
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30017
+        port: 40017
       }
     }, {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30016
+        port: 40016
       }
     }]
 
@@ -615,14 +615,14 @@ describe('net api + parallel scheduler', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30018
+        port: 40018
       }
     }]
     var connectionInfo = [{
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30018
+        port: 40018
       }
     }]
 
@@ -679,20 +679,20 @@ describe('net api + parallel scheduler', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30019
+        port: 40019
       }
     }]
     var connectionInfo = [{
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30020
+        port: 40020
       }
     }, {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30020
+        port: 40020
       }
     }]
 
@@ -775,20 +775,20 @@ describe('net api + parallel scheduler', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30021
+        port: 40021
       }
     }]
     var connectionInfo = [{
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30022
+        port: 40022
       }
     }, {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30021
+        port: 40021
       }
     }]
 
@@ -871,20 +871,20 @@ describe('net api + parallel scheduler', function () {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30023
+        port: 40023
       }
     }]
     var connectionInfo = [{
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30024
+        port: 40024
       }
     }, {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 30023
+        port: 40023
       }
     }]
 
@@ -893,4 +893,5 @@ describe('net api + parallel scheduler', function () {
       createClient(connectionInfo)
     })
   })
+
 })
