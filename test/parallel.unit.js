@@ -65,7 +65,7 @@ describe('net api + parallel scheduler', function () {
         connection.on('data', function (data) {
           expect(data.toString()).to.equal(testMessage)
           var openServerSessions = 0
-          setTimeout(function() {
+          setTimeout(function () {
             server._transports.forEach(function (transport) {
               if (transport._sessions !== undefined) {
                 openServerSessions += Object.keys(transport._sessions).length
@@ -126,7 +126,7 @@ describe('net api + parallel scheduler', function () {
         expect(connection.remoteAddress).to.not.be.undefined
         connection.on('data', function (data) {
           expect(data.toString()).to.equal(testMessage)
-          setTimeout(function() {
+          setTimeout(function () {
             // check if all server sessions have closed
             server._transports.forEach(function (transport) {
               if (transport._sessions !== undefined) {
@@ -200,7 +200,7 @@ describe('net api + parallel scheduler', function () {
         expect(connection.remoteAddress).to.not.be.undefined
         connection.on('data', function (data) {
           expect(data.toString()).to.equal(testMessage)
-          setTimeout(function() {
+          setTimeout(function () {
             // check if all server sessions have closed
             server._transports.forEach(function (transport) {
               if (transport._sessions !== undefined) {
@@ -294,7 +294,7 @@ describe('net api + parallel scheduler', function () {
         expect(connection.remoteAddress).to.not.be.undefined
         connection.on('data', function (data) {
           expect(data.toString()).to.equal(testMessage)
-          setTimeout(function() {
+          setTimeout(function () {
             // check if all server sessions have closed
             server._transports.forEach(function (transport) {
               if (transport._sessions !== undefined) {
@@ -391,7 +391,7 @@ describe('net api + parallel scheduler', function () {
         expect(connection.remoteAddress).to.not.be.undefined
         connection.on('data', function (data) {
           expect(data.toString()).to.equal(testMessage)
-          setTimeout(function() {
+          setTimeout(function () {
             // check if all server sessions have closed
             server._transports.forEach(function (transport) {
               if (transport._sessions !== undefined) {
@@ -485,7 +485,7 @@ describe('net api + parallel scheduler', function () {
         expect(connection.remoteAddress).to.not.be.undefined
         connection.on('data', function (data) {
           expect(data.toString()).to.equal(testMessage)
-          setTimeout(function() {
+          setTimeout(function () {
             // check if all server sessions have closed
             server._transports.forEach(function (transport) {
               if (transport._sessions !== undefined) {
@@ -718,7 +718,7 @@ describe('net api + parallel scheduler', function () {
         expect(connection.remoteAddress).to.not.be.undefined
         connection.on('data', function (data) {
           expect(data.toString()).to.equal(testMessage)
-          setTimeout(function() {
+          setTimeout(function () {
             // check if all server sessions have closed
             server._transports.forEach(function (transport) {
               if (transport._sessions !== undefined) {
@@ -814,7 +814,7 @@ describe('net api + parallel scheduler', function () {
         expect(connection.remoteAddress).to.not.be.undefined
         connection.on('data', function (data) {
           expect(data.toString()).to.equal(testMessage)
-          setTimeout(function() {
+          setTimeout(function () {
             // check if all server sessions have closed
             server._transports.forEach(function (transport) {
               if (transport._sessions !== undefined) {
@@ -893,5 +893,4 @@ describe('net api + parallel scheduler', function () {
       createClient(connectionInfo)
     })
   })
-
 })
