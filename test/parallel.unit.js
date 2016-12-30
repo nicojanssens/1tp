@@ -894,7 +894,7 @@ describe('net api + parallel scheduler', function () {
     })
   })
 
-    it('should correctly close server socket after UdpSession was established -- case 1', function (done) {
+  it('should correctly close server socket after UdpSession was established -- case 1', function (done) {
     var client, server
     var testMessage = 'test'
 
@@ -908,7 +908,7 @@ describe('net api + parallel scheduler', function () {
         expect(connection.remoteAddress.transportType).to.equal('udp')
         var udpTransport = server._transports[0]
         // test if UdpSession is established
-        //expect(Object.keys(udpTransport._sessions).length).to.equal(1)
+        // expect(Object.keys(udpTransport._sessions).length).to.equal(1)
         server.closeP()
           .then(function () {
             // test if UdpSession is closed
@@ -1229,5 +1229,4 @@ describe('net api + parallel scheduler', function () {
       createClient(server.address())
     })
   })
-
 })
