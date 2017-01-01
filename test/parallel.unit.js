@@ -908,7 +908,7 @@ describe('net api + parallel scheduler', function () {
         expect(connection.remoteAddress.transportType).to.equal('udp')
         var udpTransport = server._transports[0]
         // test if UdpSession is established
-        // expect(Object.keys(udpTransport._sessions).length).to.equal(1)
+        expect(Object.keys(udpTransport._sessions).length).to.equal(1)
         server.closeP()
           .then(function () {
             // test if UdpSession is closed
@@ -1074,7 +1074,6 @@ describe('net api + parallel scheduler', function () {
         expect(connection).to.not.be.undefined
         expect(connection.isConnected()).to.be.true
         expect(connection.remoteAddress).to.not.be.undefined
-        console.log(connection.remoteAddress)
         expect(connection.remoteAddress.transportType).to.equal('turn-tcp')
         var turnTransport = server._transports[0]
         // test if TurnSession is established
@@ -1162,7 +1161,6 @@ describe('net api + parallel scheduler', function () {
         expect(connection).to.not.be.undefined
         expect(connection.isConnected()).to.be.true
         expect(connection.remoteAddress).to.not.be.undefined
-        console.log(connection.remoteAddress)
         expect(connection.remoteAddress.transportType).to.equal('webrtc')
         var webRtcTransport = server._transports[0]
         // test if WebRtcSession is established
