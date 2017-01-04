@@ -241,9 +241,6 @@ The optional `connectListener` argument is automatically set as a listener for t
 
 ## Events
 
-### `socket.on('connect', function() {})`
-Emitted when a socket connection is successfully established -- i.e. one of the transport protocols has established a connection with a 1tp server.
-
 ### `server.on('connection', function(socket) {})`
 Emitted when a new connection is made. `socket` is an instance of 1tp's `net.Socket`.
 
@@ -252,6 +249,9 @@ Emitted when an error occurs.
 
 ### `server.on('listening', function() {})`
 Emitted once all registered transport protocols are accepting connections after calling `server.listen`.
+
+### `socket.on('connect', function() {})`
+Emitted when a socket connection is successfully established -- i.e. one of the transport protocols has established a connection with a 1tp server.
 
 ### `socket.on('data', function(data) {})`
 Emitted when data is received. The `data` argument is a Buffer.
