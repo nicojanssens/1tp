@@ -16,7 +16,7 @@ describe('Signaling factory', function () {
     var transactionId = myUtils.generateTransactionId()
     var data = signalingFactory.createSynPacket(sessionId, transactionId)
     expect(data).to.not.be.undefined
-    var result = signalingFactory.parse(data)
+    var result = signalingFactory.parseTransportPacket(data)
     expect(result.type).to.equal(signalingFactory.MESSAGE.SYN)
     expect(result.version).to.equal(projectVersion)
     expect(result.sessionId).to.equal(sessionId)
@@ -28,7 +28,7 @@ describe('Signaling factory', function () {
     var transactionId = myUtils.generateTransactionId()
     var data = signalingFactory.createSynAckPacket(sessionId, transactionId)
     expect(data).to.not.be.undefined
-    var result = signalingFactory.parse(data)
+    var result = signalingFactory.parseTransportPacket(data)
     expect(result.type).to.equal(signalingFactory.MESSAGE.SYN_ACK)
     expect(result.version).to.equal(projectVersion)
     expect(result.sessionId).to.equal(sessionId)
@@ -40,7 +40,7 @@ describe('Signaling factory', function () {
     var transactionId = myUtils.generateTransactionId()
     var data = signalingFactory.createAckPacket(sessionId, transactionId)
     expect(data).to.not.be.undefined
-    var result = signalingFactory.parse(data)
+    var result = signalingFactory.parseTransportPacket(data)
     expect(result.type).to.equal(signalingFactory.MESSAGE.ACK)
     expect(result.version).to.equal(projectVersion)
     expect(result.sessionId).to.equal(sessionId)
@@ -52,7 +52,7 @@ describe('Signaling factory', function () {
     var sessionId = myUtils.generateSessionId()
     var data = signalingFactory.createDataPacket(sessionId, chunk)
     expect(data).to.not.be.undefined
-    var result = signalingFactory.parse(data)
+    var result = signalingFactory.parseTransportPacket(data)
     expect(result.type).to.equal(signalingFactory.MESSAGE.DATA)
     expect(result.version).to.equal(projectVersion)
     expect(result.sessionId).to.equal(sessionId)
@@ -64,7 +64,7 @@ describe('Signaling factory', function () {
     var transactionId = myUtils.generateTransactionId()
     var data = signalingFactory.createFinPacket(sessionId, transactionId)
     expect(data).to.not.be.undefined
-    var result = signalingFactory.parse(data)
+    var result = signalingFactory.parseTransportPacket(data)
     expect(result.type).to.equal(signalingFactory.MESSAGE.FIN)
     expect(result.version).to.equal(projectVersion)
     expect(result.sessionId).to.equal(sessionId)
@@ -76,7 +76,7 @@ describe('Signaling factory', function () {
     var transactionId = myUtils.generateTransactionId()
     var data = signalingFactory.createRstPacket(sessionId, transactionId)
     expect(data).to.not.be.undefined
-    var result = signalingFactory.parse(data)
+    var result = signalingFactory.parseTransportPacket(data)
     expect(result.type).to.equal(signalingFactory.MESSAGE.RST)
     expect(result.version).to.equal(projectVersion)
     expect(result.sessionId).to.equal(sessionId)
