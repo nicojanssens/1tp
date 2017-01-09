@@ -327,6 +327,110 @@ describe('net api', function () {
     })
   })
 
+  it('should establish 3 connections between 3 clients and 1 server and exchange a test message -- using UDP transports', function (done) {
+    var server
+    var testMessage = 'test'
+    var nbClients = 3
+    var activeServerStreams = []
+
+    var createServer = function () {
+      var transports = []
+      transports.push(new UdpTransport())
+      server = new Server(transports, function (connection) {
+        expect(connection).to.not.be.undefined
+        expect(connection.isConnected()).to.be.true
+        expect(connection.remoteAddress).to.not.be.undefined
+        connection.on('data', function (data) {
+          expect(data.toString()).to.equal(testMessage)
+          if (activeServerStreams.indexOf(connection._id) !== -1) {
+            done('not expecting to receive more than one packet per connection')
+          } else {
+            activeServerStreams.push(connection._id)
+            if (activeServerStreams.length === nbClients) {
+              done()
+            }
+          }
+        })
+      })
+      return server
+    }
+
+    var launchServer = function (onReady) {
+      server.listen(function () {
+        onReady(server.address())
+      })
+    }
+
+    var createClient = function (connectionInfo) {
+      var transports = []
+      transports.push(new UdpTransport())
+      var client = new Socket(transports)
+      client.connect(connectionInfo, function () {
+        expect(client.isConnected()).to.be.true
+        expect(client.remoteAddress).to.not.be.undefined
+        client.write(testMessage)
+      })
+      expect(client.isConnected()).to.be.false
+    }
+
+    server = createServer()
+    launchServer(function (connectionInfo) {
+      for (var i = 0; i < nbClients; i++) {
+        createClient(connectionInfo)
+      }
+    })
+  })
+
+  it('should establish 3 connections between 3 clients and 1 server and exchange a test message -- using default transports', function (done) {
+    var server
+    var testMessage = 'test'
+    var nbClients = 3
+    var activeServerStreams = []
+
+    var createServer = function () {
+      server = new Server(function (connection) {
+        expect(connection).to.not.be.undefined
+        expect(connection.isConnected()).to.be.true
+        expect(connection.remoteAddress).to.not.be.undefined
+        connection.on('data', function (data) {
+          expect(data.toString()).to.equal(testMessage)
+          if (activeServerStreams.indexOf(connection._id) !== -1) {
+            done('not expecting to receive more than one packet per connection')
+          } else {
+            activeServerStreams.push(connection._id)
+            if (activeServerStreams.length === nbClients) {
+              done()
+            }
+          }
+        })
+      })
+      return server
+    }
+
+    var launchServer = function (onReady) {
+      server.listen(function () {
+        onReady(server.address())
+      })
+    }
+
+    var createClient = function (connectionInfo) {
+      var client = new Socket()
+      client.connect(connectionInfo, function () {
+        expect(client.isConnected()).to.be.true
+        expect(client.remoteAddress).to.not.be.undefined
+        client.write(testMessage)
+      })
+      expect(client.isConnected()).to.be.false
+    }
+
+    server = createServer()
+    launchServer(function (connectionInfo) {
+      for (var i = 0; i < nbClients; i++) {
+        createClient(connectionInfo)
+      }
+    })
+  })
+
   it('should run server listening to TCP socket + client tries connecting over TCP and UDP', function (done) {
     var client, server
     var testMessage = 'test'
