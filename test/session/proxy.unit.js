@@ -78,31 +78,31 @@ describe('Testing proxy stream', function () {
       })
     // complain when other events are fired
     clientStream.on('data', function () {
-      done("client stream should not receive DATA event")
+      done('client stream should not receive DATA event')
     })
     clientStream.on('end', function () {
-      done("client stream should not receive END event")
+      done('client stream should not receive END event')
     })
     clientStream.on('finish', function () {
-      done("client stream should not receive FINISH event")
+      done('client stream should not receive FINISH event')
     })
     clientStream.on('close', function () {
-      done("client stream should not receive CLOSE event")
+      done('client stream should not receive CLOSE event')
     })
     clientStream.on('error', function (error) {
       done(error)
     })
     serverStream.on('data', function () {
-      done("server stream should not receive DATA event")
+      done('server stream should not receive DATA event')
     })
     serverStream.on('end', function () {
-      done("server stream should not receive END event")
+      done('server stream should not receive END event')
     })
     serverStream.on('finish', function () {
-      done("server stream should not receive FINISH event")
+      done('server stream should not receive FINISH event')
     })
     serverStream.on('close', function () {
-      done("server stream should not receive CLOSE event")
+      done('server stream should not receive CLOSE event')
     })
     serverStream.on('error', function (error) {
       done(error)
@@ -130,7 +130,7 @@ describe('Testing proxy stream', function () {
       })
     clientStream._initHandshakeP()
       .then(function () {
-        done("client stream should not succeed in handshake participation")
+        done('client stream should not succeed in handshake participation')
       })
       .catch(function (error) {
         expect(error).to.not.be.undefined
@@ -138,31 +138,31 @@ describe('Testing proxy stream', function () {
       })
     // complain when other events are fired
     clientStream.on('data', function () {
-      done("client stream should not receive DATA event")
+      done('client stream should not receive DATA event')
     })
     clientStream.on('end', function () {
-      done("client stream should not receive END event")
+      done('client stream should not receive END event')
     })
     clientStream.on('finish', function () {
-      done("client stream should not receive FINISH event")
+      done('client stream should not receive FINISH event')
     })
     clientStream.on('close', function () {
-      done("client stream should not receive CLOSE event")
+      done('client stream should not receive CLOSE event')
     })
     clientStream.on('error', function (error) {
       done(error)
     })
     serverStream.on('data', function () {
-      done("server stream should not receive DATA event")
+      done('server stream should not receive DATA event')
     })
     serverStream.on('end', function () {
-      done("server stream should not receive END event")
+      done('server stream should not receive END event')
     })
     serverStream.on('finish', function () {
-      done("server stream should not receive FINISH event")
+      done('server stream should not receive FINISH event')
     })
     serverStream.on('close', function () {
-      done("server stream should not receive CLOSE event")
+      done('server stream should not receive CLOSE event')
     })
     serverStream.on('error', function (error) {
       done(error)
@@ -192,7 +192,7 @@ describe('Testing proxy stream', function () {
       })
     clientStream._initHandshakeP()
       .then(function () {
-        done("client stream should not succeed in handshake participation")
+        done('client stream should not succeed in handshake participation')
       })
       .catch(function (error) {
         expect(error).to.not.be.undefined
@@ -200,31 +200,31 @@ describe('Testing proxy stream', function () {
       })
     // complain when other events are fired
     clientStream.on('data', function () {
-      done("client stream should not receive DATA event")
+      done('client stream should not receive DATA event')
     })
     clientStream.on('end', function () {
-      done("client stream should not receive END event")
+      done('client stream should not receive END event')
     })
     clientStream.on('finish', function () {
-      done("client stream should not receive FINISH event")
+      done('client stream should not receive FINISH event')
     })
     clientStream.on('close', function () {
-      done("client stream should not receive CLOSE event")
+      done('client stream should not receive CLOSE event')
     })
     clientStream.on('error', function (error) {
       done(error)
     })
     serverStream.on('data', function () {
-      done("server stream should not receive DATA event")
+      done('server stream should not receive DATA event')
     })
     serverStream.on('end', function () {
-      done("server stream should not receive END event")
+      done('server stream should not receive END event')
     })
     serverStream.on('finish', function () {
-      done("server stream should not receive FINISH event")
+      done('server stream should not receive FINISH event')
     })
     serverStream.on('close', function () {
-      done("server stream should not receive CLOSE event")
+      done('server stream should not receive CLOSE event')
     })
     serverStream.on('error', function (error) {
       done(error)
@@ -296,7 +296,7 @@ function FiteringPassThrough (options) {
 
 util.inherits(FiteringPassThrough, Transform)
 
-FiteringPassThrough.prototype._transform = function(bytes, encoding, cb) {
+FiteringPassThrough.prototype._transform = function (bytes, encoding, cb) {
   var packet = signalingFactory.parseSocketPacket(bytes)
   // if message type needs to be filtered
   if (this.filter(packet)) {
