@@ -301,7 +301,7 @@ FiteringPassThrough.prototype._transform = function(bytes, encoding, cb) {
   // if message type needs to be filtered
   if (this.filter(packet)) {
     // ignore packet
-    console.log('FiteringPassThrough -- IGNORING message ' + packet.type)
+    console.log('FiteringPassThrough -- IGNORING message ' + packet.type.toString(2))
     cb()
     return
   }
