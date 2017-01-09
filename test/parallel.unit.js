@@ -732,7 +732,7 @@ describe('net api + parallel scheduler', function () {
             expect(openServerSessions).to.equal(1)
             // done
             done()
-          })
+          }, client._connectTimeout() + 250)
         })
       })
       return server
@@ -828,7 +828,7 @@ describe('net api + parallel scheduler', function () {
             expect(openServerSessions).to.equal(1)
             // done
             done()
-          })
+          }, client._connectTimeout() + 250)
         })
       })
       return server
@@ -894,7 +894,7 @@ describe('net api + parallel scheduler', function () {
     })
   })
 
-  it('should correctly close server socket after UdpSession was established -- case 1', function (done) {
+  it('should correctly close server socket after UdpSession was established', function (done) {
     var client, server
     var testMessage = 'test'
 
@@ -907,21 +907,23 @@ describe('net api + parallel scheduler', function () {
         expect(connection.remoteAddress).to.not.be.undefined
         expect(connection.remoteAddress.transportType).to.equal('udp')
         var udpTransport = server._transports[0]
-        // test if UdpSession is established
-        expect(Object.keys(udpTransport._sessions).length).to.equal(1)
-        server.closeP()
-          .then(function () {
-            // test if UdpSession is closed
-            expect(Object.keys(udpTransport._sessions).length).to.equal(0)
-            done()
+        // test if single UdpSession is established (and all other parallel Udp handshakes are aborted)
+        setTimeout(function () {
+          expect(Object.keys(udpTransport._sessions).length).to.equal(1)
+          server.closeP()
+            .then(function () {
+              // test if UdpSession is closed
+              expect(Object.keys(udpTransport._sessions).length).to.equal(0)
+              done()
+            })
+            .catch(function (error) {
+              done(error)
+            })
+          connection.on('data', function (data) {
+            expect(data.toString()).to.equal(testMessage)
+            connection.destroy()
           })
-          .catch(function (error) {
-            done(error)
-          })
-        connection.on('data', function (data) {
-          expect(data.toString()).to.equal(testMessage)
-          connection.destroy()
-        })
+        }, udpTransport._args.connectTimeout + 250)
       })
       return server
     }
@@ -988,20 +990,22 @@ describe('net api + parallel scheduler', function () {
         expect(connection.remoteAddress).to.not.be.undefined
         expect(connection.remoteAddress.transportType).to.equal('tcp')
         var tcpTransport = server._transports[0]
-        expect(Object.keys(tcpTransport._connectingSockets).length).to.equal(0)
-        server.closeP()
-          .then(function () {
-            // test if all sessions are closed
-            expect(Object.keys(tcpTransport._connectingSockets).length).to.equal(0)
-            done()
+        setTimeout(function () {
+          expect(Object.keys(tcpTransport._connectingSockets).length).to.equal(0)
+          server.closeP()
+            .then(function () {
+              // test if all sessions are closed
+              expect(Object.keys(tcpTransport._connectingSockets).length).to.equal(0)
+              done()
+            })
+            .catch(function (error) {
+              done(error)
+            })
+          connection.on('data', function (data) {
+            expect(data.toString()).to.equal(testMessage)
+            connection.destroy()
           })
-          .catch(function (error) {
-            done(error)
-          })
-        connection.on('data', function (data) {
-          expect(data.toString()).to.equal(testMessage)
-          connection.destroy()
-        })
+        }, tcpTransport._args.connectTimeout + 250)
       })
       return server
     }
@@ -1077,20 +1081,22 @@ describe('net api + parallel scheduler', function () {
         expect(connection.remoteAddress.transportType).to.equal('turn-tcp')
         var turnTransport = server._transports[0]
         // test if TurnSession is established
-        expect(Object.keys(turnTransport._sessions).length).to.equal(1)
-        server.closeP()
-          .then(function () {
-            // test if TurnSession is closed
-            expect(Object.keys(turnTransport._sessions).length).to.equal(0)
-            done()
+        setTimeout(function () {
+          expect(Object.keys(turnTransport._sessions).length).to.equal(1)
+          server.closeP()
+            .then(function () {
+              // test if TurnSession is closed
+              expect(Object.keys(turnTransport._sessions).length).to.equal(0)
+              done()
+            })
+            .catch(function (error) {
+              done(error)
+            })
+          connection.on('data', function (data) {
+            expect(data.toString()).to.equal(testMessage)
+            connection.destroy()
           })
-          .catch(function (error) {
-            done(error)
-          })
-        connection.on('data', function (data) {
-          expect(data.toString()).to.equal(testMessage)
-          connection.destroy()
-        })
+        }, turnTransport._args.connectTimeout + 250)
       })
       return server
     }
@@ -1164,20 +1170,22 @@ describe('net api + parallel scheduler', function () {
         expect(connection.remoteAddress.transportType).to.equal('webrtc')
         var webRtcTransport = server._transports[0]
         // test if WebRtcSession is established
-        expect(Object.keys(webRtcTransport._sessions).length).to.equal(1)
-        server.closeP()
-          .then(function () {
-            // test if WebRtcSession is closed
-            expect(Object.keys(webRtcTransport._sessions).length).to.equal(0)
-            done()
+        setTimeout(function () {
+          expect(Object.keys(webRtcTransport._sessions).length).to.equal(1)
+          server.closeP()
+            .then(function () {
+              // test if WebRtcSession is closed
+              expect(Object.keys(webRtcTransport._sessions).length).to.equal(0)
+              done()
+            })
+            .catch(function (error) {
+              done(error)
+            })
+          connection.on('data', function (data) {
+            expect(data.toString()).to.equal(testMessage)
+            connection.destroy()
           })
-          .catch(function (error) {
-            done(error)
-          })
-        connection.on('data', function (data) {
-          expect(data.toString()).to.equal(testMessage)
-          connection.destroy()
-        })
+        }, webRtcTransport._args.connectTimeout + 250)
       })
       return server
     }
