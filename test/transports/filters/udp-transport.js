@@ -20,14 +20,14 @@ function FilteringUdpTransport (args) {
 util.inherits(FilteringUdpTransport, UdpTransport)
 
 FilteringUdpTransport.prototype._onIncomingBytes = function (bytes, rinfo) {
-  var message = signalingFactory.parse(bytes)
+  var message = signalingFactory.parseTransportPacket(bytes)
   // if message passes the filter test
   if (this.filter(message)) {
-    console.log('FilteringUdpTransport -- IGNORING message ' + message.type.toString(16) + ' ' + JSON.stringify(message) + ' from ' + JSON.stringify(rinfo))
+    console.log('FilteringUdpTransport -- IGNORING message ' + message.type + ' ' + JSON.stringify(message) + ' from ' + JSON.stringify(rinfo))
     // then return -- dropping request on the floor
     return
   }
-  // console.log('FilteringUdpTransport -- PROCESSING message ' + message.type.toString(16) + ' ' + JSON.stringify(message) + ' from ' + JSON.stringify(rinfo))
+  // console.log('FilteringUdpTransport -- PROCESSING message ' + message.type + ' ' + JSON.stringify(message) + ' from ' + JSON.stringify(rinfo))
   FilteringUdpTransport.super_.prototype._onIncomingBytes.call(this, bytes, rinfo)
 }
 
