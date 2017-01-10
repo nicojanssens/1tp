@@ -21,7 +21,7 @@ var modules = {
 }
 
 describe('net api', function () {
-  this.timeout(80000)
+  this.timeout(160000)
 
   it('should launch 1tp server in cordova app and verify server address', function (done) {
     var child

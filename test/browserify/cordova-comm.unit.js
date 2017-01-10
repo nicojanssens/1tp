@@ -21,7 +21,7 @@ var modules = {
 }
 
 describe('net api', function () {
-  this.timeout(80000)
+  this.timeout(160000)
 
   it('should establish connection with 1tp client in cordova app', function (done) {
     var child
