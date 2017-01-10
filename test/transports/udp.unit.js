@@ -42,13 +42,60 @@ describe('udp transport', function () {
     )
   })
 
+  it('bind server using incorrect address', function (done) {
+    var listeningInfo = {
+      transportType: 'udp',
+      transportInfo: {
+        address: '1.2.3.4',
+        port: 20002
+      }
+    }
+    var serverSocket = new UdpTransport()
+    serverSocket.listenP(listeningInfo)
+      .then(function (connectionInfo) {
+        expect(connectionInfo).to.be.instanceof(Array)
+        expect(connectionInfo).to.not.be.empty
+        connectionInfo.forEach(function (endpoint) {
+          expect(endpoint.transportType).to.equal(listeningInfo.transportType)
+          expect(endpoint.transportInfo.port).to.equal(listeningInfo.transportInfo.port)
+          expect(endpoint.transportInfo.address).to.not.equal(listeningInfo.transportInfo.address)
+        })
+        done()
+      })
+      .catch (function (error) {
+        done(error)
+      })
+  })
+
+  it('bind server using incorrect port', function (done) {
+    var listeningInfo = {
+      transportType: 'udp',
+      transportInfo: {
+        address: '127.0.0.1',
+        port: 80
+      }
+    }
+    var serverSocket = new UdpTransport()
+    serverSocket.listenP(listeningInfo)
+      .then(function (connectionInfo) {
+        expect(connectionInfo).to.not.be.undefined
+        expect(connectionInfo.transportType).to.equal(listeningInfo.transportType)
+        expect(connectionInfo.transportInfo.port).to.not.equal(listeningInfo.transportInfo.port)
+        expect(connectionInfo.transportInfo.address).to.equal(listeningInfo.transportInfo.address)
+        done()
+      })
+      .catch (function (error) {
+        done(error)
+      })
+  })
+
   it('should correctly close after destroying client socket', function (done) {
     var clientSocket = new UdpTransport()
     var listeningInfo = {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20001
+        port: 20003
       }
     }
     var serverSocket = new UdpTransport()
@@ -72,7 +119,7 @@ describe('udp transport', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20002
+        port: 20004
       }
     }
     var serverSocket = new UdpTransport()
@@ -97,7 +144,7 @@ describe('udp transport', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20003
+        port: 20005
       }
     }
     clientSocket.connectP(connectionInfo)
@@ -121,7 +168,7 @@ describe('udp transport', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20004
+        port: 20006
       }
     }
     clientSocket.connectP(connectionInfo)
@@ -152,7 +199,7 @@ describe('udp transport', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20005
+        port: 20007
       }
     }
     clientSocket.connectP(connectionInfo)
@@ -182,7 +229,7 @@ describe('udp transport', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20006
+        port: 20008
       }
     }
     var serverSocket = new FilteringUdpTransport()
@@ -226,7 +273,7 @@ describe('udp transport', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20007
+        port: 20009
       }
     }
     var serverSocket = new FilteringUdpTransport()
@@ -269,7 +316,7 @@ describe('udp transport', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20008
+        port: 20010
       }
     }
     var serverSocket = new FilteringUdpTransport()
@@ -305,7 +352,7 @@ describe('udp transport', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20009
+        port: 20011
       }
     }
     var serverSocket = new FilteringUdpTransport()
@@ -344,7 +391,7 @@ describe('udp transport', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20010
+        port: 20012
       }
     }
     var serverSocket = new FilteringUdpTransport()
@@ -390,7 +437,7 @@ describe('udp transport', function () {
       transportType: 'udp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 20011
+        port: 20013
       }
     }
     var serverSocket = new FilteringUdpTransport()
