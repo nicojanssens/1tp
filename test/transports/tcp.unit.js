@@ -39,13 +39,60 @@ describe('tcp transport', function () {
     )
   })
 
+  it('bind server using incorrect address', function (done) {
+    var listeningInfo = {
+      transportType: 'tcp',
+      transportInfo: {
+        address: '1.2.3.4',
+        port: 10001
+      }
+    }
+    var serverSocket = new TcpTransport()
+    serverSocket.listenP(listeningInfo)
+      .then(function (connectionInfo) {
+        expect(connectionInfo).to.be.instanceof(Array)
+        expect(connectionInfo).to.not.be.empty
+        connectionInfo.forEach(function (endpoint) {
+          expect(endpoint.transportType).to.equal(listeningInfo.transportType)
+          expect(endpoint.transportInfo.port).to.equal(listeningInfo.transportInfo.port)
+          expect(endpoint.transportInfo.address).to.not.equal(listeningInfo.transportInfo.address)
+        })
+        done()
+      })
+      .catch (function (error) {
+        done(error)
+      })
+  })
+
+  it('bind server using incorrect port', function (done) {
+    var listeningInfo = {
+      transportType: 'tcp',
+      transportInfo: {
+        address: '127.0.0.1',
+        port: 80
+      }
+    }
+    var serverSocket = new TcpTransport()
+    serverSocket.listenP(listeningInfo)
+      .then(function (connectionInfo) {
+        expect(connectionInfo).to.not.be.undefined
+        expect(connectionInfo.transportType).to.equal(listeningInfo.transportType)
+        expect(connectionInfo.transportInfo.port).to.not.equal(listeningInfo.transportInfo.port)
+        expect(connectionInfo.transportInfo.address).to.equal(listeningInfo.transportInfo.address)
+        done()
+      })
+      .catch (function (error) {
+        done(error)
+      })
+  })
+
   it('should correctly close after destroying client socket', function (done) {
     var clientSocket = new TcpTransport()
     var listeningInfo = {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 10001
+        port: 10002
       }
     }
     var serverSocket = new TcpTransport()
@@ -70,7 +117,7 @@ describe('tcp transport', function () {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 10002
+        port: 10003
       }
     }
     var serverSocket = new TcpTransport()
@@ -95,7 +142,7 @@ describe('tcp transport', function () {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 10003
+        port: 10004
       }
     }
     clientSocket.connectP(connectionInfo)
@@ -118,7 +165,7 @@ describe('tcp transport', function () {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 10004
+        port: 10005
       }
     }
     clientSocket.connectP(connectionInfo)
@@ -128,7 +175,7 @@ describe('tcp transport', function () {
       })
       .catch(function (error) {
         expect(error.message).to.be.a('string')
-        expect(['connect ECONNREFUSED 127.0.0.1:10004', 'handshake aborted']).to.include(error.message)
+        expect(['connect ECONNREFUSED 127.0.0.1:10005', 'handshake aborted']).to.include(error.message)
         // test if there are no more sessions left
         expect(Object.keys(clientSocket._connectingSockets).length).to.equal(0)
         done()
@@ -141,7 +188,7 @@ describe('tcp transport', function () {
       transportType: 'tcp',
       transportInfo: {
         address: '127.0.0.1',
-        port: 10005
+        port: 10006
       }
     }
     clientSocket.connectP(connectionInfo)
