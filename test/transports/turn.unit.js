@@ -12,27 +12,27 @@ var FilteringWebSocketSignaling = require('./filters/ws-signaling')
 var chai = require('chai')
 var expect = chai.expect
 
+if (!process.env.TURN_ADDR) {
+  throw new Error('TURN_ADDR undefined -- giving up')
+}
+if (!process.env.TURN_PORT) {
+  throw new Error('TURN_PORT undefined -- giving up')
+}
+if (!process.env.TURN_USER) {
+  throw new Error('TURN_USER undefined -- giving up')
+}
+if (!process.env.TURN_PASS) {
+  throw new Error('TURN_PASS undefined -- giving up')
+}
+if (!process.env.ONETP_REGISTRAR) {
+  throw new Error('ONETP_REGISTRAR undefined -- giving up')
+}
+
 var turnAddr = process.env.TURN_ADDR
-var turnPort = process.env.TURN_PORT
+var turnPort = parseInt(process.env.TURN_PORT)
 var turnUser = process.env.TURN_USER
 var turnPwd = process.env.TURN_PASS
 var registrar = process.env.ONETP_REGISTRAR
-
-if (!turnAddr) {
-  throw new Error('TURN_ADDR undefined -- giving up')
-}
-if (!turnPort) {
-  throw new Error('TURN_PORT undefined -- giving up')
-}
-if (!turnUser) {
-  throw new Error('TURN_USER undefined -- giving up')
-}
-if (!turnPwd) {
-  throw new Error('TURN_PASS undefined -- giving up')
-}
-if (!registrar) {
-  throw new Error('ONETP_REGISTRAR undefined -- giving up')
-}
 
 describe('turn transport', function () {
   this.timeout(10000)

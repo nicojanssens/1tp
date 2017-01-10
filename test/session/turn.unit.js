@@ -7,8 +7,21 @@ var TurnSession = require('../../lib/transports/session/turn')
 var chai = require('chai')
 var expect = chai.expect
 
+if (!process.env.TURN_ADDR) {
+  throw new Error('TURN_ADDR undefined -- giving up')
+}
+if (!process.env.TURN_PORT) {
+  throw new Error('TURN_PORT undefined -- giving up')
+}
+if (!process.env.TURN_USER) {
+  throw new Error('TURN_USER undefined -- giving up')
+}
+if (!process.env.TURN_PASS) {
+  throw new Error('TURN_PASS undefined -- giving up')
+}
+
 var turnAddr = process.env.TURN_ADDR
-var turnPort = process.env.TURN_PORT
+var turnPort = parseInt(process.env.TURN_PORT)
 var turnUser = process.env.TURN_USER
 var turnPwd = process.env.TURN_PASS
 
@@ -30,7 +43,13 @@ describe('Testing turn stream', function () {
     }
 
     // allocate session alice
-    clientAlice.allocateP()
+    clientAlice.initP()
+      .then(function () {
+        return clientBob.initP()
+      })
+      .then(function () {
+        return clientAlice.allocateP()
+      })
       .then(function (allocateAddress) {
         connectionInfoAlice = allocateAddress
         console.log("alice's connectionInfo = " + JSON.stringify(connectionInfoAlice))
