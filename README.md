@@ -55,7 +55,7 @@ serverTransports.push(new TurnTransport({
   })
 }))
 serverTransports.push(new WebRtcTransport({
-  config: { iceServers: [ { url: 'stun:23.21.150.121' } ] },
+  config: { iceServers: [ { url: 'stun:stun.l.google.com:19305' } ] },
   //signaling: localSignaling,
   signaling: new WebSocketSignaling({
     url: ONETP_REGISTRAR
