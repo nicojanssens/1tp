@@ -199,13 +199,15 @@ function testAbortStream (clientSpecs, serverSpecs, timeout, onSuccess, onFailur
         function () {
           onFailure('connection established')
         },
-        onFailure
+        onSuccess
       )
       // abort this connection setup
       setTimeout(function () {
         clientSocket.abort(
           connectionInfo,
-          onSuccess,
+          function () {
+            // do nothing
+          },
           onFailure
         )
       }, timeout)

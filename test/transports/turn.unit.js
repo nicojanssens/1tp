@@ -342,11 +342,11 @@ describe('turn transport', function () {
         expect(error.message).to.be.a('string')
         expect(error.message).to.equal('handshake aborted')
         expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
+        expect(Object.keys(clientSocket._sessions).length).to.equal(0)
       })
     setTimeout(function () {
       clientSocket.abortP(connectionInfo)
         .then(function () {
-          expect(Object.keys(clientSocket._sessions).length).to.equal(0)
           done()
         })
         .catch(function (error) {
@@ -390,10 +390,10 @@ describe('turn transport', function () {
         expect(error.message).to.be.a('string')
         expect(error.message).to.equal('handshake aborted')
         expect(error.code).to.equal(OneTpError.CODES.handshakeAborted)
+        expect(Object.keys(clientSocket._sessions).length).to.equal(0)
       })
     clientSocket.abortP(connectionInfo)
       .then(function () {
-        expect(Object.keys(clientSocket._sessions).length).to.equal(0)
         setTimeout(done, 3000)
       })
       .catch(function (error) {
